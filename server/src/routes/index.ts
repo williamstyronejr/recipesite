@@ -7,7 +7,16 @@ export const setUpRoutes = (app: Application): void => {
     console.log('testing');
     try {
       res.sendFile(
-        path.join(__dirname, '..', '..', '..', 'client', 'build', 'index.html'),
+        path.join(
+          __dirname,
+          '..',
+          '..',
+          '..',
+          '..',
+          'client',
+          'build',
+          'index.html',
+        ),
       );
     } catch (err) {
       next(err);
