@@ -27,7 +27,7 @@ const Footer = () => (
       <ul className="footer__list">
         <li className="footer__item footer__item--title">Company</li>
         <li className="footer__item">
-          <a className="footer__link" href="/about">
+          <a className="footer__link" href="/faq">
             FAQ
           </a>
         </li>
@@ -36,25 +36,25 @@ const Footer = () => (
       <ul className="footer__list">
         <li className="footer__item footer__item--title">Support</li>
         <li className="footer__item">
-          <a className="footer__link" href="/about">
+          <a className="footer__link" href="/support">
             Support Center
           </a>
         </li>
 
         <li className="footer__item">
-          <a className="footer__link" href="/about">
+          <a className="footer__link" href="/account">
             Account
           </a>
         </li>
 
         <li className="footer__item">
-          <a className="footer__link" href="/about">
+          <a className="footer__link" href="/feedback">
             Feedback
           </a>
         </li>
 
         <li className="footer__item">
-          <a className="footer__link" href="/about">
+          <a className="footer__link" href="/accessibility">
             Accessibility Issues
           </a>
         </li>
