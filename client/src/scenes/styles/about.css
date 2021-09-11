@@ -1,0 +1,62 @@
+.about {
+  padding: 12em 0;
+  text-align: center;
+}
+
+.about__heading {
+  font-size: 4rem;
+  max-width: 600px;
+  margin: auto;
+}
+
+.mission {
+  padding: 8em 0;
+}
+
+.mission__header {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.mission__heading {
+  display: inline-block;
+  font-size: 3rem;
+  width: 60%;
+  padding: 0 15px;
+  word-break: break-all;
+  vertical-align: top;
+  margin: 0;
+}
+
+.mission__description {
+  display: inline-block;
+  font-size: 1.5rem;
+  width: 40%;
+  word-break: break-all;
+  vertical-align: top;
+  margin: 0;
+}
+
+.passionate {
+  padding: 5em;
+  text-align: center;
+}
+
+.passionate__heading {
+  font-size: 3rem;
+}
+
+.passionate__list {
+}
+
+.passionate__item {
+  font-size: 1.7rem;
+}
+
+.passionate__item:not(:last-child):after {
+  content: '⬩';
+  color: #000;
+  display: inline-block;
+  line-height: 1;
+  padding: 0 0.8rem;
+}
