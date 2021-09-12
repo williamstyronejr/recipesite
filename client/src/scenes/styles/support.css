@@ -1,0 +1,34 @@
+.support {
+  text-align: center;
+}
+
+.support__header {
+  width: 100%;
+  /* max-width: 1000px; */
+  padding: 18em 0 20em 0;
+  background: linear-gradient(rgba(0, 0, 0, 0.527), rgba(0, 0, 0, 0.5)),
+    url('../../images/support.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.support__heading {
+  font-size: 5rem;
+  margin: 0 0 20px 0;
+  color: var(--color-text-off);
+}
+
+.support__input {
+  padding: 1em;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 3px;
+  border: none;
+}
+
+.support__input:focus {
+  outline: none;
+  /* border: 1px solid #bbb; */
+
+  box-shadow: 0 0 0 4px var(--color-alt);
+}
