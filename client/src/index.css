@@ -12,6 +12,7 @@
   --color-alt-darken: #2d9759;
   --color-background: #efefef;
   --color-background-off: #f8fafb;
+  --max-width: 1400px;
 }
 
 html,

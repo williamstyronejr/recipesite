@@ -29,11 +29,11 @@ const AboutPage = () => (
     <section className="passionate">
       <header className="passionate__header">
         <h3 className="passionate__heading">
-          We&apso;re passionate about creating
+          We&apos;re passionate about creating
         </h3>
         <div className="passionate__list">
-          <span className="passionate__item">COMMUNITY</span>
           <span className="passionate__item">FOOD</span>
+          <span className="passionate__item">COMMUNITY</span>
           <span className="passionate__item">FAMILY</span>
         </div>
       </header>

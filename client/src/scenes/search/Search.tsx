@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useLocation } from 'react-router-dom';
+import './styles/search.css';
 
 const SearchPage = () => {
   const recipes: any[] = [];
