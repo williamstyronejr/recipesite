@@ -43,6 +43,12 @@ const Header = () => {
               Signin
             </Link>
           </li>
+
+          <li className="header__item">
+            <Link className="header__link" to="/signup">
+              Signup
+            </Link>
+          </li>
         </ul>
       </nav>
 
