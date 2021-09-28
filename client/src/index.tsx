@@ -1,13 +1,51 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+import { createUploadLink } from 'apollo-upload-client';
 import './index.css';
 import Root from './Root';
 import reportWebVitals from './reportWebVitals';
 
+const authLink = setContext(() => {
+  const token = localStorage.getItem('jwtToken');
+  return {
+    headers: {
+      Authorization: token ? `Bearer ${token}` : '',
+    },
+  };
+});
+
+const httpLink = createUploadLink({
+  uri: 'http://localhost:3001/graphql',
+});
+
+const client = new ApolloClient({
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache({
+    typePolicies: {
+      Query: {
+        fields: {
+          searchRecipes: {
+            keyArgs: false,
+            merge(existing = { recipes: [], endOfList: true }, incoming) {
+              // return [...existing, ...incoming];
+              return {
+                recipes: [...existing.recipes, ...incoming.recipes],
+                endOfList: incoming.endOfList,
+              };
+            },
+          },
+        },
+      },
+    },
+  }),
+});
+
 ReactDOM.render(
-  <React.StrictMode>
+  <ApolloProvider client={client}>
     <Root />
-  </React.StrictMode>,
+  </ApolloProvider>,
   document.getElementById('root'),
 );
 
