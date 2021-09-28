@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
+
 import './styles/recipesearch.css';
 
 const RecipeSearch = () => {
-  const [search, setSearch] = React.useState('');
+  const [search, setSearch] = React.useState<string>('');
   const history = useHistory();
 
   return (
