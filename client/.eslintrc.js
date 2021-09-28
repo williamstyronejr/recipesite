@@ -14,5 +14,6 @@ module.exports = {
   },
   rules: {
     'import/no-anonymous-default-export': 0,
+    'consistent-return': 0,
   },
 };
