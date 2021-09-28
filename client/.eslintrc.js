@@ -6,7 +6,13 @@ module.exports = {
     jest: true,
   },
   plugins: [],
-  extends: ['react-app', 'react-app/jest', 'airbnb', 'airbnb-typescript'],
+  extends: [
+    'react-app',
+    'react-app/jest',
+    'airbnb',
+    'airbnb-typescript',
+    'prettier',
+  ],
   parserOptions: {
     project: 'tsconfig.json',
     tsconfigRootDir: __dirname,
