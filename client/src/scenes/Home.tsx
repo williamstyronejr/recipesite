@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Carousel } from 'react-responsive-carousel';
+import NewsLetter from '../components/NewsLetter';
 import Plate1 from '../images/plate1.png';
 import Plate2 from '../images/plate2.png';
 import Plate3 from '../images/plate3.png';
@@ -10,7 +10,6 @@ import Plate6 from '../images/plate6.png';
 import Plate7 from '../images/plate7.png';
 import Plate8 from '../images/plate8.png';
 import Plate9 from '../images/plate9.png';
-import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import './styles/home.css';
 
 const HomePage = () => (
@@ -29,7 +28,7 @@ const HomePage = () => (
           <Link className="home__link" to="/started">
             Get Started
           </Link>
-          <Link className="home__link home__link--off" to="/recipes/popular">
+          <Link className="home__link home__link--off" to="/explore/popular">
             Explore Recipes
           </Link>
         </div>
@@ -149,68 +148,7 @@ const HomePage = () => (
       </div>
     </section>
 
-    <section className="carousels">
-      <Carousel>
-        <div className="carousel__item">
-          <div className="carousel__recipe">
-            <h4 className="carousel__title">Test Title</h4>
-            <p className="carousel__description">Test Descripition</p>
-            <div className="carousel__info">
-              <span className="carosel__time">30 min</span>
-              <span className="carosel__rating"> Rating</span>
-            </div>
-
-            <div className="">foods</div>
-          </div>
-
-          <div className="carousel__aside">
-            <div className="carousel__review">
-              <p className="carousel__chief">Gordon Ramsay</p>
-              <p className="carousel__style">French</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="carousel__item">
-          <div className="carousel__recipe">
-            <h4 className="carousel__title">Test Title</h4>
-            <p className="carousel__description">Test Descripition</p>
-            <div className="carousel__info">
-              <span className="carosel__time">30 min</span>
-              <span className="carosel__rating"> Rating</span>
-            </div>
-
-            <div className="">foods</div>
-          </div>
-
-          <div className="carousel__aside">
-            <div className="carousel__review">
-              <p className="carousel__chief">Gordon Ramsay</p>
-              <p className="carousel__style">French</p>
-            </div>
-          </div>
-        </div>
-      </Carousel>
-    </section>
-
-    <section className="newsletter">
-      <header className="newsletter__header">
-        <h4 className="newsletter__heading">
-          Subscribe to get weekly recipes updates
-        </h4>
-      </header>
-
-      <div className="newsletter__email">
-        <input
-          className="newsletter__input"
-          type="text"
-          placeholder="Enter your email here"
-        />
-        <button className="newsletter__button" type="button">
-          Subscribe
-        </button>
-      </div>
-    </section>
+    <NewsLetter />
   </>
 );
 
