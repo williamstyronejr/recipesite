@@ -91,10 +91,17 @@
 .header__link {
   text-decoration: none;
   color: var(--color-link);
+  background-color: transparent;
+  border: none;
+  font-size: inherit;
+  margin: 0;
+  padding: 0;
+  font-family: 'Besley', serif;
 }
 
 .header__link:hover {
   color: var(--color-link-active);
+  cursor: pointer;
 }
 
 .header__text-alt {
@@ -122,7 +129,7 @@
   opacity: 1;
 }
 
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 800px) {
   .header__menu {
     display: none;
   }
