@@ -1,48 +1,63 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import { useMutation, gql } from '@apollo/client';
+import { useAuthContext } from '../../context/auth';
 import './styles/index.css';
 
+const REGISTER_USER = gql`
+  mutation register(
+    $username: String!
+    $email: String!
+    $password: String!
+    $confirmPassword: String!
+  ) {
+    register(
+      registerInput: {
+        username: $username
+        email: $email
+        password: $password
+        confirmPassword: $confirmPassword
+      }
+    ) {
+      id
+      email
+      username
+      token
+    }
+  }
+`;
+
 const SignupPage = () => {
+  const { state, login } = useAuthContext();
   const [email, setEmail] = React.useState<string>('');
   const [username, setUsername] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
   const [confirm, setConfirm] = React.useState<string>('');
   const [errors, setError] = React.useState<{ [key: string]: string }>({});
 
-  const validate = (
-    inputUsername: string,
-    inputEmail: string,
-    inputPassword: string,
-    inputConfirm: string,
-  ) => {
-    const err: { [key: string]: string } = {};
+  const [createUser, { loading }] = useMutation(REGISTER_USER, {
+    update(_, { data: { register: userData } }) {
+      login(userData);
+    },
+    onError(err) {
+      if (err.graphQLErrors[0] && err.graphQLErrors[0].extensions) {
+        setError(err.graphQLErrors[0].extensions.errors);
+      }
+    },
+    variables: {
+      username,
+      email,
+      password,
+      confirmPassword: confirm,
+    },
+  });
 
-    if (inputUsername === '') {
-      err.username = 'Must provided username';
-    }
-    if (inputEmail === '') {
-      err.email = 'Must provided email';
-    }
-    if (inputPassword === '') {
-      err.password = 'Must provide password';
-    }
-    if (inputConfirm === '') {
-      err.confirm = 'Must confirm password';
-    } else if (inputConfirm !== inputPassword) {
-      err.confirm = 'Must match password';
-    }
-
-    return err;
-  };
+  if (state.authenticated) return <Redirect to="/" />;
 
   const submitHandler = (evt: React.SyntheticEvent<HTMLFormElement>) => {
     evt.preventDefault();
-
     setError({});
-    const validationError = validate(username, email, password, confirm);
-    setError(validationError);
-
-    // Submit Data
+    createUser();
   };
 
   return (
@@ -68,6 +83,7 @@ const SignupPage = () => {
               <span className="form__label-error">{errors.email}</span>
             ) : null}
 
+            <span className="form__labeling">Email</span>
             <input
               id="email"
               className="form__input form__input--text"
@@ -77,14 +93,13 @@ const SignupPage = () => {
               onChange={(evt) => setEmail(evt.target.value)}
             />
           </label>
-        </fieldset>
 
-        <fieldset className="form__field">
           <label className="form__label" htmlFor="email">
             {errors.username ? (
               <span className="form__label-error">{errors.username}</span>
             ) : null}
 
+            <span className="form__labeling">Username</span>
             <input
               id="username"
               className="form__input form__input--text"
@@ -94,14 +109,13 @@ const SignupPage = () => {
               onChange={(evt) => setUsername(evt.target.value)}
             />
           </label>
-        </fieldset>
 
-        <fieldset className="form__field">
           <label className="form__label" htmlFor="password">
             {errors.password ? (
               <span className="form__label-error">{errors.password}</span>
             ) : null}
 
+            <span className="form__labeling">Password</span>
             <input
               id="password"
               className="form__input form__input--text"
@@ -111,14 +125,13 @@ const SignupPage = () => {
               onChange={(evt) => setPassword(evt.target.value)}
             />
           </label>
-        </fieldset>
 
-        <fieldset className="form__field">
           <label className="form__label" htmlFor="confim">
             {errors.confirm ? (
               <span className="form__label-error">{errors.confirm}</span>
             ) : null}
 
+            <span className="form__labeling">Confirm Password</span>
             <input
               id="confirm"
               className="form__input form__input--text"
@@ -130,7 +143,11 @@ const SignupPage = () => {
           </label>
         </fieldset>
 
-        <button className="form__button form__button--submit" type="submit">
+        <button
+          className="form__button form__button--submit"
+          type="submit"
+          disabled={loading}
+        >
           Signup
         </button>
       </form>
