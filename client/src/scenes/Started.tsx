@@ -9,19 +9,19 @@ const StartedPage = () => (
     </header>
 
     <div className="started__options">
-      <Link className="started__option" to="/recipes/breakfest">
+      <Link className="started__option" to="/explore/breakfest">
         Breakfest
       </Link>
-      <Link className="started__option" to="/recipes/lunch">
+      <Link className="started__option" to="/explore/lunch">
         Lunch
       </Link>
-      <Link className="started__option" to="/recipes/dinner">
+      <Link className="started__option" to="/explore/dinner">
         Dinner
       </Link>
-      <Link className="started__option" to="/recipes/dessert">
+      <Link className="started__option" to="/explore/dessert">
         Dessert
       </Link>
-      <Link className="started__option" to="/recipes/snack">
+      <Link className="started__option" to="/explore/snack">
         Snack
       </Link>
     </div>
