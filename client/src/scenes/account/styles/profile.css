@@ -1,5 +1,7 @@
 .profile {
   padding-top: 30px;
+  min-height: 100vh;
+  padding-bottom: 30px;
 }
 
 .profile--missing {
