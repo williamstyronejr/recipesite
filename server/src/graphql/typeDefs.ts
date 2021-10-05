@@ -67,8 +67,9 @@ export default gql`
     removeImage: Boolean
   }
   input Search {
-    q: String!
+    q: String
     order: String
+    author: String
     offset: Int!
     limit: Int!
   }
@@ -77,6 +78,7 @@ export default gql`
     getSession: Session
     getProfile(userId: ID!): Profile
     getRecipe(recipeId: ID!): Recipe
+    getUserRecipes(userId: ID!, publishedType: String!): [Recipe]
     getCommentsByRecipe(author: ID!): [Comment]
 
     searchRecipes(search: Search): RecipePaged

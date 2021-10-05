@@ -1,7 +1,6 @@
 import { Op } from 'sequelize';
 import db from '../../models/index';
 import checkAuth from '../utils/auth';
-import user from './user';
 import { uploadImage } from './utils';
 
 export default {
@@ -34,22 +33,61 @@ export default {
         authorName: recipe.user.username,
       };
     },
+    async getUserRecipes(
+      _: any,
+      { userId, publishedType }: { userId: string; publishedType: string },
+      content: any,
+    ): Promise<Array<any>> {
+      const user = await checkAuth(content);
+      console.log(user.id, userId);
+
+      if (publishedType === 'private' && user.id.toString() !== userId)
+        return [];
+
+      const params: { published?: boolean; author: string } = {
+        author: userId,
+      };
+      if (publishedType === 'private') params.published = false;
+      if (publishedType === 'public') params.published = true;
+
+      console.log(params);
+      const recipes = await db.models.Recipe.findAll({ where: params });
+
+      return recipes;
+    },
     async searchRecipes(
       _: any,
       {
-        search: { q, order, offset, limit },
+        search: { q, order, author, offset, limit },
       }: {
-        search: { q: string; order: string; offset: number; limit: number };
+        search: {
+          q: string;
+          author: string;
+          order: string;
+          offset: number;
+          limit: number;
+        };
       },
     ): Promise<any | null> {
       const ordering = order === 'rating' ? [[]] : [['createdAt', 'DESC']];
+      const where: { q?: any } = {};
+      const innerWhere: { username?: string } = {};
+      if (author) innerWhere.username = author;
+      if (q)
+        where.q = {
+          [Op.like]: q,
+        };
 
       const recipes = await db.models.Recipe.findAll({
         where: {
-          title: {
-            [Op.like]: q,
-          },
+          ...where,
           published: true,
+        },
+        include: {
+          model: db.models.User,
+          as: 'user',
+          where: innerWhere,
+          attributes: { exclude: ['hash'] }, // Remove hash from results
         },
         order: ordering,
         limit,
