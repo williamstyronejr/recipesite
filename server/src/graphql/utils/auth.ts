@@ -4,11 +4,11 @@ import jwt from 'jsonwebtoken';
 const { JWT_SECRET } = process.env;
 
 export default function checkAuth(context: any): any {
-  // context = { ... headers }
   const authHeader = context.req.headers.authorization;
+
   if (authHeader) {
-    // Bearer ....
     const token = authHeader.split('Bearer ')[1];
+
     if (token) {
       try {
         const user = jwt.verify(token, JWT_SECRET as string);
