@@ -5,14 +5,12 @@ import { useAuthContext } from '../../context/auth';
 import Loading from '../../components/Loading';
 import './styles/manageRecipes.css';
 
-const QUERY_USER_PROFILE = gql`
-  query ($userId: ID!) {
-    getProfile(userId: $userId) {
-      recipes {
-        id
-        title
-        summary
-      }
+const QUERY_USER_RECIPES = gql`
+  query ($userId: ID!, $publishedType: String!) {
+    getUserRecipes(userId: $userId, publishedType: $publishedType) {
+      id
+      title
+      summary
     }
   }
 `;
@@ -27,16 +25,17 @@ const ManageRecipesPage = () => {
   const { state } = useAuthContext();
   const [filter, setFilter] = React.useState('all');
 
-  const { loading, data } = useQuery(QUERY_USER_PROFILE, {
+  const { loading, data, refetch } = useQuery(QUERY_USER_RECIPES, {
     variables: {
       userId: state.id,
+      publishedType: filter,
     },
   });
 
   const [deleteRecipe] = useMutation(DELETE_RECIPE, {
     refetchQueries: [
       {
-        query: QUERY_USER_PROFILE,
+        query: QUERY_USER_RECIPES,
         variables: {
           userId: state.id,
         },
@@ -47,10 +46,15 @@ const ManageRecipesPage = () => {
     },
   });
 
-  if (!state.authenticated) <Redirect to="/signin" />;
+  React.useEffect(() => {
+    refetch({ userId: state.id, publishedType: filter });
+  }, [filter, refetch, state.id]);
 
-  if (loading) return <Loading />;
-  const { recipes } = data.getProfile;
+  if (!state.authenticated) return <Redirect to="/signin" />;
+
+  if (loading || !data) return <Loading />;
+
+  const recipes = data.getUserRecipes || [];
 
   return (
     <section className="manage">

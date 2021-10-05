@@ -80,6 +80,12 @@
   flex: 1 0 auto;
 }
 
+.manage__empty {
+  font-size: 1.5rem;
+  margin-top: 20px;
+  text-align: center;
+}
+
 .manage__recipe {
   display: flex;
   flex-flow: row nowrap;
