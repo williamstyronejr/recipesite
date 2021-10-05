@@ -17,7 +17,7 @@ import CreateRecipePage from './scenes/account/CreateRecipe';
 import ProfilePage from './scenes/account/Profile';
 import EditRecipePage from './scenes/recipe/EditRecipe';
 import MissingPage from './scenes/Missing';
-import PopularPage from './scenes/explore/Popular';
+import ExplorePage from './scenes/explore/Explore';
 import DashboardPage from './scenes/dashboard/Dashboard';
 import ManageRecipesPage from './scenes/dashboard/ManageRecipes';
 import { AuthProvider } from './context/auth';
@@ -45,7 +45,7 @@ export default () => (
           <Route exact path="/recipe/:recipeId" component={RecipePage} />
           <Route path="/recipe/:recipeId/edit" component={EditRecipePage} />
 
-          <Route path="/explore/popular" component={PopularPage} />
+          <Route path="/explore/:type" component={ExplorePage} />
 
           <Route exact path="/dashboard" component={DashboardPage} />
           <Route path="/dashboard/manage" component={ManageRecipesPage} />
