@@ -7,10 +7,25 @@ import './styles/index.css';
 const LOGIN_USER = gql`
   mutation login($username: String!, $password: String!) {
     login(username: $username, password: $password) {
-      id
-      email
-      username
-      token
+      user {
+        id
+        email
+        username
+        token
+      }
+      userErrors {
+        ... on UserInputError {
+          __typename
+          path
+          message
+        }
+        ... on WrongCredetials {
+          __typename
+          path
+          message
+          reason
+        }
+      }
     }
   }
 `;
@@ -24,11 +39,15 @@ const SigninPage = () => {
 
   const [loginUser, { loading }] = useMutation(LOGIN_USER, {
     update(_, { data: { login: userData } }) {
-      login(userData);
+      if (userData.userErrors && userData.userErrors.length > 0) {
+        return setError(userData.userErrors[0].message);
+      }
+
+      login(userData.user);
       history.push('/');
     },
-    onError(err) {
-      setError(err.message);
+    onError() {
+      setError('Server error occurred, please try again.');
     },
     variables: {
       username,

@@ -123,7 +123,11 @@ export default {
       );
 
       if (!valid) {
-        throw new UserInputError('Errors', { errors });
+        console.log(errors);
+        return {
+          user: null,
+          userErrors: errors,
+        };
       }
 
       const hash = await bcrpty.hash(password, SALT_ROUNDS);
@@ -137,8 +141,7 @@ export default {
       const token = generateToken(user);
 
       return {
-        ...user.toJSON(),
-        token,
+        user: { ...user.toJSON(), token },
       };
     },
     async login(
@@ -147,28 +150,44 @@ export default {
     ): Promise<Record<string, unknown>> {
       const { errors, valid } = validateLogin(username, password);
 
-      if (!valid) throw new UserInputError('Input errors', { errors });
+      if (!valid) {
+        return { userErrors: errors };
+      }
 
       const user = await db.models.User.findOne({ where: { username } });
 
       if (!user) {
-        throw new UserInputError('User not found', {
-          general: 'User not found',
-        });
+        return {
+          userErrors: [
+            {
+              path: 'username',
+              message: 'Invalid username or password',
+              reason: 'Wrong Credetials',
+            },
+          ],
+        };
       }
 
       const match = await bcrpty.compare(password, user.hash);
       if (!match) {
-        throw new UserInputError('Wrong crendetials', {
-          general: 'Wrong crendetials',
-        });
+        return {
+          userErrors: [
+            {
+              path: 'password',
+              message: 'Invalid username or password',
+              reason: 'Wrong Credetials',
+            },
+          ],
+        };
       }
 
       const token = generateToken(user);
 
       return {
-        ...user.dataValues,
-        token,
+        user: {
+          ...user.dataValues,
+          token,
+        },
       };
     },
     async recovery(_: any, { email }: { email: string }): Promise<boolean> {

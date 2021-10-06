@@ -6,6 +6,17 @@ import bookmarkResolver from './bookmark';
 
 export default {
   Upload: GraphQLUpload,
+  CreateUserError: {
+    __resolveType: (obj: any) => {
+      return 'UserInputError';
+    },
+  },
+  LoginUserError: {
+    __resolveType: (obj: any) => {
+      if (obj.reason) return 'WrongCredetials';
+      return 'UserInputError';
+    },
+  },
   Query: {
     ...userResolver.Query,
     ...recipeResolver.Query,

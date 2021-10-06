@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, Redirect, useHistory } from 'react-router-dom';
 import { useMutation, gql } from '@apollo/client';
 import { useAuthContext } from '../../context/auth';
 import './styles/index.css';
@@ -19,16 +19,26 @@ const REGISTER_USER = gql`
         confirmPassword: $confirmPassword
       }
     ) {
-      id
-      email
-      username
-      token
+      user {
+        id
+        email
+        username
+        token
+      }
+      userErrors {
+        ... on UserInputError {
+          __typename
+          path
+          message
+        }
+      }
     }
   }
 `;
 
 const SignupPage = () => {
   const { state, login } = useAuthContext();
+  const history = useHistory();
   const [email, setEmail] = React.useState<string>('');
   const [username, setUsername] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
@@ -37,12 +47,21 @@ const SignupPage = () => {
 
   const [createUser, { loading }] = useMutation(REGISTER_USER, {
     update(_, { data: { register: userData } }) {
-      login(userData);
-    },
-    onError(err) {
-      if (err.graphQLErrors[0] && err.graphQLErrors[0].extensions) {
-        setError(err.graphQLErrors[0].extensions.errors);
+      if (userData.userErrors) {
+        // eslint-disable-next-line prefer-object-spread
+        const errs: any = {};
+        userData.userErrors.forEach((error: any) => {
+          errs[error.path] = error.message;
+        });
+
+        return setError(errs);
       }
+
+      login(userData.user);
+      history.push('/');
+    },
+    onError() {
+      setError({ general: 'Server error occurred, please try again.' });
     },
     variables: {
       username,
@@ -64,14 +83,14 @@ const SignupPage = () => {
     <section className="signup">
       <form className="form" onSubmit={submitHandler}>
         <header className="form__header">
-          <h3 className="form__heading">Sign in to your account</h3>
+          <h3 className="form__heading">Create an account</h3>
           <Link className="form__button form__button--oauth" to="/">
             <img
               className="form__google"
               src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
               alt="Google logo"
             />
-            Sign in with Google
+            Sign up with Google
           </Link>
 
           <hr className="form__divisor" />
@@ -126,9 +145,11 @@ const SignupPage = () => {
             />
           </label>
 
-          <label className="form__label" htmlFor="confim">
-            {errors.confirm ? (
-              <span className="form__label-error">{errors.confirm}</span>
+          <label className="form__label" htmlFor="confirm">
+            {errors.confirmPassword ? (
+              <span className="form__label-error">
+                {errors.confirmPassword}
+              </span>
             ) : null}
 
             <span className="form__labeling">Confirm Password</span>

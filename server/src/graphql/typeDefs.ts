@@ -3,6 +3,25 @@ import { gql } from 'apollo-server-express';
 export default gql`
   scalar Upload
 
+  interface UserError {
+    message: String!
+    path: String!
+  }
+
+  type UserInputError implements UserError {
+    message: String!
+    path: String!
+  }
+
+  type WrongCredetials implements UserError {
+    path: String!
+    message: String!
+    reason: String!
+  }
+
+  union CreateUserError = UserInputError
+  union LoginUserError = UserInputError | WrongCredetials
+
   type Session {
     id: ID!
     username: String!
@@ -48,6 +67,16 @@ export default gql`
     endOfList: Boolean!
   }
 
+  type RegisterPayload {
+    user: User
+    userErrors: [CreateUserError]
+  }
+
+  type LoginPayload {
+    user: User
+    userErrors: [LoginUserError]
+  }
+
   input RegisterInput {
     username: String!
     email: String!
@@ -85,8 +114,8 @@ export default gql`
   }
 
   type Mutation {
-    register(registerInput: RegisterInput): User!
-    login(username: String!, password: String!): User!
+    register(registerInput: RegisterInput): RegisterPayload!
+    login(username: String!, password: String!): LoginPayload!
     recovery(email: String!): Boolean!
     subscribeToLetter(email: String!): Boolean!
 

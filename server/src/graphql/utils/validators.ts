@@ -1,5 +1,7 @@
+type Error = Array<{ path: string; message: string }>;
+
 interface Validator {
-  errors: Record<string, unknown>;
+  errors: Error;
   valid: boolean;
 }
 
@@ -9,49 +11,70 @@ export function validateRegister(
   password: string,
   confirmPassword: string,
 ): Validator {
-  const errors: Record<string, unknown> = {};
+  const errors: Error = [];
 
   if (username.trim() === '') {
-    errors.username = 'Username must be provided';
+    errors.push({ path: 'username', message: 'Username must be provided' });
   } else if (username.trim().length < 4) {
-    errors.username = 'Username must be between 4 and 16 characters';
+    errors.push({
+      path: 'username',
+      message: 'Username must be between 4 and 16 characters',
+    });
   }
 
   if (email.trim() === '') {
-    errors.email = 'Email must be provided';
+    errors.push({
+      path: 'email',
+      message: 'Email must be provided',
+    });
   } else {
     const regEx =
       /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/;
     if (!email.match(regEx)) {
-      errors.email = 'Email must be a valid email address';
+      errors.push({
+        message: 'Email must be a valid email address',
+        path: 'email',
+      });
     }
   }
 
   if (password.trim() === '') {
-    errors.password = 'Password must be provided';
+    errors.push({
+      path: 'password',
+      message: 'Password must be provided',
+    });
   } else if (password !== confirmPassword) {
-    errors.confirmPassword = 'Password must match';
+    errors.push({
+      path: 'confirmPassword',
+      message: 'Password must match',
+    });
   }
 
   return {
     errors,
-    valid: Object.keys(errors).length < 1,
+    valid: errors.length === 0,
   };
 }
 
 export function validateLogin(username: string, password: string): Validator {
-  const errors: Record<string, unknown> = {};
+  const errors: Error = [];
 
   if (username.trim() === '') {
-    errors.username = 'Username must be provided';
+    errors.push({
+      path: 'username',
+      message: 'Username must be provided',
+    });
   }
   if (password.trim() === '') {
-    errors.password = 'Password must be provided';
+    errors.push({
+      path: 'password',
+      message: 'Password must be provided',
+    });
   }
 
   return {
     errors,
-    valid: Object.keys(errors).length < 1,
+    valid: errors.length === 0,
   };
 }
 
@@ -60,18 +83,27 @@ export function validatePasswordChange(
   newPassword: string,
   confirmPassword: string,
 ): Validator {
-  const errors: Record<string, unknown> = {};
+  const errors: Error = [];
 
   if (oldPassword.trim() === '') {
-    errors.oldPassword = 'Old password must be provided';
+    errors.push({
+      path: 'oldPassword',
+      message: 'Old password must be provided',
+    });
   }
 
   if (newPassword.trim() === '') {
-    errors.newPassword = 'New password must be provided';
+    errors.push({
+      path: 'newPassword',
+      message: 'New password must be provided',
+    });
   }
 
   if (newPassword !== confirmPassword) {
-    errors.cofirmPassword = 'Password must match';
+    errors.push({
+      path: 'cofirmPassword',
+      message: 'Password must match',
+    });
   }
 
   return {
@@ -85,22 +117,31 @@ export function validateAccountUpdate(
   email: string,
   bio: string,
 ): Validator {
-  const errors: Record<string, unknown> = {};
+  const errors: Error = [];
 
   if (username) {
     if (username.trim() === '') {
-      errors.username = 'Username must be provided';
+      errors.push({
+        path: 'username',
+        message: 'Username must be provided',
+      });
     }
   }
 
   if (email) {
     if (email.trim() === '') {
-      errors.email = 'Email must be provided';
+      errors.push({
+        path: 'email',
+        message: 'Email must be provided',
+      });
     } else {
       const regEx =
         /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/;
       if (!email.match(regEx)) {
-        errors.email = 'Email must be a valid email address';
+        errors.push({
+          path: 'email',
+          message: 'Email must be a valid email address',
+        });
       }
     }
   }
@@ -112,15 +153,18 @@ export function validateAccountUpdate(
 }
 
 export function validateEmail(email: string): Validator {
-  const errors: { email?: string } = {};
+  const errors: Error = [];
 
   if (email.trim() === '') {
-    errors.email = 'Email must be provided';
+    errors.push({ path: 'email', message: 'Email must be provided' });
   } else {
     const regEx =
       /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})$/;
     if (!email.match(regEx)) {
-      errors.email = 'Email must be a valid email address';
+      errors.push({
+        path: 'email',
+        message: 'Email must be a valid email address',
+      });
     }
   }
 
