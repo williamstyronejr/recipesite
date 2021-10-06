@@ -37,6 +37,39 @@ button {
   font-family: 'Besley', serif;
 }
 
+/* 404 page */
+.missing {
+  display: flex;
+  align-items: center;
+  flex-flow: column nowrap;
+  height: 100vh;
+  margin: 0 10px;
+}
+
+.missing__icon {
+  fill: var(--color-alt);
+  width: 100%;
+  max-width: 500px;
+  max-height: 500px;
+}
+
+.missing__heading {
+  font-size: 6rem;
+  margin: 0;
+}
+.missing__text {
+  font-size: 2rem;
+  text-align: center;
+}
+
+.missing__link {
+  color: var(--color-link);
+}
+
+.missing__link:hover {
+  color: var(--color-link-hover);
+}
+
 /* Form styles */
 
 .form {
