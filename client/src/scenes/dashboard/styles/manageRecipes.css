@@ -1,9 +1,8 @@
 .manage {
-  display: flex;
-  flex-flow: row wrap;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+  min-height: 100vh;
 }
 
 .manage__header {
@@ -11,7 +10,7 @@
 }
 
 .manage__aside {
-  flex: 1 0 auto;
+  padding: 10px 0;
   margin: 10px;
   background-color: white;
   box-shadow: 0 4px 8px 0 rgb(17 22 26 / 16%), 0 4px 8px 0 rgb(17 22 26 / 8%),
@@ -158,9 +157,15 @@
 }
 
 @media only screen and (min-width: 600px) {
+  .manage {
+    display: flex;
+    flex-flow: row wrap;
+  }
+
   .manage__aside {
     width: 200px;
     flex: 0 0 auto;
     margin: 0 10px 0 0;
+    padding: 5px 10px 0 10px;
   }
 }

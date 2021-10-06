@@ -12,6 +12,10 @@
   text-align: center;
 }
 
+.recipe__img {
+  width: 100%;
+}
+
 .recipe__title {
   font-size: 3rem;
   font-weight: 700;
@@ -29,6 +33,30 @@
 .recipe__stats {
   font-size: 1.25rem;
   padding: 10px 0;
+}
+
+.recipe__cook,
+.recipe__prep {
+  margin-right: 10px;
+}
+
+.recipe__cookicon {
+  fill: var(--color-alt);
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+.recipe__controls {
+}
+
+.recipe__edit {
+  color: var(--color-link);
+  text-decoration: none;
+  font-size: 1.5rem;
+}
+
+.recipe__edit:hover {
+  color: var(--color-link-hover);
 }
 
 .recipe__author {
