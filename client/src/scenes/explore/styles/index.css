@@ -49,10 +49,17 @@
   color: var(--color-link-active);
 }
 
-.explore__modal {
-  display: none;
+.explore__expand {
+  background-color: transparent;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 2px solid var(--color-alt);
 }
 
-.explore__recipe--active .explore__modal {
-  display: block;
+.explore__expand:hover {
+  border-color: var(--color-alt-darken);
+}
+
+.explore__summary {
+  font-size: 1.5rem;
 }
