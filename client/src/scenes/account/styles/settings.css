@@ -1,6 +1,6 @@
 .settings {
   max-width: 1000px;
-  margin: 10px auto 0 auto;
+  margin: 10px auto 20px auto;
 }
 
 .settings__aside {
@@ -12,9 +12,15 @@
 .settings__content {
 }
 
+.settings__aside {
+  display: flex;
+  justify-content: space-around;
+}
+
 .settings__link {
   border: none;
   background-color: transparent;
+  font-size: 1.5rem;
 }
 
 .settings__link:hover {
@@ -28,6 +34,7 @@
   }
 
   .settings__aside {
+    display: block;
     flex: 0 0 auto;
     width: 200px;
   }
