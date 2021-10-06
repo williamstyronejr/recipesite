@@ -12,7 +12,6 @@ const QUERY_MAIN_RECIPE = gql`
         title
         summary
         mainImage
-        ingredients
       }
     }
   }
@@ -28,38 +27,23 @@ const RecipeComponent = ({
   title: string;
   summary: string;
   mainImage: string;
-}) => {
-  const [expand, setExpand] = React.useState<boolean>(false);
+}) => (
+  <div className="explore__recipe">
+    <img
+      className="explore__image"
+      src={`/img/${mainImage}`}
+      alt="Recipe example"
+    />
 
-  return (
-    <div
-      className={`explore__recipe ${expand ? 'explore__recipe--active' : ''}`}
-    >
-      <img
-        className="explore__image"
-        src={`/img/${mainImage}`}
-        alt="Recipe example"
-      />
-
+    <div className="explore__details">
       <h3 className="explore__title">
         <Link to={`/recipe/${id}`}>{title}</Link>
       </h3>
 
-      <button
-        className="explore__expand"
-        type="button"
-        onClick={() => setExpand(!expand)}
-      >
-        Details
-      </button>
-
-      <div className="explore__modal">
-        <div className="explore__summary">{summary}</div>
-        <div className="explore__ingredients">{}</div>
-      </div>
+      <div className="explore__summary">{summary}</div>
     </div>
-  );
-};
+  </div>
+);
 
 const Popular = () => {
   const { data } = useQuery(QUERY_MAIN_RECIPE, {
