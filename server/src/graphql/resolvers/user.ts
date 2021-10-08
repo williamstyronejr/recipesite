@@ -1,7 +1,6 @@
 import { UserInputError } from 'apollo-server';
 import bcrpty from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import path from 'path';
 import { Op } from 'sequelize';
 import {
   validateAccountUpdate,
@@ -123,7 +122,6 @@ export default {
       );
 
       if (!valid) {
-        console.log(errors);
         return {
           user: null,
           userErrors: errors,
@@ -208,24 +206,36 @@ export default {
         confirmPassword,
       }: { oldPassword: string; newPassword: string; confirmPassword: string },
       context: any,
-    ): Promise<boolean> {
+    ): Promise<Record<string, unknown>> {
       const { errors, valid } = validatePasswordChange(
         oldPassword,
         newPassword,
         confirmPassword,
       );
 
-      if (!valid) throw new UserInputError('Input errors', { errors });
+      if (!valid) {
+        return {
+          success: false,
+          updateErrors: errors,
+        };
+      }
 
       const sessionUser = checkAuth(context);
       const hash = await bcrpty.hash(newPassword, SALT_ROUNDS);
       const user = await db.models.User.findByPk(sessionUser.id);
       const match = await bcrpty.compare(oldPassword, user.hash);
 
-      if (!match)
-        throw new UserInputError('Wrong crendetials', {
-          errors: { oldPassword: 'Incorrect password' },
-        });
+      if (!match) {
+        return {
+          updateErrors: [
+            {
+              path: 'oldPassword',
+              message: 'Incorrect password',
+              reason: 'Wrong Credetials',
+            },
+          ],
+        };
+      }
 
       const results = await db.models.User.update(
         { hash },
@@ -236,7 +246,7 @@ export default {
         },
       );
 
-      return results[0] > 0;
+      return { success: results[0] > 0 };
     },
     async updateAccount(
       _: any,
@@ -254,12 +264,17 @@ export default {
         removeProfileImage: boolean;
       },
       context: any,
-    ): Promise<boolean> {
+    ): Promise<Record<string, unknown>> {
       const { errors, valid } = validateAccountUpdate(username, email, bio);
 
-      if (!valid) throw new UserInputError('Input errors', { errors });
-      const sessionUser = checkAuth(context);
+      if (!valid) {
+        return {
+          success: false,
+          updateErrors: errors,
+        };
+      }
 
+      const sessionUser = checkAuth(context);
       const fileName = await uploadImage(profileImage);
 
       await checkExistingUser(username, email);
@@ -272,7 +287,7 @@ export default {
       } = {};
       if (username) params.username = username;
       if (email) params.email = email;
-      if (bio) params.bio = bio;
+      if (bio || bio === '') params.bio = bio;
       if (fileName) params.profileImage = fileName;
       if (removeProfileImage) params.profileImage = 'default.jpg';
 
@@ -282,7 +297,9 @@ export default {
         },
       });
 
-      return true;
+      return {
+        success: true,
+      };
     },
     async deleteAccount(_: any, vars: any, context: any): Promise<boolean> {
       const sessionUser = checkAuth(context);

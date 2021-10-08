@@ -17,6 +17,17 @@ export default {
       return 'UserInputError';
     },
   },
+  UpdatePasswordError: {
+    __resolveType: (obj: any) => {
+      if (obj.reason) return 'WrongCredetials';
+      return 'UserInputError';
+    },
+  },
+  UpdateAccountError: {
+    __resolveType: (obj: any) => {
+      return 'UserInputError';
+    },
+  },
   Query: {
     ...userResolver.Query,
     ...recipeResolver.Query,

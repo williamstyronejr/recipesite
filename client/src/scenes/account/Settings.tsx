@@ -16,7 +16,22 @@ const MUTATION_PASSWORD = gql`
       oldPassword: $oldPassword
       newPassword: $newPassword
       confirmPassword: $confirmPassword
-    )
+    ) {
+      success
+      updateErrors {
+        ... on UserInputError {
+          __typename
+          path
+          message
+        }
+        ... on WrongCredetials {
+          __typename
+          path
+          message
+          reason
+        }
+      }
+    }
   }
 `;
 
@@ -34,7 +49,15 @@ const MUTATION_ACCOUNT = gql`
       bio: $bio
       profileImage: $profileImage
       removeProfileImage: $removeProfileImage
-    )
+    ) {
+      success
+      updateErrors {
+        ... on UserInputError {
+          path
+          message
+        }
+      }
+    }
   }
 `;
 
@@ -59,10 +82,24 @@ const PasswordForm = ({ unauth }: { unauth: Function }) => {
   const [oldPassword, setOldPassword] = React.useState<string>('');
   const [newPassword, setNewPassword] = React.useState<string>('');
   const [confirmPassword, setConfirmPassword] = React.useState<string>('');
+  const [status, setStatus] = React.useState<boolean>(false);
   const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
 
-  const [updatePassword, { loading, data }] = useMutation(MUTATION_PASSWORD, {
+  const [updatePassword, { loading }] = useMutation(MUTATION_PASSWORD, {
+    update(_, { data: { updatePassword: res } }) {
+      if (res.updateErrors) {
+        const errs: any = {};
+        res.updateErrors.forEach((error: any) => {
+          errs[error.path] = error.message;
+        });
+
+        return setErrors(errs);
+      }
+
+      setStatus(true);
+    },
     onError({ graphQLErrors }) {
+      setErrors({ general: 'Server error occurred, please try again.' });
       if (graphQLErrors && graphQLErrors[0].extensions) {
         if (graphQLErrors[0].extensions.code === 'UNAUTHENTICATED') {
           unauth();
@@ -81,13 +118,14 @@ const PasswordForm = ({ unauth }: { unauth: Function }) => {
   function handleSubmit(evt: React.SyntheticEvent<HTMLFormElement>) {
     evt.preventDefault();
     setErrors({});
+    setStatus(false);
     updatePassword();
   }
 
   return (
     <form className="form" onSubmit={handleSubmit}>
       <header className="form__header">
-        {data && data.updatePassword ? (
+        {status ? (
           <div className="form__notification">
             Your password has been successfully updated.
           </div>
@@ -173,11 +211,25 @@ const AccountForm = ({
   const [username, setUsername] = React.useState<string>(initialUsername);
   const [email, setEmail] = React.useState<string>(initialEmail);
   const [bio, setBio] = React.useState<string>(initialBio);
+  const [status, setStatus] = React.useState<boolean>(false);
   const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
   const [confirmVisible, setConfirmVisible] = React.useState(false);
   const fileRef = React.createRef<HTMLInputElement>();
 
-  const [updateAccount, { loading, data }] = useMutation(MUTATION_ACCOUNT, {
+  const [updateAccount, { loading }] = useMutation(MUTATION_ACCOUNT, {
+    update(_: any, { data: { updateAccount: res } }) {
+      if (res.updateErrors) {
+        // eslint-disable-next-line prefer-object-spread
+        const errs: any = {};
+        res.updateErrors.forEach((error: any) => {
+          errs[error.path] = error.message;
+        });
+
+        return setErrors(errs);
+      }
+
+      setStatus(true);
+    },
     onError({ graphQLErrors }) {
       if (graphQLErrors && graphQLErrors[0].extensions) {
         if (graphQLErrors[0].extensions.code === 'UNAUTHENTICATED') {
@@ -185,7 +237,11 @@ const AccountForm = ({
         } else {
           setErrors(graphQLErrors[0].extensions.errors);
         }
+
+        return;
       }
+
+      setErrors({ general: 'Server error occurred, please try again.' });
     },
   });
 
@@ -198,12 +254,16 @@ const AccountForm = ({
   function submitHandler(evt: React.FormEvent<HTMLFormElement>) {
     evt.preventDefault();
     setErrors({});
+    setStatus(false);
+
+    const params: any = {};
+    if (username !== '' && username !== initialUsername)
+      params.username = username;
+    if (email !== '' && email !== initialEmail) params.email = email;
+    if (bio !== initialBio) params.bio = bio;
+
     updateAccount({
-      variables: {
-        username: username !== '' ? username : undefined,
-        email: email !== '' ? email : undefined,
-        bio,
-      },
+      variables: params,
     });
   }
 
@@ -218,10 +278,14 @@ const AccountForm = ({
   return (
     <form className="form" onSubmit={submitHandler}>
       <header className="form__header">
-        {data ? (
+        {status ? (
           <div className="form__notification">
             Your account has been updated.
           </div>
+        ) : null}
+
+        {errors.general ? (
+          <div className="form__error">{errors.general}</div>
         ) : null}
 
         {confirmVisible ? (
@@ -352,7 +416,7 @@ const SettingsPage = () => {
   const { loading, data } = useQuery(QUERY_USER);
 
   if (!state.authenticated) return <Redirect to="/signin" />;
-  if (loading) return <Loading />;
+  if (loading || !data) return <Loading />;
   const { username, email, bio, profileImage } = data.getSession;
 
   const onUnauth = () => history.push('/signin');

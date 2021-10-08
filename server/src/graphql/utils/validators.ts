@@ -101,7 +101,7 @@ export function validatePasswordChange(
 
   if (newPassword !== confirmPassword) {
     errors.push({
-      path: 'cofirmPassword',
+      path: 'confirmPassword',
       message: 'Password must match',
     });
   }

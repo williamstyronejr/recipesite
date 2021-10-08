@@ -21,6 +21,8 @@ export default gql`
 
   union CreateUserError = UserInputError
   union LoginUserError = UserInputError | WrongCredetials
+  union UpdatePasswordError = WrongCredetials | UserInputError
+  union UpdateAccountError = UserInputError
 
   type Session {
     id: ID!
@@ -77,6 +79,16 @@ export default gql`
     userErrors: [LoginUserError]
   }
 
+  type PasswordUpdatePayload {
+    success: Boolean
+    updateErrors: [UpdatePasswordError]
+  }
+
+  type AccountUpdatePayload {
+    success: Boolean
+    updateErrors: [UpdateAccountError]
+  }
+
   input RegisterInput {
     username: String!
     email: String!
@@ -123,14 +135,14 @@ export default gql`
       oldPassword: String!
       newPassword: String!
       confirmPassword: String!
-    ): Boolean!
+    ): PasswordUpdatePayload!
     updateAccount(
       username: String
       email: String
       bio: String
       profileImage: Upload
       removeProfileImage: Boolean
-    ): Boolean!
+    ): AccountUpdatePayload!
     deleteAccount: Boolean!
 
     createRecipe(recipeInput: RecipeInput): Recipe!
