@@ -23,6 +23,7 @@ export default gql`
   union LoginUserError = UserInputError | WrongCredetials
   union UpdatePasswordError = WrongCredetials | UserInputError
   union UpdateAccountError = UserInputError
+  union RecoveryError = UserInputError
 
   type Session {
     id: ID!
@@ -89,6 +90,11 @@ export default gql`
     updateErrors: [UpdateAccountError]
   }
 
+  type RecoveryPayload {
+    success: Boolean
+    errors: [RecoveryError]
+  }
+
   input RegisterInput {
     username: String!
     email: String!
@@ -128,7 +134,7 @@ export default gql`
   type Mutation {
     register(registerInput: RegisterInput): RegisterPayload!
     login(username: String!, password: String!): LoginPayload!
-    recovery(email: String!): Boolean!
+    recovery(email: String!): RecoveryPayload!
     subscribeToLetter(email: String!): Boolean!
 
     updatePassword(
