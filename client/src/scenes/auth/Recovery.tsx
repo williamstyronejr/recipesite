@@ -3,24 +3,41 @@ import { gql, useMutation } from '@apollo/client';
 
 const MUTATION_RECOVERY = gql`
   mutation recovery($email: String!) {
-    recovery(email: $email)
+    recovery(email: $email) {
+      success
+      errors {
+        ... on UserInputError {
+          path
+          message
+        }
+      }
+    }
   }
 `;
 
 const RecoveryPage = () => {
   const [email, setEmail] = React.useState<string>('');
-  const [error, setError] = React.useState<{
+  const [errors, setErrors] = React.useState<{
     email?: string;
     general?: string;
   }>({});
   const [success, setSucces] = React.useState<boolean>(false);
 
   const [recoverEmail] = useMutation(MUTATION_RECOVERY, {
-    update(_, { data: { recovery: completed } }) {
-      if (completed) setSucces(true);
+    update(_, { data: { recovery: res } }) {
+      if (res.errors) {
+        const errs: any = {};
+        res.errors.forEach((error: any) => {
+          errs[error.path] = error.message;
+        });
+
+        return setErrors(errs);
+      }
+
+      setSucces(true);
     },
     onError() {
-      setError({
+      setErrors({
         general: 'An error occurred during processing, please try again.',
       });
     },
@@ -30,8 +47,8 @@ const RecoveryPage = () => {
   const submitHandler = (evt: React.SyntheticEvent<HTMLFormElement>) => {
     evt.preventDefault();
     setSucces(false);
-    if (email === '') return setError({ email: 'Must provide email' });
-    setError({});
+    if (email === '') return setErrors({ email: 'Must provide email' });
+    setErrors({});
     recoverEmail();
   };
 
@@ -45,12 +62,14 @@ const RecoveryPage = () => {
             account.
           </p>
 
-          {error.general ? (
-            <div className="form__error">{error.general}</div>
+          {errors.general ? (
+            <div className="form__error" data-cy="error">
+              {errors.general}
+            </div>
           ) : null}
 
           {success ? (
-            <div className="form__notification">
+            <div className="form__notification" data-cy="success">
               If an account is associated with this email, password reset
               instructions will be sent to this email address.
             </div>
@@ -61,8 +80,10 @@ const RecoveryPage = () => {
           <label htmlFor="email" className="form__label">
             <span className="form__labeling">Email</span>
 
-            {error.email ? (
-              <span className="form__label-error">{error.email}</span>
+            {errors.email ? (
+              <span className="form__label-error" data-cy="field-error">
+                {errors.email}
+              </span>
             ) : null}
 
             <input
