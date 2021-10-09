@@ -22,5 +22,6 @@ module.exports = {
     'import/no-anonymous-default-export': 0,
     'consistent-return': 0,
     'prefer-object-spread': 0,
+    'import/prefer-default-export': 0,
   },
 };
