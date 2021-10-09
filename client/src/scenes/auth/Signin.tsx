@@ -115,7 +115,7 @@ const SigninPage = () => {
           Signin
         </button>
 
-        <Link className="form__link" to="/recovery">
+        <Link className="form__link" to="/recovery" data-cy="forgot">
           Forget you password?
         </Link>
       </form>
