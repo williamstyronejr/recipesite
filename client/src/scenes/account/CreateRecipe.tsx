@@ -135,9 +135,13 @@ const CreateRecipePage = () => {
         <fieldset className="form__field">
           <label htmlFor="prep" className="form__label">
             <span className="form__labeling">Prep Time</span>
+
             {errors.prepTime ? (
-              <span className="form__label-error">{errors.prepTime}</span>
+              <span className="form__label-error" data-cy="field-error">
+                {errors.prepTime}
+              </span>
             ) : null}
+
             <input
               id="prep"
               name="prep"
@@ -150,9 +154,13 @@ const CreateRecipePage = () => {
 
           <label htmlFor="cook" className="form__label">
             <span className="form__labeling">Cook Time</span>
+
             {errors.cookTime ? (
-              <span className="form__label-error">{errors.cookTime}</span>
+              <span className="form__label-error" data-cy="field-error">
+                {errors.cookTime}
+              </span>
             ) : null}
+
             <input
               id="cook"
               name="cook"
@@ -195,7 +203,9 @@ const CreateRecipePage = () => {
             <span className="form__labeling">Title</span>
 
             {errors.title ? (
-              <span className="form__label-error">{errors.title}</span>
+              <span className="form__label-error" data-cy="field-error">
+                {errors.title}
+              </span>
             ) : null}
 
             <input
@@ -213,7 +223,9 @@ const CreateRecipePage = () => {
             <span className="form__labeling">Summary</span>
 
             {errors.summary ? (
-              <span className="form__label-error">{errors.summary}</span>
+              <span className="form__label-error" data-cy="field-error">
+                {errors.summary}
+              </span>
             ) : null}
 
             <textarea
@@ -231,7 +243,9 @@ const CreateRecipePage = () => {
             <span className="form__labeling">Ingredients</span>
 
             {errors.prepTime ? (
-              <span className="form__label-error">{errors.ingredients}</span>
+              <span className="form__label-error" data-cy="field-error">
+                {errors.ingredients}
+              </span>
             ) : null}
 
             <textarea
@@ -252,7 +266,9 @@ const CreateRecipePage = () => {
             <span className="form__labeling">Directions</span>
 
             {errors.directions ? (
-              <span className="form__label-error">{errors.directions}</span>
+              <span className="form__label-error" data-cy="field-error">
+                {errors.directions}
+              </span>
             ) : null}
 
             <textarea

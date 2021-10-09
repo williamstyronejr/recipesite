@@ -48,7 +48,6 @@ const SignupPage = () => {
   const [createUser, { loading }] = useMutation(REGISTER_USER, {
     update(_, { data: { register: userData } }) {
       if (userData.userErrors) {
-        // eslint-disable-next-line prefer-object-spread
         const errs: any = {};
         userData.userErrors.forEach((error: any) => {
           errs[error.path] = error.message;
@@ -96,15 +95,25 @@ const SignupPage = () => {
           <hr className="form__divisor" />
         </header>
 
+        {errors.general ? (
+          <div className="form__error" data-cy="form-error">
+            {errors.general}
+          </div>
+        ) : null}
+
         <fieldset className="form__field">
           <label className="form__label" htmlFor="email">
+            <span className="form__labeling">Email</span>
+
             {errors.email ? (
-              <span className="form__label-error">{errors.email}</span>
+              <span className="form__label-error" data-cy="field-error">
+                {errors.email}
+              </span>
             ) : null}
 
-            <span className="form__labeling">Email</span>
             <input
               id="email"
+              name="email"
               className="form__input form__input--text"
               type="text"
               value={email}
@@ -114,13 +123,17 @@ const SignupPage = () => {
           </label>
 
           <label className="form__label" htmlFor="email">
+            <span className="form__labeling">Username</span>
+
             {errors.username ? (
-              <span className="form__label-error">{errors.username}</span>
+              <span className="form__label-error" data-cy="field-error">
+                {errors.username}
+              </span>
             ) : null}
 
-            <span className="form__labeling">Username</span>
             <input
               id="username"
+              name="username"
               className="form__input form__input--text"
               type="text"
               value={username}
@@ -130,13 +143,17 @@ const SignupPage = () => {
           </label>
 
           <label className="form__label" htmlFor="password">
+            <span className="form__labeling">Password</span>
+
             {errors.password ? (
-              <span className="form__label-error">{errors.password}</span>
+              <span className="form__label-error" data-cy="field-error">
+                {errors.password}
+              </span>
             ) : null}
 
-            <span className="form__labeling">Password</span>
             <input
               id="password"
+              name="password"
               className="form__input form__input--text"
               type="password"
               value={password}
@@ -146,15 +163,17 @@ const SignupPage = () => {
           </label>
 
           <label className="form__label" htmlFor="confirm">
+            <span className="form__labeling">Confirm Password</span>
+
             {errors.confirmPassword ? (
-              <span className="form__label-error">
+              <span className="form__label-error" data-cy="field-error">
                 {errors.confirmPassword}
               </span>
             ) : null}
 
-            <span className="form__labeling">Confirm Password</span>
             <input
               id="confirm"
+              name="confirm"
               className="form__input form__input--text"
               type="password"
               value={confirm}

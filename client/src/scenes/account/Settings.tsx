@@ -99,14 +99,13 @@ const PasswordForm = ({ unauth }: { unauth: Function }) => {
       setStatus(true);
     },
     onError({ graphQLErrors }) {
-      setErrors({ general: 'Server error occurred, please try again.' });
       if (graphQLErrors && graphQLErrors[0].extensions) {
         if (graphQLErrors[0].extensions.code === 'UNAUTHENTICATED') {
-          unauth();
-        } else {
-          setErrors(graphQLErrors[0].extensions.errors);
+          return unauth();
         }
       }
+
+      setErrors({ general: 'Server error occurred, please try again.' });
     },
     variables: {
       oldPassword,
@@ -126,16 +125,26 @@ const PasswordForm = ({ unauth }: { unauth: Function }) => {
     <form className="form" onSubmit={handleSubmit}>
       <header className="form__header">
         {status ? (
-          <div className="form__notification">
+          <div className="form__notification" data-cy="form-notification">
             Your password has been successfully updated.
           </div>
         ) : null}
+
+        {errors.general ? (
+          <div className="form__error" data-cy="form-error">
+            {errors.general}
+          </div>
+        ) : null}
       </header>
+
       <fieldset className="form__field">
         <label className="form__label" htmlFor="oldPassword">
           <span className="form__labeling">Old Password</span>
+
           {errors.oldPassword ? (
-            <span className="form__label-error">{errors.oldPassword}</span>
+            <span className="form__label-error" data-cy="field-error">
+              {errors.oldPassword}
+            </span>
           ) : null}
 
           <input
@@ -151,9 +160,13 @@ const PasswordForm = ({ unauth }: { unauth: Function }) => {
 
         <label className="form__label" htmlFor="newPassword">
           <span className="form__labeling">New Password</span>
+
           {errors.newPassword ? (
-            <span className="form__label-error">{errors.newPassword}</span>
+            <span className="form__label-error" data-cy="field-error">
+              {errors.newPassword}
+            </span>
           ) : null}
+
           <input
             id="newPassword"
             name="newPassword"
@@ -167,9 +180,13 @@ const PasswordForm = ({ unauth }: { unauth: Function }) => {
 
         <label className="form__label" htmlFor="confirmPassword">
           <span className="form__labeling">Confirm New Password</span>
+
           {errors.confirmPassword ? (
-            <span className="form__label-error">{errors.confirmPassword}</span>
+            <span className="form__label-error" data-cy="field-error">
+              {errors.confirmPassword}
+            </span>
           ) : null}
+
           <input
             id="confirmPassword"
             name="confirmPassword"
@@ -219,7 +236,6 @@ const AccountForm = ({
   const [updateAccount, { loading }] = useMutation(MUTATION_ACCOUNT, {
     update(_: any, { data: { updateAccount: res } }) {
       if (res.updateErrors) {
-        // eslint-disable-next-line prefer-object-spread
         const errs: any = {};
         res.updateErrors.forEach((error: any) => {
           errs[error.path] = error.message;
@@ -233,12 +249,8 @@ const AccountForm = ({
     onError({ graphQLErrors }) {
       if (graphQLErrors && graphQLErrors[0].extensions) {
         if (graphQLErrors[0].extensions.code === 'UNAUTHENTICATED') {
-          unauth();
-        } else {
-          setErrors(graphQLErrors[0].extensions.errors);
+          return unauth();
         }
-
-        return;
       }
 
       setErrors({ general: 'Server error occurred, please try again.' });
@@ -257,9 +269,8 @@ const AccountForm = ({
     setStatus(false);
 
     const params: any = {};
-    if (username !== '' && username !== initialUsername)
-      params.username = username;
-    if (email !== '' && email !== initialEmail) params.email = email;
+    if (username !== initialUsername) params.username = username;
+    if (email !== initialEmail) params.email = email;
     if (bio !== initialBio) params.bio = bio;
 
     updateAccount({
@@ -279,13 +290,15 @@ const AccountForm = ({
     <form className="form" onSubmit={submitHandler}>
       <header className="form__header">
         {status ? (
-          <div className="form__notification">
+          <div className="form__notification" data-cy="form-notification">
             Your account has been updated.
           </div>
         ) : null}
 
         {errors.general ? (
-          <div className="form__error">{errors.general}</div>
+          <div className="form__error" data-cy="form-error">
+            {errors.general}
+          </div>
         ) : null}
 
         {confirmVisible ? (
@@ -343,12 +356,14 @@ const AccountForm = ({
         <label htmlFor="username" className="form__label">
           <span className="form__labeling">Username</span>
           {errors.username ? (
-            <span className="form__label-error">{errors.username}</span>
+            <span className="form__label-error" data-cy="field-error">
+              {errors.username}
+            </span>
           ) : null}
           <input
             id="username"
-            className="form__input form__input--text"
             name="username"
+            className="form__input form__input--text"
             type="text"
             value={username}
             onChange={(evt) => setUsername(evt.target.value)}
@@ -357,13 +372,17 @@ const AccountForm = ({
 
         <label htmlFor="email" className="form__label">
           <span className="form__labeling">Email</span>
+
           {errors.email ? (
-            <span className="form__label-error">{errors.email}</span>
+            <span className="form__label-error" data-cy="field-error">
+              {errors.email}
+            </span>
           ) : null}
+
           <input
             id="email"
-            className="form__input form__input--text"
             name="email"
+            className="form__input form__input--text"
             type="text"
             value={email}
             onChange={(evt) => setEmail(evt.target.value)}
@@ -372,13 +391,17 @@ const AccountForm = ({
 
         <label htmlFor="bio" className="form__label">
           <span className="form__labeling">About You</span>
+
           {errors.bio ? (
-            <span className="form__label-error">{errors.bio}</span>
+            <span className="form__label-error" data-cy="field-error">
+              {errors.bio}
+            </span>
           ) : null}
+
           <textarea
             id="bio"
-            className="form__input form__input--textarea"
             name="bio"
+            className="form__input form__input--textarea"
             value={bio}
             onChange={(evt) => setBio(evt.target.value)}
           />
@@ -398,6 +421,7 @@ const AccountForm = ({
           Delete Account
         </span>
         <button
+          data-cy="delete"
           className="form__button form__button--delete"
           type="button"
           onClick={() => setConfirmVisible(true)}

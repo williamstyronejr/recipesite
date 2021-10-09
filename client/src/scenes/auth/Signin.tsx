@@ -35,19 +35,23 @@ const SigninPage = () => {
   const history = useHistory();
   const [username, setUsername] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
-  const [error, setError] = React.useState<string | null>(null);
+  const [errors, setErrors] = React.useState<Record<string, string>>({});
 
   const [loginUser, { loading }] = useMutation(LOGIN_USER, {
     update(_, { data: { login: userData } }) {
       if (userData.userErrors && userData.userErrors.length > 0) {
-        return setError(userData.userErrors[0].message);
+        const errs: any = {};
+        userData.userErrors.forEach((error: any) => {
+          errs[error.path] = error.message;
+        });
+        return setErrors(errs);
       }
 
       login(userData.user);
       history.push('/');
     },
     onError() {
-      setError('Server error occurred, please try again.');
+      setErrors({ general: 'Server error occurred, please try again.' });
     },
     variables: {
       username,
@@ -59,7 +63,7 @@ const SigninPage = () => {
 
   const submitHandler = (evt: React.SyntheticEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    setError(null);
+    setErrors({});
     loginUser();
   };
 
@@ -80,13 +84,24 @@ const SigninPage = () => {
           <hr className="form__divisor" />
         </header>
 
-        {error ? <div className="form__error">{error}</div> : null}
+        {errors.general ? (
+          <div className="form__error" data-cy="form-error">
+            {errors.general}
+          </div>
+        ) : null}
 
         <fieldset className="form__field">
           <label className="form__label" htmlFor="username">
             <span className="form__labeling">Username</span>
+            {errors.username ? (
+              <span className="form__label-error" data-cy="field-error">
+                {errors.username}
+              </span>
+            ) : null}
+
             <input
               id="username"
+              name="username"
               className="form__input form__input--text"
               type="text"
               value={username}
@@ -97,8 +112,15 @@ const SigninPage = () => {
 
           <label className="form__label" htmlFor="password">
             <span className="form__labeling">Password</span>
+            {errors.password ? (
+              <span className="form__label-error" data-cy="field-error">
+                {errors.password}
+              </span>
+            ) : null}
+
             <input
               id="password"
+              name="password"
               className="form__input form__input--text"
               type="password"
               value={password}
@@ -107,6 +129,7 @@ const SigninPage = () => {
             />
           </label>
         </fieldset>
+
         <button
           className="form__button form__button--submit"
           type="submit"

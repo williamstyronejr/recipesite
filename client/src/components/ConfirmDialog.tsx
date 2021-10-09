@@ -17,6 +17,7 @@ const ConfirmDialog = ({
       <button
         className="dialog__button dialog__button--confirm"
         type="button"
+        data-cy="confirm"
         onClick={() => onConfirm()}
       >
         Confirm
@@ -25,6 +26,7 @@ const ConfirmDialog = ({
       <button
         className="dialog__button dialog__button--cancel"
         type="button"
+        data-cy="cancel"
         onClick={() => onCancel()}
       >
         Cancel
