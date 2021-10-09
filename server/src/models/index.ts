@@ -19,7 +19,6 @@ const models: any = {
 
 Object.keys(models).forEach((key) => {
   if ('associate' in models[key]) {
-    console.log('Made it for', models[key]);
     models[key].associate(models);
   }
 });
