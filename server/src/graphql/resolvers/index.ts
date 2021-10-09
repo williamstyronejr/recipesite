@@ -28,6 +28,11 @@ export default {
       return 'UserInputError';
     },
   },
+  RecoveryError: {
+    __resolveType: (obj: any) => {
+      return 'UserInputError';
+    },
+  },
   Query: {
     ...userResolver.Query,
     ...recipeResolver.Query,
