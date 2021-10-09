@@ -1,8 +1,53 @@
+import db from '../../models/index';
+import { Op } from 'sequelize';
+
 type Error = Array<{ path: string; message: string }>;
 
 interface Validator {
   errors: Error;
   valid: boolean;
+}
+
+export async function checkExistingUser(
+  username: string | undefined,
+  email: string | undefined,
+): Promise<Validator> {
+  const errors: Error = [];
+  const conditions: Array<Record<string, unknown>> = [];
+
+  if (username) conditions.push({ username: { [Op.like]: username } });
+  if (email) conditions.push({ email: { [Op.like]: email } });
+
+  if (conditions.length === 0) return { valid: true, errors: [] };
+
+  const matchingUsers = await db.models.User.findAll({
+    where: {
+      [Op.or]: conditions,
+    },
+  });
+
+  if (matchingUsers.length > 0) {
+    matchingUsers.forEach((user: any) => {
+      if (user.dataValues.username === username) {
+        errors.push({
+          path: 'username',
+          message: 'Username is already taken',
+        });
+      }
+
+      if (user.dataValues.email === email) {
+        errors.push({
+          path: 'email',
+          message: 'Email is already in use',
+        });
+      }
+    });
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
 }
 
 export function validateRegister(
@@ -112,14 +157,14 @@ export function validatePasswordChange(
   };
 }
 
-export function validateAccountUpdate(
+export async function validateAccountUpdate(
   username: string,
   email: string,
   bio: string,
-): Validator {
+): Promise<Validator> {
   const errors: Error = [];
 
-  if (username) {
+  if (username !== undefined) {
     if (username.trim() === '') {
       errors.push({
         path: 'username',
@@ -128,7 +173,7 @@ export function validateAccountUpdate(
     }
   }
 
-  if (email) {
+  if (email !== undefined) {
     if (email.trim() === '') {
       errors.push({
         path: 'email',
@@ -146,9 +191,12 @@ export function validateAccountUpdate(
     }
   }
 
+  const { errors: userErrors } = await checkExistingUser(username, email);
+  if (userErrors.length > 0) errors.push(...userErrors);
+
   return {
-    errors,
     valid: Object.keys(errors).length < 1,
+    errors,
   };
 }
 

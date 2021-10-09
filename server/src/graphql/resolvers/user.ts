@@ -1,13 +1,13 @@
 import { UserInputError } from 'apollo-server';
 import bcrpty from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { Op } from 'sequelize';
 import {
   validateAccountUpdate,
   validateEmail,
   validateLogin,
   validatePasswordChange,
   validateRegister,
+  checkExistingUser,
 } from '../utils/validators';
 import db from '../../models/index';
 import checkAuth from '../utils/auth';
@@ -22,49 +22,6 @@ function generateToken(user: any): string {
     JWT_SECRET || 'secret',
     { expiresIn: '1h' },
   );
-}
-
-/**
- * Check if a user exists with an username or email. Will throw a user input
- *  error is a user with the parameters already exists.
- * @param {String|undefined} username A username to check if its in use
- * @param {String|undefined} email A email to check if its in use
- * @return {Promise<Boolean>} Returns a promise to resolve if no user has this
- *  username and/or email.
- */
-async function checkExistingUser(
-  username: string | undefined,
-  email: string | undefined,
-): Promise<boolean> {
-  const conditions: Array<any> = [];
-
-  if (username) conditions.push({ username: { [Op.like]: username } });
-  if (email) conditions.push({ email: { [Op.like]: email } });
-
-  const matchingUsers = await db.models.User.findAll({
-    where: {
-      [Op.or]: conditions,
-    },
-  });
-
-  if (matchingUsers.length > 0) {
-    const errors: Record<string, unknown> = {};
-
-    matchingUsers.forEach((user: any) => {
-      if (user.dataValues.username === username) {
-        errors.username = 'Username is already taken';
-      }
-
-      if (user.dataValues.email === email) {
-        errors.email = 'Email is already in use';
-      }
-    });
-
-    if (Object.keys(errors).length > 0)
-      throw new UserInputError('Input error', { errors });
-  }
-
-  return true;
 }
 
 export default {
@@ -188,15 +145,22 @@ export default {
         },
       };
     },
-    async recovery(_: any, { email }: { email: string }): Promise<boolean> {
-      const existingUser = await checkExistingUser(undefined, email);
-      if (!existingUser) return true;
+    async recovery(
+      _: any,
+      { email }: { email: string },
+    ): Promise<Record<string, unknown>> {
+      const { valid: userExists } = await checkExistingUser(undefined, email);
+      if (!userExists) return { success: true };
 
       const { errors, valid } = validateEmail(email);
-      if (!valid) throw new UserInputError('Input errors', { errors });
+      if (!valid) {
+        return {
+          errors,
+        };
+      }
 
       // Send email to user
-      return true;
+      return { success: true };
     },
     async updatePassword(
       _: any,
@@ -265,7 +229,11 @@ export default {
       },
       context: any,
     ): Promise<Record<string, unknown>> {
-      const { errors, valid } = validateAccountUpdate(username, email, bio);
+      const { errors, valid } = await validateAccountUpdate(
+        username,
+        email,
+        bio,
+      );
 
       if (!valid) {
         return {
@@ -276,8 +244,6 @@ export default {
 
       const sessionUser = checkAuth(context);
       const fileName = await uploadImage(profileImage);
-
-      await checkExistingUser(username, email);
 
       const params: {
         username?: string;
