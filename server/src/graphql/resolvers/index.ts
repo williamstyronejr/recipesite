@@ -3,6 +3,7 @@ import userResolver from './user';
 import recipeResolver from './recipe';
 import commentResolver from './comment';
 import bookmarkResolver from './bookmark';
+import entityResolver from './entity';
 
 export default {
   Upload: GraphQLUpload,
@@ -33,6 +34,17 @@ export default {
       return 'UserInputError';
     },
   },
+  RecipeError: {
+    __resolveType: (obj: any) => {
+      return 'UserInputError';
+    },
+  },
+  RatingError: {
+    __resolveType: (obj: any) => {
+      if (obj.type) return 'MissingContentError';
+      return 'UserInputError';
+    },
+  },
   Query: {
     ...userResolver.Query,
     ...recipeResolver.Query,
@@ -43,5 +55,6 @@ export default {
     ...recipeResolver.Mutation,
     ...commentResolver.Mutation,
     ...bookmarkResolver.Mutation,
+    ...entityResolver.Mutation,
   },
 };

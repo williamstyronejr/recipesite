@@ -19,11 +19,19 @@ export default gql`
     reason: String!
   }
 
+  type MissingContentError implements UserError {
+    path: String!
+    message: String!
+    type: String!
+  }
+
   union CreateUserError = UserInputError
   union LoginUserError = UserInputError | WrongCredetials
   union UpdatePasswordError = WrongCredetials | UserInputError
   union UpdateAccountError = UserInputError
   union RecoveryError = UserInputError
+  union RecipeError = UserInputError
+  union RatingError = MissingContentError | UserInputError
 
   type Session {
     id: ID!
@@ -95,6 +103,21 @@ export default gql`
     errors: [RecoveryError]
   }
 
+  type RecipePayload {
+    recipe: Recipe
+    errors: [RecipeError]
+  }
+
+  type UpdateRecipePayload {
+    success: Boolean
+    errors: [RecipeError]
+  }
+
+  type RatingPayload {
+    success: Boolean
+    errors: [RatingError]
+  }
+
   input RegisterInput {
     username: String!
     email: String!
@@ -103,12 +126,12 @@ export default gql`
   }
   input RecipeInput {
     id: ID
-    title: String!
-    summary: String!
-    directions: String!
-    ingredients: String!
-    prepTime: Int!
-    cookTime: Int!
+    title: String
+    summary: String
+    directions: String
+    ingredients: String
+    prepTime: Int
+    cookTime: Int
     published: Boolean!
     mainImage: Upload
     removeImage: Boolean
@@ -151,9 +174,11 @@ export default gql`
     ): AccountUpdatePayload!
     deleteAccount: Boolean!
 
-    createRecipe(recipeInput: RecipeInput): Recipe!
+    createRecipe(recipeInput: RecipeInput): RecipePayload!
     deleteRecipe(recipeId: ID!): Boolean!
-    updateRecipe(recipeInput: RecipeInput): Boolean!
+    updateRecipe(recipeInput: RecipeInput): UpdateRecipePayload!
     updateBookmark(recipeId: ID!, bookmarking: Boolean!): Boolean!
+
+    setRating(entityId: Int!, rating: Int!): RatingPayload!
   }
 `;

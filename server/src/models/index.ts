@@ -4,6 +4,8 @@ import User from './User';
 import Recipe from './Recipe';
 import Comment from './Comment';
 import Bookmark from './Bookmark';
+import Entity from './Entity';
+import Rating from './Rating';
 
 const { DATABASE_URL } = process.env;
 
@@ -15,6 +17,8 @@ const models: any = {
   Recipe: Recipe(sequelize, DataTypes),
   Comment: Comment(sequelize, DataTypes),
   Bookmark: Bookmark(sequelize, DataTypes),
+  Entity: Entity(sequelize, DataTypes),
+  Rating: Rating(sequelize, DataTypes),
 };
 
 Object.keys(models).forEach((key) => {
