@@ -80,6 +80,8 @@ const NewsLetter = () => {
 
       <div className="newsletter__email">
         <input
+          id="email"
+          name="email"
           className="newsletter__input"
           type="text"
           placeholder="Enter your email here"
@@ -92,7 +94,12 @@ const NewsLetter = () => {
           onChange={(evt) => setEmail(evt.target.value)}
         />
 
-        <button className="newsletter__button" type="button" onClick={onJoin}>
+        <button
+          className="newsletter__button"
+          type="button"
+          onClick={onJoin}
+          data-cy="submit"
+        >
           Subscribe
         </button>
       </div>
