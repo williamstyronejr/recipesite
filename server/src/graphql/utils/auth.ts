@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 const { JWT_SECRET } = process.env;
 
-export default function checkAuth(context: any): any {
+export default function checkAuth(context: any, required = true): any {
   const authHeader = context.req.headers.authorization;
 
   if (authHeader) {
@@ -14,10 +14,11 @@ export default function checkAuth(context: any): any {
         const user = jwt.verify(token, JWT_SECRET as string);
         return user;
       } catch (err) {
-        throw new AuthenticationError('Invalid/Expired token');
+        if (required) throw new AuthenticationError('Invalid/Expired token');
       }
     }
-    throw new Error("Authentication token must be 'Bearer [token]");
+    if (required)
+      throw new Error("Authentication token must be 'Bearer [token]");
   }
-  throw new Error('Authorization header must be provided');
+  if (required) throw new Error('Authorization header must be provided');
 }
