@@ -6,12 +6,12 @@ import './styles/create.css';
 
 const CREATE_RECIPE = gql`
   mutation createRecipe(
-    $title: String!
-    $summary: String!
-    $directions: String!
-    $ingredients: String!
-    $prepTime: Int!
-    $cookTime: Int!
+    $title: String
+    $summary: String
+    $directions: String
+    $ingredients: String
+    $prepTime: Int
+    $cookTime: Int
     $published: Boolean!
     $mainImage: Upload
   ) {
@@ -27,7 +27,15 @@ const CREATE_RECIPE = gql`
         mainImage: $mainImage
       }
     ) {
-      id
+      recipe {
+        id
+      }
+      errors {
+        ... on UserInputError {
+          path
+          message
+        }
+      }
     }
   }
 `;
@@ -48,8 +56,17 @@ const CreateRecipePage = () => {
   const [errors, setErrors] = React.useState<Record<string, string>>({});
 
   const [createRecipe, { loading }] = useMutation(CREATE_RECIPE, {
-    update(_, { data: { createRecipe: recipeData } }) {
-      history.push(`/recipe/${recipeData.id}`);
+    update(_, { data: { createRecipe: res } }) {
+      if (res.errors) {
+        const errs: any = {};
+        res.errors.forEach((error: any) => {
+          errs[error.path] = error.message;
+        });
+
+        return setErrors(errs);
+      }
+
+      history.push(`/recipe/${res.recipe.id}`);
     },
     onError(err) {
       if (err.graphQLErrors[0] && err.graphQLErrors[0].extensions) {
@@ -59,8 +76,8 @@ const CreateRecipePage = () => {
     variables: {
       title,
       summary,
-      directions: 'directions',
-      ingredients: 'ingredients',
+      directions,
+      ingredients,
       published,
       cookTime: Number.parseInt(cookTime, 10),
       prepTime: Number.parseInt(prepTime, 10),
@@ -230,8 +247,8 @@ const CreateRecipePage = () => {
 
             <textarea
               id="summary"
-              className="form__input form__input--textarea"
               name="summary"
+              className="form__input form__input--textarea"
               value={summary}
               onChange={(evt) => setSummary(evt.target.value)}
             />
@@ -250,8 +267,8 @@ const CreateRecipePage = () => {
 
             <textarea
               id="ingredients"
-              className="form__input form__input--textarea"
               name="ingredients"
+              className="form__input form__input--textarea"
               placeholder="Put each ingredients on its own line"
               value={ingredients}
               onChange={(evt) => {
@@ -273,8 +290,8 @@ const CreateRecipePage = () => {
 
             <textarea
               id="directions"
-              className="form__input form__input--textarea"
               name="directions"
+              className="form__input form__input--textarea"
               placeholder="Put each step on its own line"
               value={directions}
               onChange={(evt) => {
