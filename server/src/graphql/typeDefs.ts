@@ -50,6 +50,7 @@ export default gql`
   }
   type Recipe {
     id: ID!
+    entityId: ID!
     title: String!
     summary: String!
     directions: String!
@@ -60,6 +61,9 @@ export default gql`
     mainImage: String!
     authorName: String!
     author: ID!
+    avgRating: Float
+    userRating: Int
+    ratingCount: Int
   }
   type Comment {
     id: ID!
@@ -179,6 +183,6 @@ export default gql`
     updateRecipe(recipeInput: RecipeInput): UpdateRecipePayload!
     updateBookmark(recipeId: ID!, bookmarking: Boolean!): Boolean!
 
-    setRating(entityId: Int!, rating: Int!): RatingPayload!
+    setRating(entityId: ID!, rating: Int!): RatingPayload!
   }
 `;
