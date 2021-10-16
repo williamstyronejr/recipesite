@@ -221,3 +221,32 @@ export function validateEmail(email: string): Validator {
     valid: Object.keys(errors).length < 1,
   };
 }
+
+export function validateRecipe(
+  title: string | undefined,
+  summary: string | undefined,
+  directions: string | undefined,
+  ingredients: string | undefined,
+  cookTime: string | undefined,
+  prepTime: string | undefined,
+  published: boolean,
+): Validator {
+  const errors: Error = [];
+
+  // If published all fields are required
+  if (published) {
+    if (title || title === '') {
+      if (title.trim() === '') {
+        errors.push({
+          path: 'title',
+          message: 'Title is required for a published recipe',
+        });
+      }
+    }
+  }
+
+  return {
+    errors,
+    valid: errors.length === 0,
+  };
+}
