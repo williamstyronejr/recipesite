@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-
 import './styles/recipesearch.css';
 
 const RecipeSearch = () => {
@@ -10,6 +9,8 @@ const RecipeSearch = () => {
   return (
     <div className="search">
       <input
+        id="search-header"
+        name="search-header"
         className="search__input"
         type="text"
         placeholder="Search"
