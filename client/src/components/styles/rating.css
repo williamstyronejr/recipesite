@@ -2,7 +2,6 @@
   font-size: 4rem;
   direction: rtl;
 }
-
 .rating__btn {
   font-size: 4rem;
   background-color: transparent;
@@ -23,4 +22,22 @@
 .rating__btn--active {
   color: orange;
   cursor: pointer;
+}
+
+.rating__info {
+  direction: ltr;
+  height: 50px;
+}
+.rating__avg {
+  display: inline-block;
+  vertical-align: top;
+  font-size: 2rem;
+  margin-right: 10px;
+}
+
+.rating__count {
+  display: inline-block;
+  vertical-align: top;
+  font-size: 1.75rem;
+  color: var(--color-subtle);
 }
