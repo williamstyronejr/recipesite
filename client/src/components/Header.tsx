@@ -97,7 +97,7 @@ const Header = () => {
             </li>
 
             <li className="header__item">
-              <Link className="header__link" to="/signin">
+              <Link className="header__link" to="/signin" data-cy="signin">
                 Signin
               </Link>
             </li>
