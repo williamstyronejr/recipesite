@@ -38,6 +38,7 @@ const ManageRecipesPage = () => {
         query: QUERY_USER_RECIPES,
         variables: {
           userId: state.id,
+          publishedType: filter,
         },
       },
     ],
@@ -116,12 +117,17 @@ const ManageRecipesPage = () => {
             </Link>
 
             <div className="manage__controls">
-              <Link className="manage__edit" to={`/recipe/${recipe.id}/edit`}>
+              <Link
+                className="manage__edit"
+                data-cy="edit"
+                to={`/recipe/${recipe.id}/edit`}
+              >
                 Edit
               </Link>
               <button
                 className="manage__delete"
                 type="button"
+                data-cy="delete"
                 onClick={() => {
                   deleteRecipe({ variables: { recipeId: recipe.id } });
                 }}
