@@ -9,8 +9,7 @@ import Rating from './Rating';
 
 const { DATABASE_URL } = process.env;
 
-const db: any = {};
-const sequelize = new Sequelize(DATABASE_URL || '');
+const sequelize: Sequelize = new Sequelize(DATABASE_URL || '');
 
 const models: any = {
   User: User(sequelize, DataTypes),
@@ -27,8 +26,14 @@ Object.keys(models).forEach((key) => {
   }
 });
 
-db.models = models;
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+const db: {
+  models: any;
+  sequelize: Sequelize;
+  Sequelize: any;
+} = {
+  models: models,
+  sequelize: sequelize,
+  Sequelize: Sequelize,
+};
 
 export default db;
