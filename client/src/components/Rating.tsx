@@ -21,8 +21,20 @@ const MUTATION_RATE = gql`
   }
 `;
 
-const Rating = ({ entityId }: { entityId: string }) => {
-  const [rating, setRating] = React.useState<number>(0);
+const Rating = ({
+  entityId,
+  userRating,
+  avgRating,
+  totalRatings,
+}: {
+  entityId: string;
+  userRating: number;
+  avgRating: number;
+  totalRatings: number;
+}) => {
+  const [rating, setRating] = React.useState<number>(
+    userRating || Math.floor(avgRating),
+  );
   const [error, setError] = React.useState<string>('');
 
   const [updateRating] = useMutation(MUTATION_RATE, {
@@ -35,15 +47,16 @@ const Rating = ({ entityId }: { entityId: string }) => {
       setRating(0);
       setError('A server error occurred, please try again.');
     },
-    variables: {
-      entityId,
-      rating,
-    },
   });
 
   const onRate = (val: number) => {
     setRating(val);
-    updateRating();
+    updateRating({
+      variables: {
+        rating: val,
+        entityId,
+      },
+    });
   };
 
   return (
@@ -89,6 +102,11 @@ const Rating = ({ entityId }: { entityId: string }) => {
       >
         ★
       </button>
+
+      <div className="rating__info">
+        <div className="rating__avg">{avgRating || 0}</div>
+        <div className="rating__count">{totalRatings || 0} ratings</div>
+      </div>
     </div>
   );
 };
