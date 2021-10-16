@@ -115,7 +115,7 @@ export default {
         return {
           userErrors: [
             {
-              path: 'username',
+              path: 'general',
               message: 'Invalid username or password',
               reason: 'Wrong Credetials',
             },
@@ -128,7 +128,7 @@ export default {
         return {
           userErrors: [
             {
-              path: 'password',
+              path: 'general',
               message: 'Invalid username or password',
               reason: 'Wrong Credetials',
             },
