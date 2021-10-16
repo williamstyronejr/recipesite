@@ -55,7 +55,15 @@ const UPDATE_RECIPE = gql`
         mainImage: $mainImage
         removeImage: $removeImage
       }
-    )
+    ) {
+      success
+      errors {
+        ... on UserInputError {
+          path
+          message
+        }
+      }
+    }
   }
 `;
 
@@ -90,11 +98,19 @@ const EditRecipe = () => {
   });
 
   const [updateRecipe] = useMutation(UPDATE_RECIPE, {
-    update(_, { data: { updateRecipe: complete } }) {
-      console.log(complete);
+    update(_, { data: { updateRecipe: res } }) {
+      if (res.errors) {
+        const errs: any = {};
+        res.errors.forEach((error: any) => {
+          errs[error.path] = error.message;
+        });
+
+        return setErrors(errs);
+      }
+      history.push(`/recipe/${recipeId}`);
     },
-    onError(err) {
-      console.log(err);
+    onError() {
+      setErrors({ general: 'Server error occurrer, please try again.' });
     },
     variables: {
       recipeId,
@@ -102,8 +118,8 @@ const EditRecipe = () => {
       directions,
       ingredients,
       summary,
-      prepTime,
-      cookTime,
+      prepTime: parseInt(prepTime, 10),
+      cookTime: parseInt(cookTime, 10),
       published,
       mainImage: mainImage === 'defaultRecipe.jpg' ? undefined : mainImage,
       removeImage,
@@ -156,6 +172,10 @@ const EditRecipe = () => {
     <section className="form-wrapper form-wrapper--wide">
       <form className="form" onSubmit={submitHandler}>
         <header className="form__header">
+          {errors.general ? (
+            <div className="form__error">{errors.general}</div>
+          ) : null}
+
           <button
             className="form__button form__button--delete"
             type="button"
