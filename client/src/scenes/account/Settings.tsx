@@ -347,6 +347,7 @@ const AccountForm = ({
           <button
             className="form__button form__button--remove"
             type="button"
+            disabled={initialImage === 'default.jpg'}
             onClick={() => uploadProfileImage(null, true)}
           >
             Remove Profile Image
