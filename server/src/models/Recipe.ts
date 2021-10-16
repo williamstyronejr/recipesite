@@ -14,6 +14,7 @@ interface RecipeAttributes {
 export default (sequelize: Sequelize, DataTypes: any): any => {
   class Recipe extends Model {
     id!: number;
+    entityId!: number;
     title!: string;
     summary!: string;
     ingredients!: string;
@@ -26,6 +27,7 @@ export default (sequelize: Sequelize, DataTypes: any): any => {
 
     static associate(models: any) {
       // define association here
+      Recipe.belongsTo(models.Entity, { foreignKey: 'entityId' });
       Recipe.belongsTo(models.User, { foreignKey: 'author' });
       Recipe.hasMany(models.Bookmark, { foreignKey: 'entityId' });
       Recipe.hasMany(models.Comment, { foreignKey: 'source' });
