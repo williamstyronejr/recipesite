@@ -55,11 +55,13 @@ const Popular = () => {
   return (
     <section className="explore">
       <header className="explore__header">
-        <div className="explore__wrapper">
-          <h2 className="explore__heading">Popular</h2>
-          <p className="explore__text">
-            Create one a delicious everyday meal hand picked by our staff.
-          </p>
+        <div className="explore__max">
+          <div className="explore__wrapper">
+            <h2 className="explore__heading">Popular</h2>
+            <p className="explore__text">
+              Create one a delicious everyday meal hand picked by our staff.
+            </p>
+          </div>
         </div>
       </header>
 
