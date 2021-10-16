@@ -1,7 +1,9 @@
 import { Op } from 'sequelize';
 import db from '../../models/index';
 import checkAuth from '../utils/auth';
+import { validateRecipe } from '../utils/validators';
 import { uploadImage } from './utils';
+import { QueryTypes } from 'sequelize';
 
 export default {
   Query: {
@@ -10,27 +12,50 @@ export default {
       { recipeId }: { recipeId: string },
       context: any,
     ): Promise<any | null> {
-      let sessionUser;
-      try {
-        sessionUser = checkAuth(context);
-      } catch (err) {
-        //
-      }
-
-      const data = await db.models.Recipe.findByPk(recipeId, {
-        include: {
-          model: db.models.User,
-          as: 'user',
-          attributes: { exclude: ['hash'] }, // Remove hash from results
-        },
+      const user = checkAuth(context, false);
+      const recipeData = await db.models.Recipe.findByPk(recipeId, {
+        include: [
+          {
+            model: db.models.User,
+            as: 'user',
+            attributes: { exclude: ['hash'] }, // Remove hash from results
+          },
+        ],
       });
-      const recipe = data.toJSON();
 
-      console.log(recipe);
+      if (!recipeData) return null; // Recipe not found
+
+      /**
+       * Can't get sub querys to work using raw query for now
+       */
+      const ratingData: Array<{
+        avgRating?: number;
+        ratingCount?: number;
+        rating?: number;
+      }> = await db.sequelize.query(
+        `
+            SELECT 
+              AVG("rating") as "avgRating",
+              COUNT("rating") as "ratingCount"
+              ${
+                user
+                  ? `, (SELECT "rating" FROM "ratings" WHERE "userId"=${user.id} AND "entityId"=${recipeData.entityId})`
+                  : ''
+              }
+            FROM "public"."ratings"
+            WHERE "entityId" = ${recipeData.entityId}
+          `,
+        { type: QueryTypes.SELECT },
+      );
+
+      const recipe = recipeData.toJSON();
 
       return {
         ...recipe,
         authorName: recipe.user.username,
+        avgRating: ratingData.length ? ratingData[0].avgRating : 0,
+        ratingCount: ratingData.length ? ratingData[0].ratingCount : 0,
+        userRating: ratingData.length ? ratingData[0].rating : 0,
       };
     },
     async getUserRecipes(
@@ -128,10 +153,27 @@ export default {
       context: any,
     ): Promise<Record<string, unknown>> {
       const user = checkAuth(context);
+      const { errors, valid } = validateRecipe(
+        title,
+        summary,
+        directions,
+        ingredients,
+        cookTime,
+        prepTime,
+        published,
+      );
 
+      if (!valid) {
+        return {
+          errors,
+          recipe: null,
+        };
+      }
       const fileName = await uploadImage(mainImage);
 
+      const entity = await db.models.Entity.create({});
       const recipe = await db.models.Recipe.create({
+        entityId: entity.id,
         title,
         summary,
         directions,
@@ -142,7 +184,8 @@ export default {
         author: user.id,
         mainImage: fileName ? fileName : 'defaultRecipe.jpg',
       });
-      return recipe;
+
+      return { recipe, errors: null };
     },
     async updateRecipe(
       _: any,
@@ -166,16 +209,32 @@ export default {
           summary: string;
           directions: string;
           ingredients: string;
-          cookTime: number;
-          prepTime: number;
+          cookTime: string;
+          prepTime: string;
           published: boolean;
           mainImage: any;
           removeImage: boolean;
         };
       },
       context: any,
-    ): Promise<boolean> {
+    ): Promise<Record<string, unknown>> {
       const user = checkAuth(context);
+      const { errors, valid } = validateRecipe(
+        title,
+        summary,
+        directions,
+        ingredients,
+        cookTime,
+        prepTime,
+        published,
+      );
+
+      if (!valid) {
+        return {
+          errors,
+          success: false,
+        };
+      }
 
       const fileName = !removeImage
         ? await uploadImage(mainImage)
@@ -198,7 +257,10 @@ export default {
         },
       });
 
-      return results[0] > 0;
+      return {
+        success: results[0] > 0,
+        errors: null,
+      };
     },
 
     async deleteRecipe(
