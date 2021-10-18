@@ -13,17 +13,18 @@ export default {
       context: any,
     ): Promise<any | null> {
       const user = checkAuth(context, false);
+
       const recipeData = await db.models.Recipe.findByPk(recipeId, {
         include: [
           {
             model: db.models.User,
             as: 'user',
-            attributes: { exclude: ['hash'] }, // Remove hash from results
+            attributes: { exclude: ['hash'] },
           },
         ],
       });
 
-      if (!recipeData) return null; // Recipe not found
+      if (!recipeData || !recipeData.published) return null;
 
       /**
        * Can't get sub querys to work using raw query for now
@@ -64,7 +65,6 @@ export default {
       content: any,
     ): Promise<Array<any>> {
       const user = await checkAuth(content);
-      console.log(user.id, userId);
 
       if (publishedType === 'private' && user.id.toString() !== userId)
         return [];
@@ -75,7 +75,6 @@ export default {
       if (publishedType === 'private') params.published = false;
       if (publishedType === 'public') params.published = true;
 
-      console.log(params);
       const recipes = await db.models.Recipe.findAll({ where: params });
 
       return recipes;
@@ -247,7 +246,7 @@ export default {
       if (ingredients) params.ingredients = ingredients;
       if (cookTime) params.cookTime = cookTime;
       if (prepTime) params.prepTime = prepTime;
-      if (published) params.published = published;
+      if (typeof published === 'boolean') params.published = published;
       if (fileName) params.mainImage = fileName;
 
       const results = await db.models.Recipe.update(params, {
