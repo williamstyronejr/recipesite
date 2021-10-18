@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useHistory } from 'react-router-dom';
 import { useQuery, gql } from '@apollo/client';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
+import Loading from '../../components/Loading';
 import './styles/search.css';
 
 const QUERY_SEARCH = gql`
@@ -27,18 +28,19 @@ const QUERY_SEARCH = gql`
 `;
 
 const SearchPage = () => {
+  const history = useHistory();
   const searchParams = new URLSearchParams(useLocation().search);
+  const initSearch = searchParams.get('q') || '';
   const [searchError, setSearchError] = React.useState<boolean>(false);
-  const [search, setSearch] = React.useState<string>(
-    searchParams.get('q') || '',
-  );
+  const [search, setSearch] = React.useState<string>(initSearch);
 
   const { loading, data, fetchMore } = useQuery(QUERY_SEARCH, {
     onError() {
       setSearchError(true);
     },
+    fetchPolicy: 'no-cache',
     variables: {
-      q: search,
+      q: initSearch,
       offset: 0,
       limit: 10,
     },
@@ -55,6 +57,10 @@ const SearchPage = () => {
     rootMargin: '0px 0px 200px 0px',
   });
 
+  const onNewSearch = () => {
+    history.push(`/search?q=${search}`);
+  };
+
   return (
     <section className="search">
       <header className="search__header">
@@ -68,9 +74,14 @@ const SearchPage = () => {
           <input
             id="filter-search"
             name="filter-search"
+            className="filter__search-bar"
             type="text"
             value={search}
             onChange={(evt) => setSearch(evt.target.value)}
+            placeholder="Search ..."
+            onKeyUp={(evt) => {
+              if (evt.key === 'Enter') onNewSearch();
+            }}
           />
         </label>
       </aside>
@@ -106,12 +117,12 @@ const SearchPage = () => {
             </li>
           ))}
 
-          {!endOfList ? (
+          {!endOfList && !searchError ? (
             <li
               className="search__item search__item--loading"
               ref={infiniteRef}
             >
-              Loading
+              <Loading />
             </li>
           ) : null}
         </ul>
