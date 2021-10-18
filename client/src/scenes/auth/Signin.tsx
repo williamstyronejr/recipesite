@@ -63,6 +63,19 @@ const SigninPage = () => {
 
   const submitHandler = (evt: React.SyntheticEvent<HTMLFormElement>) => {
     evt.preventDefault();
+
+    const validateErrors: any = {};
+    if (username.trim() === '') {
+      validateErrors.username = 'Username must be provided';
+    }
+
+    if (password.trim() === '') {
+      validateErrors.password = 'Password must be provided';
+    }
+
+    if (Object.keys(validateErrors).length > 0)
+      return setErrors(validateErrors);
+
     setErrors({});
     loginUser();
   };

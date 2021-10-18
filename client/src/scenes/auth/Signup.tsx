@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Link, Redirect, useHistory } from 'react-router-dom';
 import { useMutation, gql } from '@apollo/client';
 import { useAuthContext } from '../../context/auth';
+import { validateSignup } from '../../utils/validators';
 import './styles/index.css';
 
 const REGISTER_USER = gql`
@@ -75,6 +76,9 @@ const SignupPage = () => {
   const submitHandler = (evt: React.SyntheticEvent<HTMLFormElement>) => {
     evt.preventDefault();
     setError({});
+    const validateErrors = validateSignup(username, email, password, confirm);
+    if (Object.keys(validateErrors).length > 0) return setError(validateErrors);
+
     createUser();
   };
 
