@@ -22,7 +22,7 @@ const DELETE_RECIPE = gql`
 `;
 
 const ManageRecipesPage = () => {
-  const { state } = useAuthContext();
+  const { state, signout } = useAuthContext();
   const [filter, setFilter] = React.useState('all');
 
   const { loading, data, refetch } = useQuery(QUERY_USER_RECIPES, {
@@ -42,8 +42,12 @@ const ManageRecipesPage = () => {
         },
       },
     ],
-    onError(err) {
-      console.log(err);
+    onError({ graphQLErrors }) {
+      if (graphQLErrors && graphQLErrors[0].extensions) {
+        if (graphQLErrors[0].extensions.code === 'UNAUTHENTICATED') {
+          return signout();
+        }
+      }
     },
   });
 

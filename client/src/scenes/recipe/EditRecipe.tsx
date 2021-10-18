@@ -69,7 +69,7 @@ const UPDATE_RECIPE = gql`
 
 const EditRecipe = () => {
   const { recipeId } = useParams<{ recipeId: string }>();
-  const { state } = useAuthContext();
+  const { state, signout } = useAuthContext();
   const history = useHistory();
   const fileRef = React.createRef<HTMLInputElement>();
   const [dialogVisible, setDialogVisible] = React.useState<boolean>();
@@ -89,8 +89,13 @@ const EditRecipe = () => {
     update(_, { data: { deleteRecipe: complete } }) {
       if (complete) history.push(`/account/profile/${state.id}`);
     },
-    onError(err) {
-      console.log(err);
+    onError({ graphQLErrors }) {
+      if (graphQLErrors && graphQLErrors[0].extensions) {
+        if (graphQLErrors[0].extensions.code === 'UNAUTHENTICATED') {
+          return signout();
+        }
+      }
+      setErrors({ general: 'Recipe could not be deleted, please try again.' });
     },
     variables: {
       recipeId,
@@ -109,7 +114,12 @@ const EditRecipe = () => {
       }
       history.push(`/recipe/${recipeId}`);
     },
-    onError() {
+    onError({ graphQLErrors }) {
+      if (graphQLErrors && graphQLErrors[0].extensions) {
+        if (graphQLErrors[0].extensions.code === 'UNAUTHENTICATED') {
+          return signout();
+        }
+      }
       setErrors({ general: 'Server error occurrer, please try again.' });
     },
     variables: {
