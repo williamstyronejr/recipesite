@@ -22,9 +22,7 @@ export default {
           success: true,
         };
       } catch (err: any) {
-        console.log(err);
         if (err.original && err.original.code === '23503') {
-          console.log('Entity does not exists');
           return {
             success: false,
             errors: [
