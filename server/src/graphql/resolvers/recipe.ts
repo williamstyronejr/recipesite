@@ -95,11 +95,11 @@ export default {
       },
     ): Promise<any | null> {
       const ordering = order === 'rating' ? [[]] : [['createdAt', 'DESC']];
-      const where: { q?: any } = {};
+      const where: { title?: any } = {};
       const innerWhere: { username?: string } = {};
       if (author) innerWhere.username = author;
       if (q)
-        where.q = {
+        where.title = {
           [Op.like]: q,
         };
 
