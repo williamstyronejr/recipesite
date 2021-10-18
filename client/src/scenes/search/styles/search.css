@@ -80,6 +80,14 @@
   font-size: 1.25rem;
 }
 
+.filter__search-bar {
+  padding: 0.6em 10px;
+  width: 100%;
+  border-radius: 3px;
+  margin-right: 10px;
+  border: 1px solid black;
+}
+
 @media only screen and (min-width: 600px) {
   .search {
     display: flex;
@@ -99,17 +107,19 @@
 
   .search__content {
     flex: 1 0 auto;
+    width: 10px;
   }
 
   .search__list {
     display: flex;
     flex-flow: row wrap;
+    justify-content: space-around;
   }
 
   .search__item {
     display: block;
     width: 280px;
-    margin: 0 10px;
+    margin: 0 10px 20px 10px;
   }
 
   .search__item--empty {
