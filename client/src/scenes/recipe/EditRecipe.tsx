@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Redirect, useParams, useHistory } from 'react-router-dom';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { useAuthContext } from '../../context/auth';
+import Recipe from '../../components/Recipe';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import Loading from '../../components/Loading';
 
@@ -72,6 +73,7 @@ const EditRecipe = () => {
   const { state, signout } = useAuthContext();
   const history = useHistory();
   const fileRef = React.createRef<HTMLInputElement>();
+  const [previewVisible, setPreviewVisible] = React.useState<boolean>(false);
   const [dialogVisible, setDialogVisible] = React.useState<boolean>();
   const [title, setTitle] = React.useState<string>('');
   const [directions, setDirections] = React.useState<string>('');
@@ -180,204 +182,238 @@ const EditRecipe = () => {
 
   return (
     <section className="form-wrapper form-wrapper--wide">
-      <form className="form" onSubmit={submitHandler}>
-        <header className="form__header">
-          {errors.general ? (
-            <div className="form__error">{errors.general}</div>
-          ) : null}
+      {previewVisible ? (
+        <Recipe
+          id=""
+          entityId=""
+          title={title}
+          summary={summary}
+          prepTime={prepTime}
+          cookTime={cookTime}
+          authorName={state.username || ''}
+          author={state.id || ''}
+          mainImage={mainImage}
+          ingredients={ingredients}
+          directions={directions}
+          avgRating={0}
+          userRating={0}
+          ratingCount={0}
+          onPreviewClose={() => {
+            setPreviewVisible(false);
+          }}
+          isPreview
+          isOwner
+        />
+      ) : (
+        <form className="form" onSubmit={submitHandler}>
+          <header className="form__header">
+            {errors.general ? (
+              <div className="form__error">{errors.general}</div>
+            ) : null}
 
-          <button
-            className="form__button form__button--delete"
-            type="button"
-            onClick={() => setDialogVisible(true)}
-          >
-            Delete
-          </button>
-
-          {dialogVisible ? (
-            <ConfirmDialog
-              onConfirm={() => {
-                setDialogVisible(false);
-                deleteRecipe();
-              }}
-              onCancel={() => {
-                setDialogVisible(false);
-              }}
-              message="Are you sure you want to delete your recipe?"
-            />
-          ) : null}
-        </header>
-
-        <fieldset className="form__field">
-          <label
-            htmlFor="recipeImage"
-            className="form__label form__label--file"
-          >
             <button
-              className="form__button form__button--file"
+              className="form__button form__button--preview"
               type="button"
-              onClick={() => fileRef.current?.click()}
+              onClick={() => setPreviewVisible(true)}
             >
-              <div className="form__preview-cover">Click to replace image</div>
-              <img
-                className="form__preview"
-                src={previewImage || `/img/${mainImage}`}
-                alt="Recipe example"
+              Preview
+            </button>
+
+            <button
+              className="form__button form__button--delete"
+              type="button"
+              onClick={() => setDialogVisible(true)}
+            >
+              Delete
+            </button>
+
+            {dialogVisible ? (
+              <ConfirmDialog
+                onConfirm={() => {
+                  setDialogVisible(false);
+                  deleteRecipe();
+                }}
+                onCancel={() => {
+                  setDialogVisible(false);
+                }}
+                message="Are you sure you want to delete your recipe?"
               />
-            </button>
-            <input
-              id="recipeImage"
-              name="recipeImage"
-              type="file"
-              className="form__input form__input--file"
-              ref={fileRef}
-              onChange={onFileChange}
-            />
-          </label>
+            ) : null}
+          </header>
 
-          {previewImage || mainImage !== 'defaultRecipe.jpg' ? (
-            <button
-              className="form__button form__button--remove"
-              type="button"
-              onClick={() => {
-                setPreviewImage(null);
-                setMainImage('defaultRecipe.jpg');
-                setRemoveImage(true);
-              }}
+          <fieldset className="form__field">
+            <label
+              htmlFor="recipeImage"
+              className="form__label form__label--file"
             >
-              Remove Image
-            </button>
-          ) : null}
-        </fieldset>
+              <button
+                className="form__button form__button--file"
+                type="button"
+                onClick={() => fileRef.current?.click()}
+              >
+                <div className="form__preview-cover">
+                  Click to replace image
+                </div>
+                <img
+                  className="form__preview"
+                  src={previewImage || `/img/${mainImage}`}
+                  alt="Recipe example"
+                />
+              </button>
+              <input
+                id="recipeImage"
+                name="recipeImage"
+                type="file"
+                className="form__input form__input--file"
+                ref={fileRef}
+                onChange={onFileChange}
+              />
+            </label>
 
-        <fieldset className="form__field">
-          <label htmlFor="prep" className="form__label">
-            <span className="form__labeling">Prep Time</span>
-            <input
-              id="prep"
-              name="prep"
-              type="text"
-              className="form__input form__input--text"
-              value={prepTime}
-              onChange={(evt) => setPrepTime(evt.target.value)}
-            />
-          </label>
-
-          <label htmlFor="cook" className="form__label">
-            <span className="form__labeling">Cook Time</span>
-            <input
-              id="cook"
-              name="cook"
-              type="text"
-              className="form__input form__input--text"
-              value={cookTime}
-              onChange={(evt) => setCookTime(evt.target.value)}
-            />
-          </label>
-
-          <label htmlFor="published" className="form__label">
-            <span className="labeling">Private</span>
-            <input
-              id="published"
-              name="published"
-              className="form__input form__input--radio"
-              type="radio"
-              value="private"
-              checked={!published}
-              onChange={() => setPublished(false)}
-            />
-          </label>
-
-          <label htmlFor="published" className="form__label">
-            <span className="labeling">Public</span>
-            <input
-              id="published"
-              name="published"
-              className="form__input form__input--radio"
-              type="radio"
-              value="public"
-              checked={published}
-              onChange={() => setPublished(true)}
-            />
-          </label>
-        </fieldset>
-
-        <fieldset className="form__field">
-          <label htmlFor="title" className="form__label">
-            <span className="form__labeling">Title</span>
-
-            {errors.title ? (
-              <span className="form__label-error">{errors.title}</span>
+            {previewImage || mainImage !== 'defaultRecipe.jpg' ? (
+              <button
+                className="form__button form__button--remove"
+                type="button"
+                onClick={() => {
+                  setPreviewImage(null);
+                  setMainImage('defaultRecipe.jpg');
+                  setRemoveImage(true);
+                }}
+              >
+                Remove Image
+              </button>
             ) : null}
+          </fieldset>
 
-            <input
-              id="title"
-              name="title"
-              className="form__input form__input--text"
-              value={title}
-              onChange={(evt) => setTitle(evt.target.value)}
-            />
-          </label>
-        </fieldset>
+          <fieldset className="form__field">
+            <label htmlFor="prep" className="form__label">
+              <span className="form__labeling">Prep Time</span>
+              <input
+                id="prep"
+                name="prep"
+                type="text"
+                className="form__input form__input--text"
+                value={prepTime}
+                onChange={(evt) => setPrepTime(evt.target.value)}
+              />
+            </label>
 
-        <fieldset className="form__field">
-          <label htmlFor="summary" className="form__label">
-            <span className="form__labeling">Summary</span>
+            <label htmlFor="cook" className="form__label">
+              <span className="form__labeling">Cook Time</span>
+              <input
+                id="cook"
+                name="cook"
+                type="text"
+                className="form__input form__input--text"
+                value={cookTime}
+                onChange={(evt) => setCookTime(evt.target.value)}
+              />
+            </label>
 
-            {errors.summary ? (
-              <span className="form__label-error">{errors.summary}</span>
-            ) : null}
+            <label htmlFor="published" className="form__label">
+              <span className="labeling">Private</span>
+              <input
+                id="published"
+                name="published"
+                className="form__input form__input--radio"
+                type="radio"
+                value="private"
+                checked={!published}
+                onChange={() => setPublished(false)}
+              />
+            </label>
 
-            <input
-              id="summary"
-              name="summary"
-              className="form__input form__input--text"
-              value={summary}
-              onChange={(evt) => setSummary(evt.target.value)}
-            />
-          </label>
-        </fieldset>
+            <label htmlFor="published" className="form__label">
+              <span className="labeling">Public</span>
+              <input
+                id="published"
+                name="published"
+                className="form__input form__input--radio"
+                type="radio"
+                value="public"
+                checked={published}
+                onChange={() => setPublished(true)}
+              />
+            </label>
+          </fieldset>
 
-        <fieldset className="form__field">
-          <label htmlFor="ingredients" className="form__label">
-            <span className="form__labeling">Ingredients</span>
+          <fieldset className="form__field">
+            <label htmlFor="title" className="form__label">
+              <span className="form__labeling">Title</span>
 
-            {errors.ingredients ? (
-              <span className="form__label-error">{errors.ingredients}</span>
-            ) : null}
+              {errors.title ? (
+                <span className="form__label-error">{errors.title}</span>
+              ) : null}
 
-            <input
-              id="ingredients"
-              name="ingredients"
-              className="form__input form__input--text"
-              value={ingredients}
-              onChange={(evt) => setIngredients(evt.target.value)}
-            />
-          </label>
-        </fieldset>
+              <input
+                id="title"
+                name="title"
+                className="form__input form__input--text"
+                value={title}
+                onChange={(evt) => setTitle(evt.target.value)}
+              />
+            </label>
+          </fieldset>
 
-        <fieldset className="form__field">
-          <label htmlFor="direction" className="form__label">
-            <span className="form__labeling">Direction</span>
+          <fieldset className="form__field">
+            <label htmlFor="summary" className="form__label">
+              <span className="form__labeling">Summary</span>
 
-            {errors.directins ? (
-              <span className="form__label-error">{errors.directions}</span>
-            ) : null}
+              {errors.summary ? (
+                <span className="form__label-error">{errors.summary}</span>
+              ) : null}
 
-            <input
-              id="direction"
-              name="direction"
-              className="form__input form__input--text"
-              value={directions}
-              onChange={(evt) => setDirections(evt.target.value)}
-            />
-          </label>
-        </fieldset>
+              <input
+                id="summary"
+                name="summary"
+                className="form__input form__input--text"
+                value={summary}
+                onChange={(evt) => setSummary(evt.target.value)}
+              />
+            </label>
+          </fieldset>
 
-        <button className="form__button form__button--submit" type="submit">
-          Update
-        </button>
-      </form>
+          <fieldset className="form__field">
+            <label htmlFor="ingredients" className="form__label">
+              <span className="form__labeling">Ingredients</span>
+
+              {errors.ingredients ? (
+                <span className="form__label-error">{errors.ingredients}</span>
+              ) : null}
+
+              <input
+                id="ingredients"
+                name="ingredients"
+                className="form__input form__input--text"
+                value={ingredients}
+                onChange={(evt) => setIngredients(evt.target.value)}
+              />
+            </label>
+          </fieldset>
+
+          <fieldset className="form__field">
+            <label htmlFor="direction" className="form__label">
+              <span className="form__labeling">Direction</span>
+
+              {errors.directins ? (
+                <span className="form__label-error">{errors.directions}</span>
+              ) : null}
+
+              <input
+                id="direction"
+                name="direction"
+                className="form__input form__input--text"
+                value={directions}
+                onChange={(evt) => setDirections(evt.target.value)}
+              />
+            </label>
+          </fieldset>
+
+          <button className="form__button form__button--submit" type="submit">
+            Update
+          </button>
+        </form>
+      )}
     </section>
   );
 };
