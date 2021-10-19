@@ -26,11 +26,13 @@ const Rating = ({
   userRating,
   avgRating,
   totalRatings,
+  disabled = false,
 }: {
   entityId: string;
   userRating: number;
   avgRating: number;
   totalRatings: number;
+  disabled?: boolean;
 }) => {
   const [rating, setRating] = React.useState<number>(
     userRating || Math.floor(avgRating),
@@ -50,6 +52,8 @@ const Rating = ({
   });
 
   const onRate = (val: number) => {
+    if (disabled) return;
+
     setRating(val);
     updateRating({
       variables: {
@@ -109,6 +113,10 @@ const Rating = ({
       </div>
     </div>
   );
+};
+
+Rating.defaultProps = {
+  disabled: false,
 };
 
 export default Rating;
