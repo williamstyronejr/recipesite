@@ -109,6 +109,24 @@
 
 .manage__info:hover .manage__title {
   color: var(--color-alt);
+  text-decoration: underline;
+}
+
+.manage__status {
+  display: block;
+  width: fit-content;
+  border-radius: 10px;
+  font-size: 1rem;
+  padding: 5px 5px;
+  color: var(--color-text-off);
+  font-weight: 700;
+  margin-right: 10px;
+  background-color: var(--color-subtle);
+  text-decoration: none;
+}
+
+.manage__status--public {
+  background-color: var(--color-alt);
 }
 
 .manage__summary {
