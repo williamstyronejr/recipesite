@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useMutation, gql } from '@apollo/client';
 import { useHistory, Redirect } from 'react-router-dom';
 import { useAuthContext } from '../../context/auth';
+import { validateRecipe } from '../../utils/validators';
 import './styles/create.css';
 
 const CREATE_RECIPE = gql`
@@ -89,6 +90,18 @@ const CreateRecipePage = () => {
 
   const submitHandler = (evt: React.SyntheticEvent<HTMLFormElement>) => {
     evt.preventDefault();
+
+    const validateErr = validateRecipe(
+      title,
+      prepTime,
+      cookTime,
+      summary,
+      directions,
+      ingredients,
+      published,
+    );
+    if (Object.keys(validateErr).length > 0) return setErrors(validateErr);
+
     setErrors({});
     createRecipe();
   };
@@ -233,9 +246,7 @@ const CreateRecipePage = () => {
               onChange={(evt) => setTitle(evt.target.value)}
             />
           </label>
-        </fieldset>
 
-        <fieldset className="form__field">
           <label htmlFor="summary" className="form__label">
             <span className="form__labeling">Summary</span>
 
@@ -253,9 +264,7 @@ const CreateRecipePage = () => {
               onChange={(evt) => setSummary(evt.target.value)}
             />
           </label>
-        </fieldset>
 
-        <fieldset className="form__field">
           <label htmlFor="ingredients" className="form__label">
             <span className="form__labeling">Ingredients</span>
 
@@ -276,9 +285,7 @@ const CreateRecipePage = () => {
               }}
             />
           </label>
-        </fieldset>
 
-        <fieldset className="form__field">
           <label htmlFor="directions" className="form__label">
             <span className="form__labeling">Directions</span>
 

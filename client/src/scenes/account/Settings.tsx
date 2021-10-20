@@ -3,8 +3,12 @@ import { useHistory, Redirect } from 'react-router-dom';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { useAuthContext } from '../../context/auth';
 import ConfirmDialog from '../../components/ConfirmDialog';
-import './styles/settings.css';
+import {
+  validatePasswordUpdate,
+  validateAccountUpdate,
+} from '../../utils/validators';
 import Loading from '../../components/Loading';
+import './styles/settings.css';
 
 const MUTATION_PASSWORD = gql`
   mutation updatePassword(
@@ -116,8 +120,17 @@ const PasswordForm = ({ unauth }: { unauth: Function }) => {
 
   function handleSubmit(evt: React.SyntheticEvent<HTMLFormElement>) {
     evt.preventDefault();
-    setErrors({});
     setStatus(false);
+
+    const validateErrors = validatePasswordUpdate(
+      oldPassword,
+      newPassword,
+      confirmPassword,
+    );
+    if (Object.keys(validateErrors).length > 0)
+      return setErrors(validateErrors);
+
+    setErrors({});
     updatePassword();
   }
 
@@ -265,8 +278,14 @@ const AccountForm = ({
 
   function submitHandler(evt: React.FormEvent<HTMLFormElement>) {
     evt.preventDefault();
-    setErrors({});
     setStatus(false);
+
+    const validateErrors = validateAccountUpdate(username, email);
+
+    if (Object.keys(validateErrors).length > 0)
+      return setErrors(validateErrors);
+
+    setErrors({});
 
     const params: any = {};
     if (username !== initialUsername) params.username = username;
