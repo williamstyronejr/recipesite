@@ -381,10 +381,10 @@ const EditRecipe = () => {
                 <span className="form__label-error">{errors.ingredients}</span>
               ) : null}
 
-              <input
+              <textarea
                 id="ingredients"
                 name="ingredients"
-                className="form__input form__input--text"
+                className="form__input form__input--textarea"
                 value={ingredients}
                 onChange={(evt) => setIngredients(evt.target.value)}
               />
@@ -399,10 +399,10 @@ const EditRecipe = () => {
                 <span className="form__label-error">{errors.directions}</span>
               ) : null}
 
-              <input
+              <textarea
                 id="direction"
                 name="direction"
-                className="form__input form__input--text"
+                className="form__input form__input--textarea"
                 value={directions}
                 onChange={(evt) => setDirections(evt.target.value)}
               />
