@@ -5,6 +5,7 @@ import { useAuthContext } from '../../context/auth';
 import Recipe from '../../components/Recipe';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import Loading from '../../components/Loading';
+import { validateRecipe } from '../../utils/validators';
 
 const QUERY_RECIPE = gql`
   query ($recipeId: ID!) {
@@ -145,8 +146,8 @@ const EditRecipe = () => {
       setSummary(data.getRecipe.summary);
       setPublished(data.getRecipe.published);
       setMainImage(data.getRecipe.mainImage);
-      setCookTime(data.getRecipe.cookTime);
-      setPrepTime(data.getRecipe.prepTime);
+      setCookTime(data.getRecipe.cookTime.toString());
+      setPrepTime(data.getRecipe.prepTime.toString());
       setIngredients(data.getRecipe.ingredients);
     },
     variables: {
@@ -160,6 +161,18 @@ const EditRecipe = () => {
 
   function submitHandler(evt: React.SyntheticEvent<HTMLFormElement>) {
     evt.preventDefault();
+
+    const validateErr = validateRecipe(
+      title,
+      prepTime,
+      cookTime,
+      summary,
+      directions,
+      ingredients,
+      published,
+    );
+    if (Object.keys(validateErr).length > 0) return setErrors(validateErr);
+
     setErrors({});
     updateRecipe();
   }
