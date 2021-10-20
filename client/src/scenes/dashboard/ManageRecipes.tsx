@@ -11,6 +11,7 @@ const QUERY_USER_RECIPES = gql`
       id
       title
       summary
+      published
     }
   }
 `;
@@ -116,7 +117,18 @@ const ManageRecipesPage = () => {
         {recipes.map((recipe: any) => (
           <div className="manage__recipe" key={recipe.id}>
             <Link className="manage__info" to={`/recipe/${recipe.id}`}>
-              <h4 className="manage__title">{recipe.title}</h4>
+              <h4 className="manage__title">
+                {recipe.published ? (
+                  <span className="manage__status manage__status--public">
+                    Public
+                  </span>
+                ) : (
+                  <span className="manage__status manage__status--private">
+                    Private
+                  </span>
+                )}
+                {recipe.title}
+              </h4>
               <p className="manage__summary">{recipe.summary}</p>
             </Link>
 
