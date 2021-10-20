@@ -35,7 +35,7 @@ export default {
       if (!user) throw new UserInputError('User does not exist');
 
       const topRecipes = await db.models.Recipe.findAll({
-        where: { author: userId },
+        where: { author: userId, published: true },
         limit: 10,
         order: [['createdAt', 'DESC']],
       });
