@@ -143,8 +143,8 @@ export default {
           summary: string;
           directions: string;
           ingredients: string;
-          cookTime: string;
-          prepTime: string;
+          cookTime: number;
+          prepTime: number;
           published: boolean;
           mainImage: any;
         };
@@ -208,8 +208,8 @@ export default {
           summary: string;
           directions: string;
           ingredients: string;
-          cookTime: string;
-          prepTime: string;
+          cookTime: number;
+          prepTime: number;
           published: boolean;
           mainImage: any;
           removeImage: boolean;
