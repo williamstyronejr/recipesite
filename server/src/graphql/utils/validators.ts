@@ -50,20 +50,20 @@ export async function checkExistingUser(
   };
 }
 
-export function validateRegister(
+export async function validateRegister(
   username: string,
   email: string,
   password: string,
   confirmPassword: string,
-): Validator {
+): Promise<Validator> {
   const errors: Error = [];
 
   if (username.trim() === '') {
     errors.push({ path: 'username', message: 'Username must be provided' });
-  } else if (username.trim().length < 4) {
+  } else if (username.trim().length < 4 || username.trim().length > 32) {
     errors.push({
       path: 'username',
-      message: 'Username must be between 4 and 16 characters',
+      message: 'Username must be between 4 and 32 characters',
     });
   }
 
@@ -83,16 +83,28 @@ export function validateRegister(
     }
   }
 
-  if (password.trim() === '') {
+  if (password === '') {
     errors.push({
       path: 'password',
       message: 'Password must be provided',
     });
-  } else if (password !== confirmPassword) {
+  } else if (password.length < 4) {
+    errors.push({
+      path: 'password',
+      message: 'Password must have at least 4 characters',
+    });
+  }
+
+  if (password !== confirmPassword) {
     errors.push({
       path: 'confirmPassword',
       message: 'Password must match',
     });
+  }
+
+  if (errors.length === 0) {
+    const { errors: userErrors } = await checkExistingUser(username, email);
+    errors.push(...userErrors);
   }
 
   return {
@@ -110,7 +122,7 @@ export function validateLogin(username: string, password: string): Validator {
       message: 'Username must be provided',
     });
   }
-  if (password.trim() === '') {
+  if (password === '') {
     errors.push({
       path: 'password',
       message: 'Password must be provided',
@@ -130,17 +142,22 @@ export function validatePasswordChange(
 ): Validator {
   const errors: Error = [];
 
-  if (oldPassword.trim() === '') {
+  if (oldPassword === '') {
     errors.push({
       path: 'oldPassword',
       message: 'Old password must be provided',
     });
   }
 
-  if (newPassword.trim() === '') {
+  if (newPassword === '') {
     errors.push({
       path: 'newPassword',
       message: 'New password must be provided',
+    });
+  } else if (newPassword.length < 4) {
+    errors.push({
+      path: 'newPassword',
+      message: 'New password must have 4 characters',
     });
   }
 
@@ -227,8 +244,8 @@ export function validateRecipe(
   summary: string | undefined,
   directions: string | undefined,
   ingredients: string | undefined,
-  cookTime: string | undefined,
-  prepTime: string | undefined,
+  cookTime: number | undefined,
+  prepTime: number | undefined,
   published: boolean,
 ): Validator {
   const errors: Error = [];
@@ -240,6 +257,47 @@ export function validateRecipe(
         errors.push({
           path: 'title',
           message: 'Title is required for a published recipe',
+        });
+      }
+    }
+
+    if (!cookTime && cookTime !== 0) {
+      errors.push({
+        path: 'cookTime',
+        message: 'Cook time is required for a published recipe',
+      });
+    }
+
+    if (!prepTime && prepTime !== 0) {
+      errors.push({
+        path: 'prepTime',
+        message: 'Prep time is required for a published recipe',
+      });
+    }
+
+    if (summary || summary === '') {
+      if (summary.trim() === '') {
+        errors.push({
+          path: 'summary',
+          message: 'Summary is required for a published recipe',
+        });
+      }
+    }
+
+    if (directions || directions === '') {
+      if (directions.trim() === '') {
+        errors.push({
+          path: 'directions',
+          message: 'Directions must be provided for a published recipe',
+        });
+      }
+    }
+
+    if (ingredients || ingredients === '') {
+      if (ingredients.trim() === '') {
+        errors.push({
+          path: 'ingredients',
+          message: 'Ingredients must be provided for a published recipe',
         });
       }
     }
