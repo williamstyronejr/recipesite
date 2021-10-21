@@ -12,8 +12,8 @@ export function validateSignup(
 
   if (username.trim() === '') {
     errors.username = 'Username must be provided';
-  } else if (username.trim().length < 4) {
-    errors.username = 'Username must be between 4 and 16 characters';
+  } else if (username.trim().length < 4 || username.trim().length > 32) {
+    errors.username = 'Username must be between 4 and 32 characters';
   }
 
   if (email.trim() === '') {
@@ -26,9 +26,13 @@ export function validateSignup(
     }
   }
 
-  if (password.trim() === '') {
+  if (password === '') {
     errors.password = 'Password must be provided';
-  } else if (password !== confirmPassword) {
+  } else if (password.length < 4) {
+    errors.password = 'Password must have at least 4 characters';
+  }
+
+  if (password !== confirmPassword) {
     errors.confirmPassword = ' Password must match';
   }
 
@@ -42,14 +46,14 @@ export function validatePasswordUpdate(
 ): Errors {
   const errors: Errors = {};
 
-  if (oldPassword.trim() === '') {
+  if (oldPassword === '') {
     errors.oldPassword = 'Old password must be provided';
   }
 
-  if (newPassword.trim() === '') {
+  if (newPassword === '') {
     errors.newPassword = 'New password must be provided';
-  } else if (newPassword.trim().length < 4) {
-    errors.newPassword = 'Password must be at least 4 characters.';
+  } else if (newPassword.length < 4) {
+    errors.newPassword = 'New password must have at least 4 characters.';
   }
 
   if (confirmPassword !== newPassword) {
@@ -95,7 +99,6 @@ export function validateRecipe(
   published: boolean,
 ): Errors {
   const errors: Errors = {};
-
   // All fields required when published
   if (published) {
     if (title.trim() === '') {
