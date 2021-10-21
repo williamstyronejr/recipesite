@@ -36,10 +36,12 @@ export default (sequelize: Sequelize, DataTypes: any): any => {
       email: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
       },
       username: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
       },
       bio: {
         type: DataTypes.STRING,

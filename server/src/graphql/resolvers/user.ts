@@ -71,7 +71,7 @@ export default {
         };
       },
     ): Promise<Record<string, unknown>> {
-      const { errors, valid } = validateRegister(
+      const { errors, valid } = await validateRegister(
         username,
         email,
         password,
@@ -86,18 +86,52 @@ export default {
       }
 
       const hash = await bcrpty.hash(password, SALT_ROUNDS);
-      const user = await db.models.User.create({
-        username,
-        email,
-        hash,
-        bio: '',
-        profileImage: 'default.jpg',
-      });
-      const token = generateToken(user);
 
-      return {
-        user: { ...user.toJSON(), token },
-      };
+      try {
+        const user = await db.models.User.create({
+          username,
+          email,
+          hash,
+          bio: '',
+          profileImage: 'default.jpg',
+        });
+        const token = generateToken(user);
+
+        return {
+          user: { ...user.toJSON(), token },
+        };
+      } catch (err: any) {
+        if (err.name && err.name === 'SequelizeUniqueConstraintError') {
+          const errors: any = [];
+
+          if (err.fields) {
+            Object.keys(err.fields).forEach((field) => {
+              if (field === 'username') {
+                errors.push({
+                  path: 'username',
+                  message: 'Username is already in use',
+                });
+              } else if (field === 'email') {
+                errors.push({
+                  path: 'email',
+                  message: 'Email is already in use',
+                });
+              }
+            });
+          }
+
+          if (errors.length > 0) return { userErrors: errors };
+        }
+
+        return {
+          userErrors: [
+            {
+              path: 'general',
+              message: 'Server error occurred, please try again.',
+            },
+          ],
+        };
+      }
     },
     async login(
       _: any,
@@ -257,15 +291,48 @@ export default {
       if (fileName) params.profileImage = fileName;
       if (removeProfileImage) params.profileImage = 'default.jpg';
 
-      await db.models.User.update(params, {
-        where: {
-          id: sessionUser.id,
-        },
-      });
+      try {
+        await db.models.User.update(params, {
+          where: {
+            id: sessionUser.id,
+          },
+        });
 
-      return {
-        success: true,
-      };
+        return {
+          success: true,
+        };
+      } catch (err: any) {
+        if (err.name && err.name === 'SequelizeUniqueConstraintError') {
+          const errors: any = [];
+
+          if (err.fields) {
+            Object.keys(err.fields).forEach((field) => {
+              if (field === 'username') {
+                errors.push({
+                  path: 'username',
+                  message: 'Username is already in use',
+                });
+              } else if (field === 'email') {
+                errors.push({
+                  path: 'email',
+                  message: 'Email is already in use',
+                });
+              }
+            });
+          }
+
+          if (errors.length > 0) return { userErrors: errors };
+        }
+
+        return {
+          updateErrors: [
+            {
+              path: 'general',
+              message: 'Server error occurred, please try again',
+            },
+          ],
+        };
+      }
     },
     async deleteAccount(_: any, vars: any, context: any): Promise<boolean> {
       const sessionUser = checkAuth(context);
