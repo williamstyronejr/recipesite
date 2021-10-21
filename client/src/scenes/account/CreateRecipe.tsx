@@ -268,7 +268,7 @@ const CreateRecipePage = () => {
           <label htmlFor="ingredients" className="form__label">
             <span className="form__labeling">Ingredients</span>
 
-            {errors.prepTime ? (
+            {errors.ingredients ? (
               <span className="form__label-error" data-cy="field-error">
                 {errors.ingredients}
               </span>
