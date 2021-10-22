@@ -1,8 +1,20 @@
 import path from 'path';
-import express, { Request, Response } from 'express';
-import logger from './logger';
-import { setUpRoutes } from '../routes';
+import cors from 'cors';
+import express from 'express';
+import { graphqlUploadExpress } from 'graphql-upload';
+import cookieParser from 'cookie-parser';
 const app = express();
+
+app.use(
+  cors({
+    credentials: true,
+    origin: 'http://localhost:3000',
+  }),
+);
+
+app.use(graphqlUploadExpress());
+app.use(cookieParser());
+app.use('/img', express.static(path.join(__dirname, '..', 'public', 'images')));
 
 // Static folder
 app.use(
@@ -11,15 +23,5 @@ app.use(
     path.join(__dirname, '..', '..', '..', '..', 'client', 'build', 'static'),
   ),
 );
-
-setUpRoutes(app);
-
-app.use((err: Error, req: Request, res: Response) => {
-  if (err) {
-    logger.error(err);
-  }
-
-  res.status(500).send('Server error has occurred.');
-});
 
 export default app;

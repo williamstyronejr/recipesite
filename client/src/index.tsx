@@ -7,17 +7,11 @@ import './index.css';
 import Root from './Root';
 import reportWebVitals from './reportWebVitals';
 
-const authLink = setContext(() => {
-  const token = localStorage.getItem('jwtToken');
-  return {
-    headers: {
-      Authorization: token ? `Bearer ${token}` : '',
-    },
-  };
-});
+const authLink = setContext(() => {});
 
 const httpLink = createUploadLink({
   uri: 'http://localhost:3001/graphql',
+  credentials: 'include',
 });
 
 const client = new ApolloClient({
@@ -29,7 +23,6 @@ const client = new ApolloClient({
           searchRecipes: {
             keyArgs: false,
             merge(existing = { recipes: [], endOfList: true }, incoming) {
-              // return [...existing, ...incoming];
               return {
                 recipes: [...existing.recipes, ...incoming.recipes],
                 endOfList: incoming.endOfList,

@@ -4,21 +4,16 @@ import jwt from 'jsonwebtoken';
 const { JWT_SECRET } = process.env;
 
 export default function checkAuth(context: any, required = true): any {
-  const authHeader = context.req.headers.authorization;
+  const { token } = context.req.cookies;
 
-  if (authHeader) {
-    const token = authHeader.split('Bearer ')[1];
-
-    if (token) {
-      try {
-        const user = jwt.verify(token, JWT_SECRET as string);
-        return user;
-      } catch (err) {
-        if (required) throw new AuthenticationError('Invalid/Expired token');
-      }
+  if (token) {
+    try {
+      const user = jwt.verify(token, JWT_SECRET as string);
+      return user;
+    } catch (err) {
+      if (required) throw new AuthenticationError('Invalid/Expired token');
     }
-    if (required)
-      throw new Error("Authentication token must be 'Bearer [token]");
   }
-  if (required) throw new Error('Authorization header must be provided');
+
+  if (required) throw new Error('No token was found.');
 }

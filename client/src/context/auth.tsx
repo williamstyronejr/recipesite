@@ -100,8 +100,6 @@ export function useAuthContext(): {
   const { state, dispatch } = context;
 
   function login(userData: any) {
-    localStorage.setItem('jwtToken', userData.token);
-
     dispatch({
       type: 'LOGIN',
       payload: userData,
@@ -109,11 +107,19 @@ export function useAuthContext(): {
   }
 
   function signout() {
-    localStorage.removeItem('jwtToken');
-
-    dispatch({
-      type: 'SIGNOUT',
-    });
+    fetch('http://localhost:3001/signout', {
+      method: 'POST',
+      credentials: 'include',
+    })
+      .then((res) => res.json())
+      .then(() => {
+        dispatch({
+          type: 'SIGNOUT',
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   return {

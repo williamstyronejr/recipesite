@@ -70,6 +70,7 @@ export default {
           confirmPassword: string;
         };
       },
+      context: any,
     ): Promise<Record<string, unknown>> {
       const { errors, valid } = await validateRegister(
         username,
@@ -96,6 +97,8 @@ export default {
           profileImage: 'default.jpg',
         });
         const token = generateToken(user);
+
+        context.res.cookie('token', token, { httpOnly: true });
 
         return {
           user: { ...user.toJSON(), token },
@@ -136,6 +139,7 @@ export default {
     async login(
       _: any,
       { username, password }: { username: string; password: string },
+      context: any,
     ): Promise<Record<string, unknown>> {
       const { errors, valid } = validateLogin(username, password);
 
@@ -171,6 +175,8 @@ export default {
       }
 
       const token = generateToken(user);
+
+      context.res.cookie('token', token, { httpOnly: true });
 
       return {
         user: {
