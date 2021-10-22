@@ -10,6 +10,9 @@ import Plate6 from '../images/plate6.png';
 import Plate7 from '../images/plate7.png';
 import Plate8 from '../images/plate8.png';
 import Plate9 from '../images/plate9.png';
+import Plate10 from '../images/plate10.png';
+import Plate11 from '../images/plate11.png';
+import Plate12 from '../images/plate12.png';
 import './styles/home.css';
 
 const HomePage = () => (
@@ -143,6 +146,15 @@ const HomePage = () => (
           </div>
           <div className="">
             <img className="popular__image" src={Plate9} alt="Plate of food" />
+          </div>
+          <div className="">
+            <img className="popular__image" src={Plate10} alt="Plate of food" />
+          </div>
+          <div className="">
+            <img className="popular__image" src={Plate11} alt="Plate of food" />
+          </div>
+          <div className="">
+            <img className="popular__image" src={Plate12} alt="Plate of food" />
           </div>
         </div>
       </div>
