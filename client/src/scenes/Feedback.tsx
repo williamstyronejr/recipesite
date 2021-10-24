@@ -10,7 +10,7 @@ const FeedbackPage = () => {
   };
 
   return (
-    <section className="feedback" onSubmit={submitHandler}>
+    <section className="page-form" onSubmit={submitHandler}>
       <form className="form">
         <header className="form__header">
           <h3 className="form__heading">Feedback Form</h3>
