@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { Sequelize, Model, DataTypes } from 'sequelize';
+import { Sequelize, Model, DataTypes, Options } from 'sequelize';
 import User from './User';
 import Recipe from './Recipe';
 import Comment from './Comment';
@@ -7,9 +7,21 @@ import Bookmark from './Bookmark';
 import Entity from './Entity';
 import Rating from './Rating';
 
-const { DATABASE_URL } = process.env;
+const { DATABASE_URL, NODE_ENV } = process.env;
 
-const sequelize: Sequelize = new Sequelize(DATABASE_URL || '');
+const options: Options = {};
+
+// Heroku only allows SSL connections on production
+if (NODE_ENV === 'production') {
+  options.dialectOptions = {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
+  };
+}
+
+const sequelize: Sequelize = new Sequelize(DATABASE_URL || '', options);
 
 const models: any = {
   User: User(sequelize, DataTypes),
