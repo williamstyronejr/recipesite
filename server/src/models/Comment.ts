@@ -5,6 +5,7 @@ interface CommentAttributes {
   content: string;
   author: number;
   source: number;
+  parentId?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -13,14 +14,17 @@ export default (sequelize: Sequelize, DataTypes: any): any => {
   class Comment extends Model {
     id!: number;
     content!: string;
-
+    author!: number;
+    parentId!: number | null;
+    source!: number;
     createdAt!: Date;
     updatedAt!: Date;
 
     static associate(models: any) {
       // define association here
+      Comment.belongsTo(models.Comment, { foreignKey: 'parentId' });
       Comment.belongsTo(models.User, { foreignKey: 'author' });
-      Comment.belongsTo(models.Recipe, {
+      Comment.belongsTo(models.Entity, {
         foreignKey: 'source',
       });
     }
@@ -37,12 +41,6 @@ export default (sequelize: Sequelize, DataTypes: any): any => {
       content: {
         type: DataTypes.STRING,
         allowNull: false,
-      },
-      createdAt: {
-        type: DataTypes.DATE,
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
       },
     },
     { sequelize, modelName: 'comment' },

@@ -122,6 +122,11 @@ export default gql`
     errors: [RatingError]
   }
 
+  type CommentPayload {
+    success: Boolean
+    errors: [UserInputError]
+  }
+
   input RegisterInput {
     username: String!
     email: String!
@@ -184,5 +189,9 @@ export default gql`
     updateBookmark(recipeId: ID!, bookmarking: Boolean!): Boolean!
 
     setRating(entityId: ID!, rating: Int!): RatingPayload!
+
+    createComment(source: ID!, parentId: ID, content: String!): CommentPayload
+
+    deleteComment(commentId: ID!): CommentPayload
   }
 `;
