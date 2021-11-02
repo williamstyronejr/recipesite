@@ -8,7 +8,7 @@ const AuthNav = ({
   userId,
   signout,
 }: {
-  userId: String;
+  userId: number;
   signout: Function;
 }) => (
   <ul className="header__list">
@@ -80,7 +80,7 @@ const Header = () => {
 
       <nav className="header__nav" role="navigation">
         {state.authenticated ? (
-          <AuthNav userId={state.id || ''} signout={signout} />
+          <AuthNav userId={state.id as number} signout={signout} />
         ) : (
           <ul className="header__list">
             <li className="header__item header__item--title">
