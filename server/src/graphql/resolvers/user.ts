@@ -347,6 +347,7 @@ export default {
         where: { id: sessionUser.id },
       });
 
+      context.res.clearCookie('token');
       return rowsDestroyed > 0;
     },
     async subscribeToLetter(
