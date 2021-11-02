@@ -11,20 +11,6 @@ declare namespace Cypress {
     ): Chainable<Element>;
 
     /**
-     * Custom command to save local storage state between tests. Recommended
-     *  to be use after each test
-     * @example cy.saveLocalStorage()
-     */
-    saveLocalStorage(): Chainable<Element>;
-
-    /**
-     * Custom command to restore local storage state. Recommended to be used
-     *  before each test.
-     * @example cy.restoreLocalStorage()
-     */
-    restoreLocalStorage(): Chainable<Element>;
-
-    /**
      * Custom command to create a new recipe assuming a user is already logged
      *  in.
      * @example cy.createRecipe(title, summary, prepTime, cookTime,
@@ -33,16 +19,14 @@ declare namespace Cypress {
     createRecipe(
       title: string,
       summary: string,
-      prepTime: string,
-      cookTime: string,
+      prepTime: number,
+      cookTime: number,
       published: boolean,
       ingredients: string,
       directions: string,
     ): Chainable<Element>;
   }
 }
-
-const localSaveState: Record<string, string> = {};
 
 Cypress.Commands.add('register', (email, username, password) => {
   cy.visit('/');
@@ -58,25 +42,13 @@ Cypress.Commands.add('register', (email, username, password) => {
   cy.location('pathname').should('eq', '/');
 });
 
-Cypress.Commands.add('saveLocalStorage', () => {
-  Object.keys(localStorage).forEach((key) => {
-    localSaveState[key] = localStorage[key];
-  });
-});
-
-Cypress.Commands.add('restoreLocalStorage', () => {
-  Object.keys(localSaveState).forEach((key) => {
-    localStorage.setItem(key, localSaveState[key]);
-  });
-});
-
 Cypress.Commands.add(
   'createRecipe',
   (
     title: string,
     summary: string,
-    prepTime: string,
-    cookTime: string,
+    prepTime: number,
+    cookTime: number,
     published: boolean,
     ingredients: string,
     directions: string,
@@ -85,8 +57,8 @@ Cypress.Commands.add(
     cy.contains('Dashboard').click();
     cy.contains('Create Recipe').click();
 
-    cy.get('input[name="prep"]').type(prepTime);
-    cy.get('input[name="cook"]').type(cookTime);
+    cy.get('input[name="prep"]').type(prepTime.toString());
+    cy.get('input[name="cook"]').type(cookTime.toString());
     cy.get('input[name="title"]').type(title);
     cy.get('textarea[name="summary"]').type(summary);
     cy.get('textarea[name="ingredients"]').type(ingredients);

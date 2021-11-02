@@ -1,4 +1,4 @@
-import { createRandomString } from '../utils';
+import { createRandomString } from '../../utils';
 
 describe('Creating a new account through local signup', () => {
   beforeEach(() => {
@@ -18,7 +18,7 @@ describe('Creating a new account through local signup', () => {
     cy.get('input[name="confirm"]').type('test');
 
     cy.get('form').submit();
-    cy.get('[data-cy="field-error"]').should('have.length', 3);
+    cy.get('[data-cy="field-error"]').should('have.length', 4);
   });
 
   it('Valid signup should redirect to home page', () => {

@@ -1,32 +1,19 @@
 import { createRandomString } from '../utils';
 
+const username = createRandomString(8);
+const email = createRandomString(8, '@email.com');
+const password = 'test';
+
+before(() => {
+  cy.clearCookies();
+  cy.register(email, username, password);
+});
+
+beforeEach(() => {
+  Cypress.Cookies.preserveOnce('token');
+});
+
 describe('Account Settings', () => {
-  const username = createRandomString(8);
-  const email = createRandomString(8, '@email.com');
-  const password = 'test';
-
-  before(() => {
-    cy.visit('/');
-    cy.contains('Signup').click();
-
-    cy.get('input[name="username"]').type(username);
-    cy.get('input[name="email"]').type(email);
-    cy.get('input[name="password"]').type(password);
-    cy.get('input[name="confirm"]').type(password);
-
-    cy.get('form').submit();
-
-    cy.location('pathname').should('eq', '/');
-  });
-
-  beforeEach(() => {
-    cy.restoreLocalStorage();
-  });
-
-  afterEach(() => {
-    cy.saveLocalStorage();
-  });
-
   it('Invalid field should display field errors', () => {
     cy.contains('Settings').click();
 
@@ -53,66 +40,7 @@ describe('Account Settings', () => {
   });
 });
 
-// Separate to avoid issues with test running
-describe('Account settings deletion', () => {
-  const username = createRandomString(8);
-  const email = createRandomString(8, '@email.com');
-  const password = 'test';
-
-  before(() => {
-    cy.visit('/');
-    cy.contains('Signup').click();
-
-    cy.get('input[name="username"]').type(username);
-    cy.get('input[name="email"]').type(email);
-    cy.get('input[name="password"]').type(password);
-    cy.get('input[name="confirm"]').type(password);
-
-    cy.get('form').submit();
-
-    cy.location('pathname').should('eq', '/');
-  });
-
-  it('Deleting account should redirect to signin page and user should be logged out', () => {
-    cy.contains('Settings').click();
-
-    cy.get('[data-cy="delete"]').click();
-    cy.get('[data-cy="confirm"]').click();
-
-    cy.location('pathname').should('eq', '/signin');
-
-    // Check if nav changed to non-authenticated version
-    cy.get('nav').contains('Signin');
-  });
-});
-
 describe('Password settings', () => {
-  const username = createRandomString(8);
-  const email = createRandomString(8, '@email.com');
-  const password = 'test';
-
-  before(() => {
-    cy.visit('/');
-    cy.contains('Signup').click();
-
-    cy.get('input[name="username"]').type(username);
-    cy.get('input[name="email"]').type(email);
-    cy.get('input[name="password"]').type(password);
-    cy.get('input[name="confirm"]').type(password);
-
-    cy.get('form').submit();
-
-    cy.location('pathname').should('eq', '/');
-  });
-
-  beforeEach(() => {
-    cy.restoreLocalStorage();
-  });
-
-  afterEach(() => {
-    cy.saveLocalStorage();
-  });
-
   it('Empty fields should display field errors', () => {
     cy.contains('Settings').click();
     cy.contains('Password').click();
@@ -147,5 +75,20 @@ describe('Password settings', () => {
     cy.get('form').submit();
 
     cy.get('[data-cy="form-notification"]');
+  });
+});
+
+describe('Account settings deletion', () => {
+  it('Deleting account should redirect to signin page and user should be logged out', () => {
+    cy.contains('Settings').click();
+    cy.contains('Account').click();
+
+    cy.get('[data-cy="delete"]').click();
+    cy.get('[data-cy="confirm"]').click();
+
+    cy.location('pathname').should('eq', '/signin');
+
+    // Check if nav changed to non-authenticated version
+    cy.get('nav').contains('Signin');
   });
 });

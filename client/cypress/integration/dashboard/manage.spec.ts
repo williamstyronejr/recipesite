@@ -4,7 +4,6 @@ describe('Managing recipes', () => {
   const username = createRandomString(8);
   const email = createRandomString(8, '@email.com');
   const password = 'test';
-
   const recipeTitle = 'fnasdkgnjgkfns';
 
   before(() => {
@@ -12,8 +11,8 @@ describe('Managing recipes', () => {
     cy.createRecipe(
       recipeTitle,
       't',
-      '12',
-      '12',
+      12,
+      12,
       true,
       'ingredients',
       'directions',
@@ -21,11 +20,7 @@ describe('Managing recipes', () => {
   });
 
   beforeEach(() => {
-    cy.restoreLocalStorage();
-  });
-
-  afterEach(() => {
-    cy.saveLocalStorage();
+    Cypress.Cookies.preserveOnce('token');
   });
 
   it('Editting recipe from manage should link to edit page', () => {
