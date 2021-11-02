@@ -48,6 +48,13 @@ export default gql`
     profileImage: String
     token: String!
   }
+  type Comment {
+    id: ID!
+    content: String!
+    author: String!
+    username: String!
+    profileImage: String!
+  }
   type Recipe {
     id: ID!
     entityId: ID!
@@ -64,12 +71,6 @@ export default gql`
     avgRating: Float
     userRating: Int
     ratingCount: Int
-  }
-  type Comment {
-    id: ID!
-    content: String!
-    author: String!
-    source: String!
   }
   type Profile {
     username: String!
@@ -124,6 +125,7 @@ export default gql`
 
   type CommentPayload {
     success: Boolean
+    comment: Comment
     errors: [UserInputError]
   }
 
@@ -158,7 +160,7 @@ export default gql`
     getProfile(userId: ID!): Profile
     getRecipe(recipeId: ID!): Recipe
     getUserRecipes(userId: ID!, publishedType: String!): [Recipe]
-    getCommentsByRecipe(author: ID!): [Comment]
+    getComments(entityId: ID!): [Comment]
 
     searchRecipes(search: Search): RecipePaged
   }
@@ -191,7 +193,6 @@ export default gql`
     setRating(entityId: ID!, rating: Int!): RatingPayload!
 
     createComment(source: ID!, parentId: ID, content: String!): CommentPayload
-
     deleteComment(commentId: ID!): CommentPayload
   }
 `;
