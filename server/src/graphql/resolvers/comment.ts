@@ -3,12 +3,31 @@ import checkAuth from '../utils/auth';
 
 export default {
   Query: {
-    async getCommentsByRecipe(
+    async getComments(
       _: any,
-      { author }: { author: string },
+      { entityId }: { entityId: number },
     ): Promise<any | null> {
-      const comments = await db.models.Comment.findAll({ where: { author } });
-      return comments;
+      try {
+        const comments: any = await db.sequelize.query(`
+        WITH RECURSIVE comment_tree (id, content, author, username, "parentId", "profileImage", "createdAt") AS
+        (
+          SELECT comments.id AS id, content, author, username, "parentId", users."profileImage" as "profileImage",  comments."createdAt" as createdAt
+          FROM comments INNER JOIN users ON users.id = comments.author
+          WHERE source=${entityId} AND "parentId" IS NULL
+          UNION ALL
+          SELECT  c.id, c.content, c.author, users.username, c."parentId", users."profileImage" as "profileImage", c."createdAt" as createdAt
+          FROM comments as c
+          JOIN comment_tree ct ON ct.id = c."parentId" 
+          JOIN users  ON users.id = c.author
+          ) 
+          SELECT * 
+          FROM comment_tree
+          `);
+
+        return comments[0];
+      } catch (err) {
+        return [];
+      }
     },
   },
   Mutation: {
@@ -25,7 +44,7 @@ export default {
       },
       context: any,
     ): Promise<any> {
-      const user = checkAuth(context);
+      const sessionUser = checkAuth(context);
 
       // Simple validation
       if (!content || content === '') {
@@ -38,16 +57,22 @@ export default {
       try {
         const comment = await db.models.Comment.create({
           content,
-          author: user.id,
+          author: sessionUser.id,
           parentId,
           source,
         });
 
+        const user = await db.models.User.findByPk(sessionUser.id);
+
         return {
           success: true,
+          comment: {
+            ...comment.toJSON(),
+            username: user.username,
+            profileImage: user.profileImage,
+          },
         };
       } catch (err) {
-        console.log(err);
         return {
           success: false,
         };
@@ -64,16 +89,25 @@ export default {
     ): Promise<any> {
       const user = checkAuth(context);
 
-      const rowDestroyed = await db.models.Comment.destroy({
-        where: {
-          id: commentId,
-          author: user.id,
-        },
-      });
+      try {
+        const rowDestroyed = await db.models.Comment.destroy({
+          where: {
+            id: commentId,
+            author: user.id,
+          },
+        });
 
-      return {
-        success: rowDestroyed > 0,
-      };
+        return {
+          success: rowDestroyed > 0,
+          comment: {
+            id: commentId,
+          },
+        };
+      } catch (err) {
+        return {
+          success: false,
+        };
+      }
     },
   },
 };
