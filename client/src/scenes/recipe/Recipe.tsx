@@ -5,6 +5,7 @@ import { useAuthContext } from '../../context/auth';
 import Loading from '../../components/Loading';
 import MissingPage from '../Missing';
 import Recipe from '../../components/Recipe';
+import Comments from '../../components/Comments';
 import './styles/recipe.css';
 
 const QUERY_RECIPE = gql`
@@ -78,6 +79,13 @@ const RecipePage = () => {
         ratingCount={ratingCount}
         isOwner={state.id === author}
         isPreview={false}
+      />
+
+      <Comments
+        entityId={entityId}
+        userId={state.id || null}
+        isSourceAuthor={state.id === author}
+        source={entityId}
       />
     </section>
   );
