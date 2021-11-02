@@ -20,7 +20,7 @@ app.use('/img', express.static(path.join(__dirname, '..', 'public', 'images')));
 app.use(
   '/static',
   express.static(
-    path.join(__dirname, '..', '..', '..', '..', 'client', 'build', 'static'),
+    path.join(__dirname, '..', '..', '..', 'client', 'build', 'static'),
   ),
 );
 
