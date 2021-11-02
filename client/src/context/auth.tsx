@@ -3,7 +3,7 @@ import { gql, useQuery } from '@apollo/client';
 import FullScreenLoading from '../components/FullScreenLoading';
 
 interface State {
-  id: string | null;
+  id: number | null;
   username: string | null;
   token: string | null;
   authenticated: boolean;
