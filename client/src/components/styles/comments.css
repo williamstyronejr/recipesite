@@ -13,10 +13,30 @@
   font-size: 2rem;
   font-weight: 500;
   text-align: center;
+  padding: 20px 0 50px 0;
 }
 
 .comments__list {
   list-style: none;
+  padding: 0;
+}
+
+.comments__item {
+}
+
+.comments__item--create {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.comments__error-input {
+  display: block;
+  background-color: #fbe6e6;
+  color: #501212;
+  font-size: 1.5rem;
+  padding: 1em 2em;
+  margin-bottom: 1em;
+  border-radius: 3px;
 }
 
 .comments__textarea {
@@ -68,12 +88,37 @@
     0 8px 12px 0 rgb(17 22 26 / 6%), 0 16px 24px 0 rgb(17 22 26 / 4%);
 }
 
+.comments__submit:disabled {
+  background-color: var(--color-disabled);
+}
+
 .comments__author {
   font-weight: 700;
   font-size: 1.5rem;
 }
+
+.comments__img {
+  height: 50px;
+  width: auto;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.comment__author-link {
+  vertical-align: middle;
+  color: var(--color-link);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.comment__author-link:hover {
+  color: var(--color-link-hover);
+  text-decoration: underline;
+}
+
 .comments__content {
   font-size: 1.5rem;
+  padding: 0 20px;
 }
 
 .comments__dividor {
@@ -83,5 +128,8 @@
 @media only screen and (min-width: 600px) {
   .comments__heading {
     font-size: 2.5rem;
+  }
+  .comments__list {
+    padding: 0 10px;
   }
 }
