@@ -1,3 +1,4 @@
+import { QueryTypes } from 'sequelize';
 import db from '../../models/index';
 import checkAuth from '../utils/auth';
 
@@ -8,23 +9,28 @@ export default {
       { entityId }: { entityId: number },
     ): Promise<any | null> {
       try {
-        const comments: any = await db.sequelize.query(`
-        WITH RECURSIVE comment_tree (id, content, author, username, "parentId", "profileImage", "createdAt") AS
-        (
-          SELECT comments.id AS id, content, author, username, "parentId", users."profileImage" as "profileImage",  comments."createdAt" as createdAt
-          FROM comments INNER JOIN users ON users.id = comments.author
-          WHERE source=${entityId} AND "parentId" IS NULL
-          UNION ALL
-          SELECT  c.id, c.content, c.author, users.username, c."parentId", users."profileImage" as "profileImage", c."createdAt" as createdAt
-          FROM comments as c
-          JOIN comment_tree ct ON ct.id = c."parentId" 
-          JOIN users  ON users.id = c.author
+        const comments: any = await db.sequelize.query(
+          `
+          WITH RECURSIVE comment_tree (id, content, author, username, "parentId", "profileImage", "createdAt") AS
+          (
+            SELECT comments.id AS id, content, author, username, "parentId", users."profileImage" as "profileImage",  comments."createdAt" as createdAt
+            FROM comments INNER JOIN users ON users.id = comments.author
+            WHERE source=$1 AND "parentId" IS NULL
+            
+            UNION ALL
+            
+            SELECT  c.id, c.content, c.author, users.username, c."parentId", users."profileImage" as "profileImage", c."createdAt" as createdAt
+            FROM comments as c
+            JOIN comment_tree ct ON ct.id = c."parentId" 
+            JOIN users  ON users.id = c.author
           ) 
           SELECT * 
           FROM comment_tree
-          `);
+          `,
+          { type: QueryTypes.SELECT, bind: [entityId] },
+        );
 
-        return comments[0];
+        return comments;
       } catch (err) {
         return [];
       }
