@@ -14,28 +14,29 @@ export default {
     ): Promise<any | null> {
       const user = checkAuth(context, false);
 
-      const recipeData = await db.models.Recipe.findByPk(recipeId, {
-        include: [
-          {
-            model: db.models.User,
-            as: 'user',
-            attributes: { exclude: ['hash'] },
-          },
-        ],
-      });
+      try {
+        const recipeData = await db.models.Recipe.findByPk(recipeId, {
+          include: [
+            {
+              model: db.models.User,
+              as: 'user',
+              attributes: { exclude: ['hash'] },
+            },
+          ],
+        });
 
-      if (!recipeData || !recipeData.published) return null;
+        if (!recipeData || !recipeData.published) return null;
 
-      /**
-       * Can't get sub querys to work using raw query for now
-       */
-      const ratingData: Array<{
-        avgRating?: number;
-        ratingCount?: number;
-        rating?: number;
-      }> = await db.sequelize.query(
-        `
-            SELECT 
+        /**
+         * Can't get sub querys to work using raw query for now
+         */
+        const ratingData: Array<{
+          avgRating?: number;
+          ratingCount?: number;
+          rating?: number;
+        }> = await db.sequelize.query(
+          `
+          SELECT
               AVG("rating") as "avgRating",
               COUNT("rating") as "ratingCount"
               ${
@@ -45,19 +46,22 @@ export default {
               }
             FROM "public"."ratings"
             WHERE "entityId" = ${recipeData.entityId}
-          `,
-        { type: QueryTypes.SELECT },
-      );
+            `,
+          { type: QueryTypes.SELECT },
+        );
 
-      const recipe = recipeData.toJSON();
+        const recipe = recipeData.toJSON();
 
-      return {
-        ...recipe,
-        authorName: recipe.user.username,
-        avgRating: ratingData.length ? ratingData[0].avgRating : 0,
-        ratingCount: ratingData.length ? ratingData[0].ratingCount : 0,
-        userRating: ratingData.length ? ratingData[0].rating : 0,
-      };
+        return {
+          ...recipe,
+          authorName: recipe.user.username,
+          avgRating: ratingData.length ? ratingData[0].avgRating : 0,
+          ratingCount: ratingData.length ? ratingData[0].ratingCount : 0,
+          userRating: ratingData.length ? ratingData[0].rating : 0,
+        };
+      } catch (err) {
+        return {};
+      }
     },
     async getUserRecipes(
       _: any,
