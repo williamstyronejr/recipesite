@@ -84,7 +84,6 @@ const RecipePage = () => {
       <Comments
         entityId={entityId}
         userId={state.id || null}
-        isSourceAuthor={state.id === author}
         source={entityId}
       />
     </section>
