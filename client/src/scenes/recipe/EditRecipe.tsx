@@ -204,7 +204,7 @@ const EditRecipe = () => {
           prepTime={prepTime}
           cookTime={cookTime}
           authorName={state.username || ''}
-          author={state.id || ''}
+          author={state.id as number}
           mainImage={mainImage}
           ingredients={ingredients}
           directions={directions}

@@ -29,7 +29,7 @@ const Recipe = ({
   prepTime: string;
   cookTime: string;
   authorName: string;
-  author: string;
+  author: number;
   mainImage: string;
   ingredients: string;
   directions: string;
