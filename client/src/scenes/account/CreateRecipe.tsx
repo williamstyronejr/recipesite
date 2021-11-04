@@ -67,6 +67,11 @@ const CreateRecipePage = () => {
         return setErrors(errs);
       }
 
+      if (!res.recipe)
+        return setErrors({
+          general: 'Server error occurred, please try again.',
+        });
+
       history.push(`/recipe/${res.recipe.id}`);
     },
     onError(err) {
@@ -124,6 +129,12 @@ const CreateRecipePage = () => {
   return (
     <section className="form-wrapper form-wrapper--wide">
       <form className="form" onSubmit={submitHandler}>
+        <header className="form__header">
+          {errors.general ? (
+            <div className="form__error">{errors.general}</div>
+          ) : null}
+        </header>
+
         <fieldset className="form__field">
           <button
             className="form__button form__button--file"

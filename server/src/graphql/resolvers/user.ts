@@ -12,6 +12,7 @@ import {
 import db from '../../models/index';
 import checkAuth from '../utils/auth';
 import { uploadImage } from './utils';
+import logger from '../../services/logger';
 
 const { JWT_SECRET } = process.env;
 const SALT_ROUNDS = 8;
@@ -30,22 +31,31 @@ export default {
       __: any,
       { userId }: { userId: string },
     ): Promise<Record<string, unknown> | null> {
-      const user = await db.models.User.findByPk(userId);
+      try {
+        const user = await db.models.User.findByPk(userId);
 
-      if (!user) throw new UserInputError('User does not exist');
+        if (!user) throw new UserInputError('User does not exist');
 
-      const topRecipes = await db.models.Recipe.findAll({
-        where: { author: userId, published: true },
-        limit: 10,
-        order: [['createdAt', 'DESC']],
-      });
+        const topRecipes = await db.models.Recipe.findAll({
+          where: { author: userId, published: true },
+          limit: 10,
+          order: [['createdAt', 'DESC']],
+        });
 
-      return {
-        username: user.username,
-        bio: user.bio,
-        profileImage: user.profileImage,
-        recipes: topRecipes,
-      };
+        return {
+          username: user.username,
+          bio: user.bio,
+          profileImage: user.profileImage,
+          recipes: topRecipes,
+        };
+      } catch (err: any) {
+        // Sequlize error, invalid id type (non integer)
+        if (err.original && err.original.code === '22P02') {
+          logger.warn(`User with id, ${userId}, could not be found.`);
+        }
+
+        return null;
+      }
     },
     async getSession(
       _: any,

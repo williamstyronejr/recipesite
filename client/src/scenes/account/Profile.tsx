@@ -41,7 +41,7 @@ const ProfilePage = () => {
 
   if (loading) return <Loading />;
   if (error) return <UserNotFound />;
-  if (!data) return <UserNotFound />;
+  if (!data || !data.getProfile) return <UserNotFound />;
 
   const { username, recipes, bio, profileImage } = data.getProfile;
 

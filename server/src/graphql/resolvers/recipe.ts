@@ -4,6 +4,7 @@ import checkAuth from '../utils/auth';
 import { validateRecipe } from '../utils/validators';
 import { uploadImage } from './utils';
 import { QueryTypes } from 'sequelize';
+import logger from '../../services/logger';
 
 export default {
   Query: {
@@ -59,8 +60,12 @@ export default {
           ratingCount: ratingData.length ? ratingData[0].ratingCount : 0,
           userRating: ratingData.length ? ratingData[0].rating : 0,
         };
-      } catch (err) {
-        return {};
+      } catch (err: any) {
+        // Sequlize error, invalid id type (non integer)
+        if (err.original && err.original.code === '22P02') {
+          logger.warn(`Recipe with id, ${recipeId}, could not be found.`);
+        }
+        return null;
       }
     },
     async getUserRecipes(
@@ -70,6 +75,7 @@ export default {
     ): Promise<Array<any>> {
       const user = await checkAuth(content);
 
+      // Users must match when getting privated recipes
       if (publishedType === 'private' && user.id.toString() !== userId)
         return [];
 
@@ -79,9 +85,17 @@ export default {
       if (publishedType === 'private') params.published = false;
       if (publishedType === 'public') params.published = true;
 
-      const recipes = await db.models.Recipe.findAll({ where: params });
+      try {
+        const recipes = await db.models.Recipe.findAll({ where: params });
 
-      return recipes;
+        return recipes;
+      } catch (err: any) {
+        // Sequlize error, invalid id type (non integer)
+        if (err.original && err.original.code === '22P02') {
+          logger.warn(`User with id, ${userId}, could not be found.`);
+        }
+        return [];
+      }
     },
     async searchRecipes(
       _: any,
@@ -106,25 +120,34 @@ export default {
           [Op.like]: q,
         };
 
-      const recipes = await db.models.Recipe.findAll({
-        where: {
-          ...where,
-          published: true,
-        },
-        include: {
-          model: db.models.User,
-          as: 'user',
-          where: innerWhere,
-          attributes: { exclude: ['hash'] }, // Remove hash from results
-        },
-        order: ordering,
-        limit,
-        offset,
-      });
-      return {
-        recipes: recipes,
-        endOfList: recipes.length !== limit,
-      };
+      try {
+        const recipes = await db.models.Recipe.findAll({
+          where: {
+            ...where,
+            published: true,
+          },
+          include: {
+            model: db.models.User,
+            as: 'user',
+            where: innerWhere,
+            attributes: { exclude: ['hash'] }, // Remove hash from results
+          },
+          order: ordering,
+          limit,
+          offset,
+        });
+
+        return {
+          recipes: recipes,
+          endOfList: recipes.length !== limit,
+        };
+      } catch (err: any) {
+        console.log(err);
+        return {
+          recipes: [],
+          endOfList: true,
+        };
+      }
     },
   },
   Mutation: {
@@ -174,21 +197,25 @@ export default {
       }
       const fileName = await uploadImage(mainImage);
 
-      const entity = await db.models.Entity.create({});
-      const recipe = await db.models.Recipe.create({
-        entityId: entity.id,
-        title,
-        summary,
-        directions,
-        ingredients,
-        cookTime,
-        prepTime,
-        published,
-        author: user.id,
-        mainImage: fileName ? fileName : 'defaultRecipe.jpg',
-      });
+      try {
+        const entity = await db.models.Entity.create({});
+        const recipe = await db.models.Recipe.create({
+          entityId: entity.id,
+          title,
+          summary,
+          directions,
+          ingredients,
+          cookTime,
+          prepTime,
+          published,
+          author: user.id,
+          mainImage: fileName ? fileName : 'defaultRecipe.jpg',
+        });
 
-      return { recipe, errors: null };
+        return { recipe, errors: null };
+      } catch (err) {
+        return {};
+      }
     },
     async updateRecipe(
       _: any,
@@ -253,17 +280,23 @@ export default {
       if (typeof published === 'boolean') params.published = published;
       if (fileName) params.mainImage = fileName;
 
-      const results = await db.models.Recipe.update(params, {
-        where: {
-          id,
-          author: user.id,
-        },
-      });
+      try {
+        const results = await db.models.Recipe.update(params, {
+          where: {
+            id,
+            author: user.id,
+          },
+        });
 
-      return {
-        success: results[0] > 0,
-        errors: null,
-      };
+        return {
+          success: results[0] > 0,
+          errors: null,
+        };
+      } catch (err) {
+        return {
+          success: false,
+        };
+      }
     },
 
     async deleteRecipe(
@@ -273,14 +306,18 @@ export default {
     ): Promise<boolean> {
       const user = checkAuth(context);
 
-      const rowsDestroyed = await db.models.Recipe.destroy({
-        where: {
-          id: recipeId,
-          author: user.id,
-        },
-      });
+      try {
+        const rowsDestroyed = await db.models.Recipe.destroy({
+          where: {
+            id: recipeId,
+            author: user.id,
+          },
+        });
 
-      return rowsDestroyed > 0;
+        return rowsDestroyed > 0;
+      } catch (err) {
+        return false;
+      }
     },
   },
 };
