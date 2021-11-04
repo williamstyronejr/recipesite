@@ -1,6 +1,7 @@
 import path from 'path';
 import crypto from 'crypto';
 import { createWriteStream } from 'fs';
+import { FileUpload } from 'graphql-upload';
 
 const PATH_TO_IMG = path.join(__dirname, '..', '..', 'public', 'images');
 
@@ -25,7 +26,9 @@ function generateRandomString(append = ''): Promise<string> {
  * @returns {Promise<String|null>} Returns a promise to resolve with file name
  *  of the uploaded file, or null if no file was uploaded.
  */
-export async function uploadImage(file: any): Promise<string | null> {
+export async function uploadImage(
+  file: FileUpload | null,
+): Promise<string | null> {
   if (!file) return null;
 
   const { filename, mimetype, createReadStream } = await file;
