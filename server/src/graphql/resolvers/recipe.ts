@@ -65,6 +65,7 @@ export default {
         if (err.original && err.original.code === '22P02') {
           logger.warn(`Recipe with id, ${recipeId}, could not be found.`);
         }
+
         return null;
       }
     },
@@ -94,6 +95,7 @@ export default {
         if (err.original && err.original.code === '22P02') {
           logger.warn(`User with id, ${userId}, could not be found.`);
         }
+
         return [];
       }
     },
@@ -113,8 +115,6 @@ export default {
     ): Promise<any | null> {
       const ordering = order === 'rating' ? [[]] : [['createdAt', 'DESC']];
       const where: { title?: any } = {};
-      const innerWhere: { username?: string } = {};
-      if (author) innerWhere.username = author;
       if (q)
         where.title = {
           [Op.like]: q,
@@ -126,12 +126,6 @@ export default {
             ...where,
             published: true,
           },
-          include: {
-            model: db.models.User,
-            as: 'user',
-            where: innerWhere,
-            attributes: { exclude: ['hash'] }, // Remove hash from results
-          },
           order: ordering,
           limit,
           offset,
@@ -142,7 +136,6 @@ export default {
           endOfList: recipes.length !== limit,
         };
       } catch (err: any) {
-        console.log(err);
         return {
           recipes: [],
           endOfList: true,
@@ -214,7 +207,15 @@ export default {
 
         return { recipe, errors: null };
       } catch (err) {
-        return {};
+        return {
+          recipe: null,
+          errors: [
+            {
+              path: 'general',
+              message: 'An error has occurred, please try again.',
+            },
+          ],
+        };
       }
     },
     async updateRecipe(
@@ -266,21 +267,21 @@ export default {
         };
       }
 
-      const fileName = !removeImage
-        ? await uploadImage(mainImage)
-        : 'defaultRecipe.jpg';
-
-      const params: Record<string, unknown> = {};
-      if (title) params.title = title;
-      if (summary) params.summary = summary;
-      if (directions) params.directions = directions;
-      if (ingredients) params.ingredients = ingredients;
-      if (cookTime) params.cookTime = cookTime;
-      if (prepTime) params.prepTime = prepTime;
-      if (typeof published === 'boolean') params.published = published;
-      if (fileName) params.mainImage = fileName;
-
       try {
+        const fileName = !removeImage
+          ? await uploadImage(mainImage)
+          : 'defaultRecipe.jpg';
+
+        const params: Record<string, unknown> = {};
+        if (title) params.title = title;
+        if (summary) params.summary = summary;
+        if (directions) params.directions = directions;
+        if (ingredients) params.ingredients = ingredients;
+        if (cookTime) params.cookTime = cookTime;
+        if (prepTime) params.prepTime = prepTime;
+        if (typeof published === 'boolean') params.published = published;
+        if (fileName) params.mainImage = fileName;
+
         const results = await db.models.Recipe.update(params, {
           where: {
             id,

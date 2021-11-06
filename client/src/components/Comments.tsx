@@ -113,6 +113,10 @@ const Comments = ({
 
           return setErrors(errs);
         }
+
+        setErrors({
+          content: 'Error occurred creating comment, please try again.',
+        });
       },
       onError() {
         //

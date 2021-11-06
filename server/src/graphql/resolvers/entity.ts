@@ -22,6 +22,7 @@ export default {
           success: true,
         };
       } catch (err: any) {
+        // Sequlize error for entityId not existing in table
         if (err.original && err.original.code === '23503') {
           return {
             success: false,

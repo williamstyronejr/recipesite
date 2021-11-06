@@ -63,8 +63,13 @@ export default {
       context: any,
     ): Promise<Record<string, unknown> | null> {
       const sessionUser = checkAuth(context);
-      const user = await db.models.User.findByPk(sessionUser.id);
-      return user;
+      try {
+        const user = await db.models.User.findByPk(sessionUser.id);
+
+        return user;
+      } catch (err) {
+        return null;
+      }
     },
   },
   Mutation: {
@@ -96,9 +101,9 @@ export default {
         };
       }
 
-      const hash = await bcrpty.hash(password, SALT_ROUNDS);
-
       try {
+        const hash = await bcrpty.hash(password, SALT_ROUNDS);
+
         const user = await db.models.User.create({
           username,
           email,
@@ -157,43 +162,54 @@ export default {
         return { userErrors: errors };
       }
 
-      const user = await db.models.User.findOne({ where: { username } });
+      try {
+        const user = await db.models.User.findOne({ where: { username } });
 
-      if (!user) {
+        if (!user) {
+          return {
+            userErrors: [
+              {
+                path: 'general',
+                message: 'Invalid username or password',
+                reason: 'Wrong Credetials',
+              },
+            ],
+          };
+        }
+
+        const match = await bcrpty.compare(password, user.hash);
+        if (!match) {
+          return {
+            userErrors: [
+              {
+                path: 'general',
+                message: 'Invalid username or password',
+                reason: 'Wrong Credetials',
+              },
+            ],
+          };
+        }
+
+        const token = generateToken(user);
+
+        context.res.cookie('token', token, { httpOnly: true });
+
+        return {
+          user: {
+            ...user.dataValues,
+            token,
+          },
+        };
+      } catch (err) {
         return {
           userErrors: [
             {
               path: 'general',
-              message: 'Invalid username or password',
-              reason: 'Wrong Credetials',
+              message: 'An error has occurred, please try again.',
             },
           ],
         };
       }
-
-      const match = await bcrpty.compare(password, user.hash);
-      if (!match) {
-        return {
-          userErrors: [
-            {
-              path: 'general',
-              message: 'Invalid username or password',
-              reason: 'Wrong Credetials',
-            },
-          ],
-        };
-      }
-
-      const token = generateToken(user);
-
-      context.res.cookie('token', token, { httpOnly: true });
-
-      return {
-        user: {
-          ...user.dataValues,
-          token,
-        },
-      };
     },
     async recovery(
       _: any,
@@ -234,33 +250,45 @@ export default {
         };
       }
 
-      const sessionUser = checkAuth(context);
-      const hash = await bcrpty.hash(newPassword, SALT_ROUNDS);
-      const user = await db.models.User.findByPk(sessionUser.id);
-      const match = await bcrpty.compare(oldPassword, user.hash);
+      try {
+        const sessionUser = checkAuth(context);
+        const hash = await bcrpty.hash(newPassword, SALT_ROUNDS);
+        const user = await db.models.User.findByPk(sessionUser.id);
+        const match = await bcrpty.compare(oldPassword, user.hash);
 
-      if (!match) {
+        if (!match) {
+          return {
+            updateErrors: [
+              {
+                path: 'oldPassword',
+                message: 'Incorrect password',
+                reason: 'Wrong Credetials',
+              },
+            ],
+          };
+        }
+
+        const results = await db.models.User.update(
+          { hash },
+          {
+            where: {
+              id: sessionUser.id,
+            },
+          },
+        );
+
+        return { success: results[0] > 0 };
+      } catch (err) {
         return {
+          success: false,
           updateErrors: [
             {
-              path: 'oldPassword',
-              message: 'Incorrect password',
-              reason: 'Wrong Credetials',
+              path: 'general',
+              message: 'An error has occurred, please try again.',
             },
           ],
         };
       }
-
-      const results = await db.models.User.update(
-        { hash },
-        {
-          where: {
-            id: sessionUser.id,
-          },
-        },
-      );
-
-      return { success: results[0] > 0 };
     },
     async updateAccount(
       _: any,
@@ -279,6 +307,7 @@ export default {
       },
       context: any,
     ): Promise<Record<string, unknown>> {
+      const sessionUser = checkAuth(context);
       const { errors, valid } = await validateAccountUpdate(
         username,
         email,
@@ -292,22 +321,21 @@ export default {
         };
       }
 
-      const sessionUser = checkAuth(context);
-      const fileName = await uploadImage(profileImage);
-
-      const params: {
-        username?: string;
-        email?: string;
-        bio?: string;
-        profileImage?: string;
-      } = {};
-      if (username) params.username = username;
-      if (email) params.email = email;
-      if (bio || bio === '') params.bio = bio;
-      if (fileName) params.profileImage = fileName;
-      if (removeProfileImage) params.profileImage = 'default.jpg';
-
       try {
+        const fileName = await uploadImage(profileImage);
+
+        const params: {
+          username?: string;
+          email?: string;
+          bio?: string;
+          profileImage?: string;
+        } = {};
+        if (username) params.username = username;
+        if (email) params.email = email;
+        if (bio || bio === '') params.bio = bio;
+        if (fileName) params.profileImage = fileName;
+        if (removeProfileImage) params.profileImage = 'default.jpg';
+
         await db.models.User.update(params, {
           where: {
             id: sessionUser.id,
@@ -353,12 +381,16 @@ export default {
     async deleteAccount(_: any, vars: any, context: any): Promise<boolean> {
       const sessionUser = checkAuth(context);
 
-      const rowsDestroyed = await db.models.User.destroy({
-        where: { id: sessionUser.id },
-      });
+      try {
+        const rowsDestroyed = await db.models.User.destroy({
+          where: { id: sessionUser.id },
+        });
 
-      context.res.clearCookie('token');
-      return rowsDestroyed > 0;
+        context.res.clearCookie('token');
+        return rowsDestroyed > 0;
+      } catch (err) {
+        return false;
+      }
     },
     async subscribeToLetter(
       _: any,

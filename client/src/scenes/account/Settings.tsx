@@ -272,7 +272,10 @@ const AccountForm = ({
 
   const [deleteAccount] = useMutation(MUTATION_DELETE, {
     update(_: any, { data: { deleteAccount: deleted } }) {
-      if (deleted) signout();
+      if (deleted) return signout();
+      setErrors({
+        general: 'An error has occurred, please try again.',
+      });
     },
   });
 

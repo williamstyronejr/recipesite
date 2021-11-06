@@ -55,7 +55,7 @@ function authReducer(state: State, action: { type: String; payload?: any }) {
       };
 
     default:
-      throw new Error('Unsupport action type');
+      throw new Error(`Unsupported action type: ${action.type}`);
   }
 }
 
