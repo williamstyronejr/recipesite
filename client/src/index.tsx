@@ -1,21 +1,64 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
+import {
+  ApolloProvider,
+  ApolloClient,
+  InMemoryCache,
+  from,
+} from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
+import { onError } from '@apollo/client/link/error';
 import { createUploadLink } from 'apollo-upload-client';
 import './index.css';
 import Root from './Root';
 import reportWebVitals from './reportWebVitals';
 
-const authLink = setContext(() => {});
+function getCookie(name: string): string | null {
+  if (!document.cookie) {
+    return null;
+  }
+
+  const xsrfCookies = document.cookie
+    .split(';')
+    .map((c) => c.trim())
+    .filter((c) => c.startsWith(`${name}=`));
+
+  if (xsrfCookies.length === 0) {
+    return null;
+  }
+  return decodeURIComponent(xsrfCookies[0].split('=')[1]);
+}
+
+const authLink = setContext((_, { headers }) => {
+  const token = getCookie('CSRF-TOKEN');
+  return {
+    headers: {
+      ...headers,
+      'csrf-token': token,
+    },
+  };
+});
 
 const httpLink = createUploadLink({
   uri: 'http://localhost:3001/graphql',
   credentials: 'include',
 });
 
+const errorLink = onError(({ graphQLErrors, operation, forward }) => {
+  if (graphQLErrors) {
+    graphQLErrors.forEach(({ extensions, path }) => {
+      if (extensions && extensions.code === 'UNAUTHENTICATED') {
+        // eslint-disable-next-line no-restricted-globals
+        if (path && path[0] !== 'getSession') location.reload();
+      }
+    });
+
+    return forward(operation);
+  }
+});
+
 const client = new ApolloClient({
-  link: authLink.concat(httpLink),
+  link: from([errorLink, authLink, httpLink]),
   cache: new InMemoryCache({
     typePolicies: {
       Query: {
