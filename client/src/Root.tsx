@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect,
+} from 'react-router-dom';
 import HomePage from './scenes/Home';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -20,9 +25,15 @@ import MissingPage from './scenes/Missing';
 import ExplorePage from './scenes/explore/Explore';
 import DashboardPage from './scenes/dashboard/Dashboard';
 import ManageRecipesPage from './scenes/dashboard/ManageRecipes';
-import { AuthProvider } from './context/auth';
+import { AuthProvider, useAuthContext } from './context/auth';
 import AnalyticsPage from './scenes/dashboard/Analytics';
 import RecoveryPage from './scenes/auth/Recovery';
+
+const ProtectedRoutes: React.FunctionComponent<{}> = ({ children }) => {
+  const { state } = useAuthContext();
+
+  return state.authenticated ? <>{children}</> : <Redirect to="/signin" />;
+};
 
 export default () => (
   <Router>
@@ -43,18 +54,20 @@ export default () => (
 
           <Route path="/search" component={SearchPage} />
           <Route exact path="/recipe/:recipeId" component={RecipePage} />
-          <Route path="/recipe/:recipeId/edit" component={EditRecipePage} />
-
           <Route path="/explore/:type" component={ExplorePage} />
 
-          <Route exact path="/dashboard" component={DashboardPage} />
-          <Route path="/dashboard/manage" component={ManageRecipesPage} />
-          <Route path="/dashboard/analytics" component={AnalyticsPage} />
-
-          <Route path="/account/settings" component={SettingsPage} />
-          <Route path="/account/recipe/create" component={CreateRecipePage} />
           <Route path="/account/profile/:userId" component={ProfilePage} />
 
+          <ProtectedRoutes>
+            <Route path="/recipe/:recipeId/edit" component={EditRecipePage} />
+
+            <Route exact path="/dashboard" component={DashboardPage} />
+            <Route path="/dashboard/manage" component={ManageRecipesPage} />
+            <Route path="/dashboard/analytics" component={AnalyticsPage} />
+
+            <Route path="/account/settings" component={SettingsPage} />
+            <Route path="/account/recipe/create" component={CreateRecipePage} />
+          </ProtectedRoutes>
           <Route component={MissingPage} />
         </Switch>
       </main>
