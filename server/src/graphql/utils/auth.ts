@@ -11,9 +11,10 @@ export default function checkAuth(context: any, required = true): any {
       const user = jwt.verify(token, JWT_SECRET as string);
       return user;
     } catch (err) {
+      context.res.clearCookie('token');
       if (required) throw new AuthenticationError('Invalid/Expired token');
     }
   }
 
-  if (required) throw new Error('No token was found.');
+  if (required) throw new AuthenticationError('No token was found.');
 }
