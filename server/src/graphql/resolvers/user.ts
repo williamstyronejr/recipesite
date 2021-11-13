@@ -71,6 +71,28 @@ export default {
         return null;
       }
     },
+    async getSettings(
+      _: any,
+      vars: any,
+      context: any,
+    ): Promise<Record<string, unknown> | null> {
+      const sessionUser = checkAuth(context);
+
+      try {
+        const user = await db.models.User.findByPk(sessionUser.id);
+        if (!user) return null;
+
+        return {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          bio: user.bio,
+          profileImage: user.profileImage,
+        };
+      } catch (err) {
+        return null;
+      }
+    },
   },
   Mutation: {
     async register(

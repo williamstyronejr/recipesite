@@ -40,6 +40,15 @@ export default gql`
     bio: String
     profileImage: String
   }
+
+  type Settings {
+    id: ID!
+    username: String!
+    email: String
+    bio: String
+    profileImage: String
+  }
+
   type User {
     id: ID!
     email: String!
@@ -157,6 +166,7 @@ export default gql`
 
   type Query {
     getSession: Session
+    getSettings: Settings
     getProfile(userId: ID!): Profile
     getRecipe(recipeId: ID!): Recipe
     getUserRecipes(userId: ID!, publishedType: String!): [Recipe]
