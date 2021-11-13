@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useHistory, Redirect } from 'react-router-dom';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { useAuthContext } from '../../context/auth';
 import ConfirmDialog from '../../components/ConfirmDialog';
@@ -73,7 +72,7 @@ const MUTATION_DELETE = gql`
 
 const QUERY_USER = gql`
   query {
-    getSession {
+    getSettings {
       username
       email
       bio
@@ -82,7 +81,7 @@ const QUERY_USER = gql`
   }
 `;
 
-const PasswordForm = ({ unauth }: { unauth: Function }) => {
+const PasswordForm = () => {
   const [oldPassword, setOldPassword] = React.useState<string>('');
   const [newPassword, setNewPassword] = React.useState<string>('');
   const [confirmPassword, setConfirmPassword] = React.useState<string>('');
@@ -102,13 +101,7 @@ const PasswordForm = ({ unauth }: { unauth: Function }) => {
 
       setStatus(true);
     },
-    onError({ graphQLErrors }) {
-      if (graphQLErrors && graphQLErrors[0].extensions) {
-        if (graphQLErrors[0].extensions.code === 'UNAUTHENTICATED') {
-          return unauth();
-        }
-      }
-
+    onError() {
       setErrors({ general: 'Server error occurred, please try again.' });
     },
     variables: {
@@ -224,14 +217,13 @@ const PasswordForm = ({ unauth }: { unauth: Function }) => {
 };
 
 const AccountForm = ({
-  unauth,
   signout,
   initialUsername,
   initialEmail,
   initialBio,
   initialImage,
 }: {
-  unauth: Function;
+  // unauth: Function;
   signout: Function;
   initialUsername: string;
   initialEmail: string;
@@ -259,13 +251,7 @@ const AccountForm = ({
 
       setStatus(true);
     },
-    onError({ graphQLErrors }) {
-      if (graphQLErrors && graphQLErrors[0].extensions) {
-        if (graphQLErrors[0].extensions.code === 'UNAUTHENTICATED') {
-          return unauth();
-        }
-      }
-
+    onError() {
       setErrors({ general: 'Server error occurred, please try again.' });
     },
   });
@@ -457,21 +443,16 @@ const AccountForm = ({
 };
 
 const SettingsPage = () => {
-  const { state, signout } = useAuthContext();
-  const history = useHistory();
+  const { signout } = useAuthContext();
   const [selected, setSelected] = React.useState('account');
-  const { loading, data } = useQuery(QUERY_USER);
+  const { loading, data } = useQuery(QUERY_USER, { fetchPolicy: 'no-cache' });
 
-  if (!state.authenticated) return <Redirect to="/signin" />;
   if (loading || !data) return <Loading />;
-  const { username, email, bio, profileImage } = data.getSession;
-
-  const onUnauth = () => history.push('/signin');
+  const { username, email, bio, profileImage } = data.getSettings;
 
   const settings =
     selected === 'account' ? (
       <AccountForm
-        unauth={onUnauth}
         initialImage={profileImage}
         initialUsername={username}
         initialEmail={email}
@@ -479,7 +460,7 @@ const SettingsPage = () => {
         signout={signout}
       />
     ) : (
-      <PasswordForm unauth={onUnauth} />
+      <PasswordForm />
     );
 
   return (

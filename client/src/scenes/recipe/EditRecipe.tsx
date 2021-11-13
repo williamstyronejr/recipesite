@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Redirect, useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { useAuthContext } from '../../context/auth';
 import Recipe from '../../components/Recipe';
@@ -71,7 +71,7 @@ const UPDATE_RECIPE = gql`
 
 const EditRecipe = () => {
   const { recipeId } = useParams<{ recipeId: string }>();
-  const { state, signout } = useAuthContext();
+  const { state } = useAuthContext();
   const history = useHistory();
   const fileRef = React.createRef<HTMLInputElement>();
   const [previewVisible, setPreviewVisible] = React.useState<boolean>(false);
@@ -92,12 +92,7 @@ const EditRecipe = () => {
     update(_, { data: { deleteRecipe: complete } }) {
       if (complete) history.push(`/account/profile/${state.id}`);
     },
-    onError({ graphQLErrors }) {
-      if (graphQLErrors && graphQLErrors[0].extensions) {
-        if (graphQLErrors[0].extensions.code === 'UNAUTHENTICATED') {
-          return signout();
-        }
-      }
+    onError() {
       setErrors({ general: 'Recipe could not be deleted, please try again.' });
     },
     variables: {
@@ -117,12 +112,7 @@ const EditRecipe = () => {
       }
       history.push(`/recipe/${recipeId}`);
     },
-    onError({ graphQLErrors }) {
-      if (graphQLErrors && graphQLErrors[0].extensions) {
-        if (graphQLErrors[0].extensions.code === 'UNAUTHENTICATED') {
-          return signout();
-        }
-      }
+    onError() {
       setErrors({ general: 'Server error occurrer, please try again.' });
     },
     variables: {
@@ -154,8 +144,6 @@ const EditRecipe = () => {
       recipeId,
     },
   });
-
-  if (!state.authenticated) return <Redirect to="/signin" />;
 
   if (loading) return <Loading />;
 

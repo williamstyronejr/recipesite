@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { gql, useQuery, useMutation } from '@apollo/client';
 import { useAuthContext } from '../../context/auth';
 import Loading from '../../components/Loading';
@@ -23,7 +23,7 @@ const DELETE_RECIPE = gql`
 `;
 
 const ManageRecipesPage = () => {
-  const { state, signout } = useAuthContext();
+  const { state } = useAuthContext();
   const [filter, setFilter] = React.useState('all');
 
   const { loading, data, refetch } = useQuery(QUERY_USER_RECIPES, {
@@ -43,20 +43,11 @@ const ManageRecipesPage = () => {
         },
       },
     ],
-    onError({ graphQLErrors }) {
-      if (graphQLErrors && graphQLErrors[0].extensions) {
-        if (graphQLErrors[0].extensions.code === 'UNAUTHENTICATED') {
-          return signout();
-        }
-      }
-    },
   });
 
   React.useEffect(() => {
     refetch({ userId: state.id, publishedType: filter });
   }, [filter, refetch, state.id]);
-
-  if (!state.authenticated) return <Redirect to="/signin" />;
 
   if (loading || !data) return <Loading />;
 

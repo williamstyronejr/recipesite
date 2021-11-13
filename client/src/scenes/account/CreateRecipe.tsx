@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useMutation, gql } from '@apollo/client';
-import { useHistory, Redirect } from 'react-router-dom';
-import { useAuthContext } from '../../context/auth';
+import { useHistory } from 'react-router-dom';
 import { validateRecipe } from '../../utils/validators';
 import './styles/create.css';
 
@@ -42,7 +41,6 @@ const CREATE_RECIPE = gql`
 `;
 
 const CreateRecipePage = () => {
-  const { state } = useAuthContext();
   const history = useHistory();
   const fileRef = React.createRef<HTMLInputElement>();
   const [title, setTitle] = React.useState<string>('');
@@ -90,8 +88,6 @@ const CreateRecipePage = () => {
       mainImage,
     },
   });
-
-  if (!state.authenticated) return <Redirect to="/signin" />;
 
   const submitHandler = (evt: React.SyntheticEvent<HTMLFormElement>) => {
     evt.preventDefault();

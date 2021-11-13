@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { Redirect, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuthContext } from '../../context/auth';
 import './styles/dashboard.css';
 
 const DashboardPage = () => {
   const { state } = useAuthContext();
-
-  if (!state.authenticated) return <Redirect to="/signin" />;
 
   return (
     <section className="dashboard">
