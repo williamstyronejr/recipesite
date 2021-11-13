@@ -12,6 +12,8 @@ export const setUpRoutes = (app: Application): void => {
   // Default to build of react app
   app.use('/*', (req: Request, res: Response, next: NextFunction) => {
     try {
+      res.cookie('CSRF-TOKEN', req.csrfToken());
+
       res.sendFile(
         path.join(__dirname, '..', '..', '..', 'client', 'build', 'index.html'),
       );
