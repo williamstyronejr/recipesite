@@ -24,5 +24,12 @@ module.exports = {
     'prefer-object-spread': 0,
     'import/prefer-default-export': 0,
     'no-underscore-dangle': 0,
+    'react/function-component-definition': [
+      2,
+      {
+        namedComponents: 'arrow-function',
+        unnamedComponents: 'arrow-function',
+      },
+    ],
   },
 };
