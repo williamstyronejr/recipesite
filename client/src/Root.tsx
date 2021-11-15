@@ -25,14 +25,14 @@ import MissingPage from './scenes/Missing';
 import ExplorePage from './scenes/explore/Explore';
 import DashboardPage from './scenes/dashboard/Dashboard';
 import ManageRecipesPage from './scenes/dashboard/ManageRecipes';
-import { AuthProvider, useAuthContext } from './context/auth';
 import AnalyticsPage from './scenes/dashboard/Analytics';
 import RecoveryPage from './scenes/auth/Recovery';
+import { AuthProvider, useAuthContext } from './context/auth';
 
-const ProtectedRoutes: React.FunctionComponent<{}> = ({ children }) => {
+const ProtectedRoutes = ({ children }: { children: any }) => {
   const { state } = useAuthContext();
 
-  return state.authenticated ? <>{children}</> : <Redirect to="/signin" />;
+  return state.authenticated ? children : <Redirect to="/signin" />;
 };
 
 export default () => (
@@ -57,7 +57,6 @@ export default () => (
           <Route path="/explore/:type" component={ExplorePage} />
 
           <Route path="/account/profile/:userId" component={ProfilePage} />
-
           <ProtectedRoutes>
             <Route path="/recipe/:recipeId/edit" component={EditRecipePage} />
 
