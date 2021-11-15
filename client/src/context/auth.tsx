@@ -59,7 +59,7 @@ function authReducer(state: State, action: { type: String; payload?: any }) {
   }
 }
 
-export function AuthProvider(props: any) {
+export const AuthProvider = (props: any) => {
   const [state, dispatch] = React.useReducer(authReducer, initState);
   const value = React.useMemo(
     () => ({
@@ -88,7 +88,7 @@ export function AuthProvider(props: any) {
 
   // eslint-disable-next-line react/jsx-props-no-spreading
   return <AuthContext.Provider value={value} {...props} />;
-}
+};
 
 export function useAuthContext(): {
   state: State;
