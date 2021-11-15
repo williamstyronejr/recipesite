@@ -5,7 +5,9 @@ import { useAuthContext } from '../../context/auth';
 import Recipe from '../../components/Recipe';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import Loading from '../../components/Loading';
+import Error from '../../components/Error';
 import { validateRecipe } from '../../utils/validators';
+import './styles/recipe.css';
 
 const QUERY_RECIPE = gql`
   query ($recipeId: ID!) {
@@ -129,7 +131,7 @@ const EditRecipe = () => {
     },
   });
 
-  const { loading } = useQuery(QUERY_RECIPE, {
+  const { loading, error } = useQuery(QUERY_RECIPE, {
     onCompleted(data) {
       setTitle(data.getRecipe.title);
       setDirections(data.getRecipe.directions);
@@ -145,6 +147,7 @@ const EditRecipe = () => {
     },
   });
 
+  if (error) return <Error />;
   if (loading) return <Loading />;
 
   function submitHandler(evt: React.SyntheticEvent<HTMLFormElement>) {
