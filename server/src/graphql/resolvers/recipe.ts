@@ -71,14 +71,27 @@ export default {
     },
     async getUserRecipes(
       _: any,
-      { userId, publishedType }: { userId: string; publishedType: string },
+      {
+        userId,
+        publishedType,
+        offset,
+        limit,
+      }: {
+        userId: string;
+        publishedType: string;
+        offset: number;
+        limit: number;
+      },
       content: any,
-    ): Promise<Array<any>> {
+    ): Promise<{
+      recipes: Array<Record<string, unknown>>;
+      endOfList: boolean;
+    }> {
       const user = await checkAuth(content);
 
       // Users must match when getting privated recipes
       if (publishedType === 'private' && user.id.toString() !== userId)
-        return [];
+        return { recipes: [], endOfList: true };
 
       const params: { published?: boolean; author: string } = {
         author: userId,
@@ -87,16 +100,19 @@ export default {
       if (publishedType === 'public') params.published = true;
 
       try {
-        const recipes = await db.models.Recipe.findAll({ where: params });
-
-        return recipes;
+        const recipes = await db.models.Recipe.findAll({
+          where: params,
+          limit,
+          offset,
+        });
+        return { recipes, endOfList: recipes.length !== limit };
       } catch (err: any) {
         // Sequlize error, invalid id type (non integer)
         if (err.original && err.original.code === '22P02') {
           logger.warn(`User with id, ${userId}, could not be found.`);
         }
 
-        return [];
+        return { recipes: [], endOfList: true };
       }
     },
     async searchRecipes(

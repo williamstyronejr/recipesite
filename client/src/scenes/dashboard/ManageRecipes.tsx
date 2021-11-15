@@ -1,17 +1,26 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { gql, useQuery, useMutation } from '@apollo/client';
 import { useAuthContext } from '../../context/auth';
 import Loading from '../../components/Loading';
 import './styles/manageRecipes.css';
 
 const QUERY_USER_RECIPES = gql`
-  query ($userId: ID!, $publishedType: String!) {
-    getUserRecipes(userId: $userId, publishedType: $publishedType) {
-      id
-      title
-      summary
-      published
+  query ($userId: ID!, $publishedType: String!, $limit: Int!, $offset: Int!) {
+    getUserRecipes(
+      userId: $userId
+      publishedType: $publishedType
+      limit: $limit
+      offset: $offset
+    ) {
+      recipes {
+        id
+        title
+        summary
+        published
+      }
+      endOfList
     }
   }
 `;
@@ -26,10 +35,18 @@ const ManageRecipesPage = () => {
   const { state } = useAuthContext();
   const [filter, setFilter] = React.useState('all');
 
-  const { loading, data, refetch } = useQuery(QUERY_USER_RECIPES, {
+  const {
+    loading,
+    data,
+    error: fetchError,
+    refetch,
+    fetchMore,
+  } = useQuery(QUERY_USER_RECIPES, {
     variables: {
       userId: state.id,
       publishedType: filter,
+      offset: 0,
+      limit: 10,
     },
   });
 
@@ -40,18 +57,27 @@ const ManageRecipesPage = () => {
         variables: {
           userId: state.id,
           publishedType: filter,
+          limit: 10,
+          offset: 0,
         },
       },
     ],
   });
 
+  const recipes = data ? data.getUserRecipes.recipes : [];
+  const endOfList = data ? data.getUserRecipes.endOfList : false;
+
+  const [infiniteRef] = useInfiniteScroll({
+    loading,
+    onLoadMore: () => fetchMore({ variables: { offset: recipes.length } }),
+    disabled: !!fetchError,
+    hasNextPage: !endOfList,
+    rootMargin: '0px 0px 200px 0px',
+  });
+
   React.useEffect(() => {
-    refetch({ userId: state.id, publishedType: filter });
-  }, [filter, refetch, state.id]);
-
-  if (loading || !data) return <Loading />;
-
-  const recipes = data.getUserRecipes || [];
+    refetch({ userId: state.id, publishedType: filter, limit: 10, offset: 0 });
+  }, [filter, state.id]);
 
   return (
     <section className="manage">
@@ -144,6 +170,12 @@ const ManageRecipesPage = () => {
             </div>
           </div>
         ))}
+
+        {!endOfList && !fetchError ? (
+          <div className="search__item" ref={infiniteRef}>
+            <Loading />
+          </div>
+        ) : null}
       </div>
     </section>
   );

@@ -169,7 +169,12 @@ export default gql`
     getSettings: Settings
     getProfile(userId: ID!): Profile
     getRecipe(recipeId: ID!): Recipe
-    getUserRecipes(userId: ID!, publishedType: String!): [Recipe]
+    getUserRecipes(
+      userId: ID!
+      publishedType: String!
+      offset: Int!
+      limit: Int!
+    ): RecipePaged
     getComments(entityId: ID!): [Comment]
 
     searchRecipes(search: Search): RecipePaged
