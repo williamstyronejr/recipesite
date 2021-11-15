@@ -31,16 +31,24 @@ app.use(
   csrf({
     cookie: {
       sameSite: 'lax',
-      secure: true,
+      secure: process.env.NODE_ENV === 'development' ? false : true,
       httpOnly: true,
     },
+
     value: (req) => {
       const csrfToken = req.headers['csrf-token']
         ? (req.headers['csrf-token'] as string)
         : '';
+
       return csrfToken;
     },
   }),
 );
 
+// Error handler for CSRF token
+app.use(function (err: any, req: any, res: any, next: any) {
+  if (err.code !== 'EBADCSRFTOKEN') return next(err);
+
+  return res.status(403).json({ ctoken: true });
+});
 export default app;
