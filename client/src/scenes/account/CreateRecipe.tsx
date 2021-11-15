@@ -72,10 +72,8 @@ const CreateRecipePage = () => {
 
       history.push(`/recipe/${res.recipe.id}`);
     },
-    onError(err) {
-      if (err.graphQLErrors[0] && err.graphQLErrors[0].extensions) {
-        setErrors(err.graphQLErrors[0].extensions.errors);
-      }
+    onError() {
+      setErrors({ general: 'An error occurred, please try again.' });
     },
     variables: {
       title,
