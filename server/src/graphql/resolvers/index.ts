@@ -8,39 +8,39 @@ import entityResolver from './entity';
 export default {
   Upload: GraphQLUpload,
   CreateUserError: {
-    __resolveType: (obj: any) => {
+    __resolveType: (obj: Record<string, unknown>) => {
       return 'UserInputError';
     },
   },
   LoginUserError: {
-    __resolveType: (obj: any) => {
+    __resolveType: (obj: Record<string, unknown>) => {
       if (obj.reason) return 'WrongCredetials';
       return 'UserInputError';
     },
   },
   UpdatePasswordError: {
-    __resolveType: (obj: any) => {
+    __resolveType: (obj: Record<string, unknown>) => {
       if (obj.reason) return 'WrongCredetials';
       return 'UserInputError';
     },
   },
   UpdateAccountError: {
-    __resolveType: (obj: any) => {
+    __resolveType: (obj: Record<string, unknown>) => {
       return 'UserInputError';
     },
   },
   RecoveryError: {
-    __resolveType: (obj: any) => {
+    __resolveType: (obj: Record<string, unknown>) => {
       return 'UserInputError';
     },
   },
   RecipeError: {
-    __resolveType: (obj: any) => {
+    __resolveType: (obj: Record<string, unknown>) => {
       return 'UserInputError';
     },
   },
   RatingError: {
-    __resolveType: (obj: any) => {
+    __resolveType: (obj: Record<string, unknown>) => {
       if (obj.type) return 'MissingContentError';
       return 'UserInputError';
     },
