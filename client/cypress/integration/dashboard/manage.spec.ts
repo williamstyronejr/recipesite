@@ -21,6 +21,8 @@ describe('Managing recipes', () => {
 
   beforeEach(() => {
     Cypress.Cookies.preserveOnce('token');
+    Cypress.Cookies.preserveOnce('_csrf');
+    Cypress.Cookies.preserveOnce('csrf_token');
   });
 
   it('Editting recipe from manage should link to edit page', () => {

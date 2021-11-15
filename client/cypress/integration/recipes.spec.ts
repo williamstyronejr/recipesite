@@ -11,6 +11,8 @@ before(() => {
 
 beforeEach(() => {
   Cypress.Cookies.preserveOnce('token');
+  Cypress.Cookies.preserveOnce('_csrf');
+  Cypress.Cookies.preserveOnce('csrf_token');
 });
 
 describe('Creating a new recipe', () => {
