@@ -1,8 +1,13 @@
 import path from 'path';
-import { Application, Response, Request, NextFunction, Router } from 'express';
+import { Application, Response, Request, NextFunction } from 'express';
 import logger from '../services/logger';
 
 export const setUpRoutes = (app: Application): void => {
+  app.get('/ctoken', (req: Request, res: Response) => {
+    res.cookie('csrf-token', req.csrfToken());
+    res.send();
+  });
+
   app.post('/signout', (req: Request, res: Response) => {
     // Destroy cookie
     res.clearCookie('token');
@@ -12,7 +17,7 @@ export const setUpRoutes = (app: Application): void => {
   // Default to build of react app
   app.use('/*', (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.cookie('CSRF-TOKEN', req.csrfToken());
+      res.cookie('csrf-token', req.csrfToken());
 
       res.sendFile(
         path.join(__dirname, '..', '..', '..', 'client', 'build', 'index.html'),
@@ -23,7 +28,7 @@ export const setUpRoutes = (app: Application): void => {
   });
 
   // Catch all error handler
-  app.use((err: Error, req: Request, res: Response) => {
+  app.use((err: any, req: Request, res: Response) => {
     if (err) {
       logger.error(err);
     }
