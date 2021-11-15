@@ -1,6 +1,6 @@
 import path from 'path';
 import cors from 'cors';
-import express from 'express';
+import express, { Response, Request, NextFunction } from 'express';
 import { graphqlUploadExpress } from 'graphql-upload';
 import cookieParser from 'cookie-parser';
 import csrf from 'csurf';
@@ -35,7 +35,7 @@ app.use(
       httpOnly: true,
     },
 
-    value: (req) => {
+    value: (req: Request) => {
       const csrfToken = req.headers['csrf-token']
         ? (req.headers['csrf-token'] as string)
         : '';
@@ -46,7 +46,7 @@ app.use(
 );
 
 // Error handler for CSRF token
-app.use(function (err: any, req: any, res: any, next: any) {
+app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
   if (err.code !== 'EBADCSRFTOKEN') return next(err);
 
   return res.status(403).json({ ctoken: true });
