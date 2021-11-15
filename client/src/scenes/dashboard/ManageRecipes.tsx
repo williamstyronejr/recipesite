@@ -172,7 +172,7 @@ const ManageRecipesPage = () => {
         ))}
 
         {!endOfList && !fetchError ? (
-          <div className="search__item" ref={infiniteRef}>
+          <div ref={infiniteRef}>
             <Loading />
           </div>
         ) : null}
