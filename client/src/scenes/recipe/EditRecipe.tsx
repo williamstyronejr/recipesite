@@ -289,6 +289,43 @@ const EditRecipe = () => {
             ) : null}
           </fieldset>
 
+          <span className="form__labeling">Publish Status</span>
+          <fieldset className="form__field form__field--flex">
+            <label
+              htmlFor="published-1"
+              className="form__label form__label--inline form__label--radio"
+            >
+              <input
+                id="published-1"
+                name="published"
+                className="form__input form__input--radio"
+                type="radio"
+                value="public"
+                checked={published}
+                onChange={() => setPublished(true)}
+              />
+              <div className="form__custom-radio" />
+              <span className="form__labeling">Public</span>
+            </label>
+
+            <label
+              htmlFor="published-2"
+              className="form__label form__label--inline form__label--radio"
+            >
+              <input
+                id="published-2"
+                name="published"
+                className="form__input form__input--radio"
+                type="radio"
+                value="private"
+                checked={!published}
+                onChange={() => setPublished(false)}
+              />
+              <div className="form__custom-radio" />
+              <span className="form__labeling">Private</span>
+            </label>
+          </fieldset>
+
           <fieldset className="form__field">
             <label htmlFor="prep" className="form__label">
               <span className="form__labeling">Prep Time</span>
@@ -311,32 +348,6 @@ const EditRecipe = () => {
                 className="form__input form__input--text"
                 value={cookTime}
                 onChange={(evt) => setCookTime(evt.target.value)}
-              />
-            </label>
-
-            <label htmlFor="published" className="form__label">
-              <span className="labeling">Private</span>
-              <input
-                id="published"
-                name="published"
-                className="form__input form__input--radio"
-                type="radio"
-                value="private"
-                checked={!published}
-                onChange={() => setPublished(false)}
-              />
-            </label>
-
-            <label htmlFor="published" className="form__label">
-              <span className="labeling">Public</span>
-              <input
-                id="published"
-                name="published"
-                className="form__input form__input--radio"
-                type="radio"
-                value="public"
-                checked={published}
-                onChange={() => setPublished(true)}
               />
             </label>
           </fieldset>
