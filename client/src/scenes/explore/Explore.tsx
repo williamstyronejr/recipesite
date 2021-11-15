@@ -47,7 +47,7 @@ const RecipeComponent = ({
 
 const Popular = () => {
   const { data } = useQuery(QUERY_MAIN_RECIPE, {
-    variables: { limit: 3, offset: 0, author: 'user1' },
+    variables: { limit: 3, offset: 0, author: 'ReshipiBukku' },
   });
 
   const recipes = data && data.searchRecipes ? data.searchRecipes.recipes : [];
