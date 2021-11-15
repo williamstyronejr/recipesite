@@ -6,6 +6,7 @@ import Loading from '../../components/Loading';
 import MissingPage from '../Missing';
 import Recipe from '../../components/Recipe';
 import Comments from '../../components/Comments';
+import Error from '../../components/Error';
 import './styles/recipe.css';
 
 const QUERY_RECIPE = gql`
@@ -39,7 +40,7 @@ const RecipePage = () => {
     },
   });
 
-  if (error) return <div>error occurred</div>;
+  if (error) return <Error />;
   if (loading) return <Loading />;
   if (!data.getRecipe) return <MissingPage />;
 

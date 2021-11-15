@@ -7,6 +7,7 @@ import {
   validateAccountUpdate,
 } from '../../utils/validators';
 import Loading from '../../components/Loading';
+import Error from '../../components/Error';
 import './styles/settings.css';
 
 const MUTATION_PASSWORD = gql`
@@ -445,8 +446,11 @@ const AccountForm = ({
 const SettingsPage = () => {
   const { signout } = useAuthContext();
   const [selected, setSelected] = React.useState('account');
-  const { loading, data } = useQuery(QUERY_USER, { fetchPolicy: 'no-cache' });
+  const { error, loading, data } = useQuery(QUERY_USER, {
+    fetchPolicy: 'no-cache',
+  });
 
+  if (error) return <Error />;
   if (loading || !data) return <Loading />;
   const { username, email, bio, profileImage } = data.getSettings;
 
