@@ -1,10 +1,11 @@
-import React from 'react';
+import * as React from 'react';
 import ReactDOM from 'react-dom';
 import {
   ApolloProvider,
   ApolloClient,
   InMemoryCache,
   from,
+  fromPromise,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
@@ -30,7 +31,8 @@ function getCookie(name: string): string | null {
 }
 
 const authLink = setContext((_, { headers }) => {
-  const token = getCookie('CSRF-TOKEN');
+  const token = getCookie('csrf-token');
+
   return {
     headers: {
       ...headers,
@@ -44,18 +46,44 @@ const httpLink = createUploadLink({
   credentials: 'include',
 });
 
-const errorLink = onError(({ graphQLErrors, operation, forward }) => {
-  if (graphQLErrors) {
-    graphQLErrors.forEach(({ extensions, path }) => {
-      if (extensions && extensions.code === 'UNAUTHENTICATED') {
-        // eslint-disable-next-line no-restricted-globals
-        if (path && path[0] !== 'getSession') location.reload();
-      }
-    });
+const errorLink = onError(
+  ({ graphQLErrors, networkError, operation, forward }) => {
+    if (graphQLErrors) {
+      graphQLErrors.forEach(({ extensions, path }) => {
+        if (extensions && extensions.code === 'UNAUTHENTICATED') {
+          // eslint-disable-next-line no-restricted-globals
+          if (path && path[0] !== 'getSession') location.reload();
+        }
+      });
 
-    return forward(operation);
-  }
-});
+      return forward(operation);
+    }
+
+    if (networkError && 'statusCode' in networkError) {
+      if (networkError.statusCode === 403) {
+        return fromPromise(
+          fetch('/ctoken', { credentials: 'include', method: 'GET' }).catch(
+            () => null,
+          ),
+        )
+          .filter((value) => Boolean(value))
+          .flatMap(() => {
+            const token = getCookie('csrf-token');
+            const oldHeaders = operation.getContext().headers;
+
+            operation.setContext({
+              headers: {
+                ...oldHeaders,
+                'csrf-token': token,
+              },
+            });
+            // retry the request, returning the new observable
+            return forward(operation);
+          });
+      }
+    }
+  },
+);
 
 const client = new ApolloClient({
   link: from([errorLink, authLink, httpLink]),
@@ -63,6 +91,15 @@ const client = new ApolloClient({
     typePolicies: {
       Query: {
         fields: {
+          getUserRecipes: {
+            keyArgs: false,
+            merge(existing = { recipes: [], endOfList: true }, incoming) {
+              return {
+                recipes: [...existing.recipes, ...incoming.recipes],
+                endOfList: incoming.endOfList,
+              };
+            },
+          },
           searchRecipes: {
             keyArgs: false,
             merge(existing = { recipes: [], endOfList: true }, incoming) {
