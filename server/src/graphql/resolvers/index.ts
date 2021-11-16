@@ -21,11 +21,13 @@ export default {
   UpdatePasswordError: {
     __resolveType: (obj: Record<string, unknown>) => {
       if (obj.reason) return 'WrongCredetials';
+      if (obj.demo) return 'DemoUserError';
       return 'UserInputError';
     },
   },
   UpdateAccountError: {
     __resolveType: (obj: Record<string, unknown>) => {
+      if (obj.demo) return 'DemoUserError';
       return 'UserInputError';
     },
   },

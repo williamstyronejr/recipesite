@@ -8,6 +8,12 @@ export default gql`
     path: String!
   }
 
+  type DemoUserError implements UserError {
+    message: String!
+    path: String!
+    demo: Boolean!
+  }
+
   type UserInputError implements UserError {
     message: String!
     path: String!
@@ -27,8 +33,8 @@ export default gql`
 
   union CreateUserError = UserInputError
   union LoginUserError = UserInputError | WrongCredetials
-  union UpdatePasswordError = WrongCredetials | UserInputError
-  union UpdateAccountError = UserInputError
+  union UpdatePasswordError = DemoUserError | WrongCredetials | UserInputError
+  union UpdateAccountError = DemoUserError | UserInputError
   union RecoveryError = UserInputError
   union RecipeError = UserInputError
   union RatingError = MissingContentError | UserInputError

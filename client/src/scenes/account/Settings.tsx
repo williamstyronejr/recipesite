@@ -34,6 +34,10 @@ const MUTATION_PASSWORD = gql`
           message
           reason
         }
+        ... on DemoUserError {
+          path
+          message
+        }
       }
     }
   }
@@ -57,6 +61,10 @@ const MUTATION_ACCOUNT = gql`
       success
       updateErrors {
         ... on UserInputError {
+          path
+          message
+        }
+        ... on DemoUserError {
           path
           message
         }

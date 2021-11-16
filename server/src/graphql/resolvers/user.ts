@@ -274,6 +274,17 @@ export default {
 
       try {
         const sessionUser = checkAuth(context);
+        if (sessionUser.username === 'guest')
+          return {
+            updateErrors: [
+              {
+                path: 'general',
+                message: 'Password for guest account can not be updated.',
+                demo: true,
+              },
+            ],
+          };
+
         const hash = await bcrpty.hash(newPassword, SALT_ROUNDS);
         const user = await db.models.User.findByPk(sessionUser.id);
         const match = await bcrpty.compare(oldPassword, user.hash);
@@ -343,6 +354,17 @@ export default {
         };
       }
 
+      if (sessionUser.username === 'guest')
+        return {
+          updateErrors: [
+            {
+              path: 'general',
+              message: 'Guest user can not update their account settings.',
+              demo: true,
+            },
+          ],
+        };
+
       try {
         const fileName = await uploadImage(profileImage);
 
@@ -402,6 +424,8 @@ export default {
     },
     async deleteAccount(_: any, vars: any, context: any): Promise<boolean> {
       const sessionUser = checkAuth(context);
+
+      if (sessionUser.username === 'guest') return false;
 
       try {
         const rowsDestroyed = await db.models.User.destroy({
