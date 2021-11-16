@@ -85,14 +85,19 @@ const SigninPage = () => {
       <form className="form" onSubmit={submitHandler}>
         <header className="form__header">
           <h3 className="form__heading">Sign in to your account</h3>
-          <Link className="form__button form__button--oauth" to="/">
-            <img
-              className="form__google"
-              src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
-              alt="Google logo"
-            />
-            Sign in with Google
-          </Link>
+          <button
+            className="form__button form__button--submit"
+            type="button"
+            onClick={() =>
+              loginUser({
+                variables: { username: 'guest', password: 'guest' },
+              })
+            }
+          >
+            Login as Guest
+          </button>
+
+          <span className="form__explanation">* Used for demo purposes</span>
 
           <hr className="form__divisor" />
         </header>

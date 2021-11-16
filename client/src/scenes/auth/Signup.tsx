@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link, Redirect, useHistory } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 import { useMutation, gql } from '@apollo/client';
 import { useAuthContext } from '../../context/auth';
 import { validateSignup } from '../../utils/validators';
@@ -87,14 +87,6 @@ const SignupPage = () => {
       <form className="form" onSubmit={submitHandler}>
         <header className="form__header">
           <h3 className="form__heading">Create an account</h3>
-          <Link className="form__button form__button--oauth" to="/">
-            <img
-              className="form__google"
-              src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
-              alt="Google logo"
-            />
-            Sign up with Google
-          </Link>
 
           <hr className="form__divisor" />
         </header>
