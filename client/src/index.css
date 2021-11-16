@@ -121,6 +121,11 @@ button {
   vertical-align: middle;
 }
 
+.form__explanation {
+  color: var(--color-subtle);
+  font-size: 1.25rem;
+}
+
 .form__divisor {
   border: 0;
   border-bottom: 1px solid hsla(0, 0%, 100%, 0.3);
@@ -204,9 +209,6 @@ button {
 
 .form__labeling--inline {
   display: inline-block;
-}
-
-.form__input {
 }
 
 .form__input--text {
