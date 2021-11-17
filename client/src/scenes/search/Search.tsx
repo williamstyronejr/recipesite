@@ -38,7 +38,7 @@ const SearchPage = () => {
     onError() {
       setSearchError(true);
     },
-    fetchPolicy: 'no-cache',
+    notifyOnNetworkStatusChange: true,
     variables: {
       q: initSearch,
       offset: 0,
