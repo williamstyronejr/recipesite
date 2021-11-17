@@ -109,6 +109,15 @@ const client = new ApolloClient({
               };
             },
           },
+          getFavorites: {
+            keyArgs: false,
+            merge(existing = { items: [], endOfList: true }, incoming) {
+              return {
+                items: [...existing.items, ...incoming.items],
+                endOfList: incoming.endOfList,
+              };
+            },
+          },
         },
       },
     },

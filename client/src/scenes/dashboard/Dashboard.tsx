@@ -22,6 +22,9 @@ const DashboardPage = () => {
         <Link className="dashboard__link" to="/dashboard/manage">
           Manage Recipes
         </Link>
+        <Link className="dashboard__link" to="/dashboard/favorites">
+          Favorites
+        </Link>
       </aside>
 
       <div className="dashboard__content">

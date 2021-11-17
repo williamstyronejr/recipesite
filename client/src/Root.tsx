@@ -27,6 +27,7 @@ import DashboardPage from './scenes/dashboard/Dashboard';
 import ManageRecipesPage from './scenes/dashboard/ManageRecipes';
 import AnalyticsPage from './scenes/dashboard/Analytics';
 import RecoveryPage from './scenes/auth/Recovery';
+import FavoritesPage from './scenes/dashboard/Favorites';
 import { AuthProvider, useAuthContext } from './context/auth';
 
 const ProtectedRoutes = ({ children }: { children: any }) => {
@@ -63,6 +64,7 @@ export default () => (
             <Route exact path="/dashboard" component={DashboardPage} />
             <Route path="/dashboard/manage" component={ManageRecipesPage} />
             <Route path="/dashboard/analytics" component={AnalyticsPage} />
+            <Route path="/dashboard/favorites" component={FavoritesPage} />
 
             <Route path="/account/settings" component={SettingsPage} />
             <Route path="/account/recipe/create" component={CreateRecipePage} />

@@ -3,6 +3,7 @@ import userResolver from './user';
 import recipeResolver from './recipe';
 import commentResolver from './comment';
 import bookmarkResolver from './bookmark';
+import favoriteResolver from './favorite';
 import entityResolver from './entity';
 
 export default {
@@ -47,10 +48,17 @@ export default {
       return 'UserInputError';
     },
   },
+
+  EntityItem: {
+    __resolveType: (obj: Record<string, unknown>) => {
+      if (obj.ingredients) return 'Recipe';
+    },
+  },
   Query: {
     ...userResolver.Query,
     ...recipeResolver.Query,
     ...commentResolver.Query,
+    ...favoriteResolver.Query,
   },
   Mutation: {
     ...userResolver.Mutation,
@@ -58,5 +66,6 @@ export default {
     ...commentResolver.Mutation,
     ...bookmarkResolver.Mutation,
     ...entityResolver.Mutation,
+    ...favoriteResolver.Mutation,
   },
 };

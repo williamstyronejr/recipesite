@@ -93,6 +93,13 @@ export default gql`
     profileImage: String!
     recipes: [Recipe]
   }
+
+  union EntityItem = Recipe
+
+  type EntitiesPaged {
+    items: [EntityItem]
+    endOfList: Boolean!
+  }
   type RecipePaged {
     recipes: [Recipe]!
     endOfList: Boolean!
@@ -184,6 +191,8 @@ export default gql`
     getComments(entityId: ID!): [Comment]
 
     searchRecipes(search: Search): RecipePaged
+
+    getFavorites(offset: Int!, limit: Int!): EntitiesPaged
   }
 
   type Mutation {

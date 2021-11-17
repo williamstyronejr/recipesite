@@ -6,6 +6,7 @@ import Comment from './Comment';
 import Bookmark from './Bookmark';
 import Entity from './Entity';
 import Rating from './Rating';
+import Favorite from './Favorite';
 
 const { DATABASE_URL, NODE_ENV } = process.env;
 
@@ -30,6 +31,7 @@ const models: any = {
   Bookmark: Bookmark(sequelize, DataTypes),
   Entity: Entity(sequelize, DataTypes),
   Rating: Rating(sequelize, DataTypes),
+  Favorite: Favorite(sequelize, DataTypes),
 };
 
 Object.keys(models).forEach((key) => {
