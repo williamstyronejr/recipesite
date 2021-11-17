@@ -29,7 +29,6 @@ export default (sequelize: Sequelize, DataTypes: any): any => {
       // define association here
       Recipe.belongsTo(models.Entity, { foreignKey: 'entityId' });
       Recipe.belongsTo(models.User, { foreignKey: 'author' });
-      Recipe.hasMany(models.Bookmark, { foreignKey: 'entityId' });
     }
   }
 
