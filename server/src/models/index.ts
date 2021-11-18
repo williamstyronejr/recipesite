@@ -3,7 +3,6 @@ import { Sequelize, Model, DataTypes, Options } from 'sequelize';
 import User from './User';
 import Recipe from './Recipe';
 import Comment from './Comment';
-import Bookmark from './Bookmark';
 import Entity from './Entity';
 import Rating from './Rating';
 import Favorite from './Favorite';
@@ -28,7 +27,6 @@ const models: any = {
   User: User(sequelize, DataTypes),
   Recipe: Recipe(sequelize, DataTypes),
   Comment: Comment(sequelize, DataTypes),
-  Bookmark: Bookmark(sequelize, DataTypes),
   Entity: Entity(sequelize, DataTypes),
   Rating: Rating(sequelize, DataTypes),
   Favorite: Favorite(sequelize, DataTypes),

@@ -2,7 +2,6 @@ import { GraphQLUpload } from 'graphql-upload';
 import userResolver from './user';
 import recipeResolver from './recipe';
 import commentResolver from './comment';
-import bookmarkResolver from './bookmark';
 import favoriteResolver from './favorite';
 import entityResolver from './entity';
 
@@ -64,7 +63,6 @@ export default {
     ...userResolver.Mutation,
     ...recipeResolver.Mutation,
     ...commentResolver.Mutation,
-    ...bookmarkResolver.Mutation,
     ...entityResolver.Mutation,
     ...favoriteResolver.Mutation,
   },

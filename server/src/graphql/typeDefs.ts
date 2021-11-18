@@ -219,7 +219,6 @@ export default gql`
     createRecipe(recipeInput: RecipeInput): RecipePayload!
     deleteRecipe(recipeId: ID!): Boolean!
     updateRecipe(recipeInput: RecipeInput): UpdateRecipePayload!
-    updateBookmark(recipeId: ID!, bookmarking: Boolean!): Boolean!
 
     setRating(entityId: ID!, rating: Int!): RatingPayload!
     setFavorite(id: ID!, favorited: Boolean!): Boolean!

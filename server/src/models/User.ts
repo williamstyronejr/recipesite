@@ -21,7 +21,6 @@ export default (sequelize: Sequelize, DataTypes: any): any => {
       // define association here
       User.hasMany(models.Recipe, { foreignKey: 'author' });
       User.hasMany(models.Comment, { foreignKey: 'author' });
-      User.hasMany(models.Bookmark, { foreignKey: 'userId' });
     }
   }
 
