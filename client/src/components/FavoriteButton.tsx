@@ -30,6 +30,7 @@ const FavoriteButton = ({
 
   return (
     <button
+      data-cy="favorite"
       className={`favorite__button ${
         favorited ? 'favorite__button--active' : ''
       }`}
