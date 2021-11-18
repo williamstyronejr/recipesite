@@ -207,6 +207,7 @@ const EditRecipe = () => {
           }}
           isPreview
           isOwner
+          favorited={false}
         />
       ) : (
         <form className="form" onSubmit={submitHandler}>

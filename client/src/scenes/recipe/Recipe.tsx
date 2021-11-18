@@ -26,6 +26,7 @@ const QUERY_RECIPE = gql`
       avgRating
       userRating
       ratingCount
+      favorited
     }
   }
 `;
@@ -59,6 +60,7 @@ const RecipePage = () => {
     avgRating,
     userRating,
     ratingCount,
+    favorited,
   } = data.getRecipe;
 
   return (
@@ -80,6 +82,7 @@ const RecipePage = () => {
         ratingCount={ratingCount}
         isOwner={state.id === author}
         isPreview={false}
+        favorited={favorited}
       />
 
       <Comments
