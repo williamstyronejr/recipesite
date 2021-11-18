@@ -52,7 +52,7 @@ const errorLink = onError(
       graphQLErrors.forEach(({ extensions, path }) => {
         if (extensions && extensions.code === 'UNAUTHENTICATED') {
           // eslint-disable-next-line no-restricted-globals
-          if (path && path[0] !== 'getSession') location.reload();
+          if (path && path[0] !== 'getSession') location.href = '/signin';
         }
       });
 
