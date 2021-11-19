@@ -37,7 +37,6 @@ const Rating = ({
   const [rating, setRating] = React.useState<number>(
     userRating || Math.floor(avgRating),
   );
-  const [error, setError] = React.useState<string>('');
 
   const [updateRating] = useMutation(MUTATION_RATE, {
     update(_: any, { data: { setRating: res } }) {
@@ -47,7 +46,6 @@ const Rating = ({
     },
     onError() {
       setRating(0);
-      setError('A server error occurred, please try again.');
     },
   });
 
@@ -65,8 +63,6 @@ const Rating = ({
 
   return (
     <div className="rating">
-      {error ? <div className="rating__error">{error}</div> : null}
-
       <button
         className={`rating__btn ${rating === 5 ? 'rating__btn--active' : ''}`}
         type="button"
