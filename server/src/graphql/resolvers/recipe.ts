@@ -321,7 +321,6 @@ export default {
         };
       }
     },
-
     async deleteRecipe(
       _: any,
       { recipeId }: { recipeId: string },
