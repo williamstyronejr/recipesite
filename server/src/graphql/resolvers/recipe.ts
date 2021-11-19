@@ -50,6 +50,11 @@ export default {
             `,
           { type: QueryTypes.SELECT },
         );
+        const favoriteData = user
+          ? await db.models.Favorite.findAll({
+              where: { userId: user.id, entityId: recipeData.entityId },
+            })
+          : null;
 
         const recipe = recipeData.toJSON();
 
@@ -59,6 +64,7 @@ export default {
           avgRating: ratingData.length ? ratingData[0].avgRating : 0,
           ratingCount: ratingData.length ? ratingData[0].ratingCount : 0,
           userRating: ratingData.length ? ratingData[0].rating : 0,
+          favorited: favoriteData && favoriteData.length > 0 ? true : false,
         };
       } catch (err: any) {
         // Sequlize error, invalid id type (non integer)
@@ -315,7 +321,6 @@ export default {
         };
       }
     },
-
     async deleteRecipe(
       _: any,
       { recipeId }: { recipeId: string },

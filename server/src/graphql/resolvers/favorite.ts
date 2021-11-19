@@ -40,5 +40,33 @@ export default {
       }
     },
   },
-  Mutation: {},
+  Mutation: {
+    async setFavorite(
+      _: any,
+      { id, favorited }: { id: number; favorited: boolean },
+      context: any,
+    ): Promise<boolean> {
+      const sessionUser = checkAuth(context);
+
+      try {
+        // Remove favorite
+        if (!favorited) {
+          const rowsDestroyed = await db.models.Favorite.destroy({
+            where: { userId: sessionUser.id, entityId: id },
+          });
+
+          return rowsDestroyed > 0;
+        }
+
+        await db.models.Favorite.create({
+          userId: sessionUser.id,
+          entityId: id,
+        });
+
+        return true;
+      } catch (err) {
+        return false;
+      }
+    },
+  },
 };

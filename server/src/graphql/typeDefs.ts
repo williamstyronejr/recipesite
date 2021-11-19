@@ -86,6 +86,7 @@ export default gql`
     avgRating: Float
     userRating: Int
     ratingCount: Int
+    favorited: Boolean
   }
   type Profile {
     username: String!
@@ -218,9 +219,9 @@ export default gql`
     createRecipe(recipeInput: RecipeInput): RecipePayload!
     deleteRecipe(recipeId: ID!): Boolean!
     updateRecipe(recipeInput: RecipeInput): UpdateRecipePayload!
-    updateBookmark(recipeId: ID!, bookmarking: Boolean!): Boolean!
 
     setRating(entityId: ID!, rating: Int!): RatingPayload!
+    setFavorite(id: ID!, favorited: Boolean!): Boolean!
 
     createComment(source: ID!, parentId: ID, content: String!): CommentPayload
     deleteComment(commentId: ID!): CommentPayload

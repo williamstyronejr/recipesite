@@ -84,4 +84,13 @@ describe('Recipe page', () => {
     cy.get('[data-cy="comment-delete"]').last().click();
     cy.get('[data-cy="comment"]').should('have.length', 1);
   });
+
+  it('Favoriting a recipe should add it to user favorites page', () => {
+    cy.get('[data-cy="favorite"]').click();
+
+    cy.contains('Dashboard').click();
+    cy.contains('Favorites').click();
+
+    cy.contains(title).click();
+  });
 });

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import Rating from './Rating';
+import FavoriteButton from './FavoriteButton';
 import './styles/recipe.css';
 
 const Recipe = ({
@@ -18,6 +19,7 @@ const Recipe = ({
   avgRating,
   userRating,
   ratingCount,
+  favorited,
   isPreview = false,
   isOwner = false,
   onPreviewClose = null,
@@ -38,6 +40,7 @@ const Recipe = ({
   ratingCount: number;
   isPreview: boolean;
   isOwner: boolean;
+  favorited: boolean;
   onPreviewClose?: Function | null;
 }) => {
   const [userControls, setUserControls] = React.useState<boolean>(false);
@@ -264,6 +267,14 @@ const Recipe = ({
           src={`/img/${mainImage}`}
           alt="Recipe Example"
         />
+
+        <div className="recipe__tools">
+          <FavoriteButton
+            initFavorite={favorited}
+            disabled={isPreview}
+            entityId={entityId}
+          />
+        </div>
 
         <h1 className="recipe__title">{title}</h1>
 
