@@ -15,13 +15,31 @@ app.use(
       process.env.NODE_ENV === 'production' ? false : 'http://localhost:3000',
   }),
 );
-app.use('/img', express.static(path.join(__dirname, '..', 'public', 'images')));
+app.use(
+  '/img',
+  express.static(
+    process.env.NODE_ENV === 'production'
+      ? path.join(__dirname, '..', '..', '..', 'src', 'public', 'images')
+      : path.join(__dirname, '..', 'public', 'images'),
+  ),
+);
 
 // Static folder
 app.use(
   '/static',
   express.static(
-    path.join(__dirname, '..', '..', '..', 'client', 'build', 'static'),
+    process.env.NODE_ENV === 'production'
+      ? path.join(
+          __dirname,
+          '..',
+          '..',
+          '..',
+          '..',
+          'client',
+          'build',
+          'static',
+        )
+      : path.join(__dirname, '..', '..', '..', 'client', 'build', 'static'),
   ),
 );
 
@@ -51,4 +69,5 @@ app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
 
   return res.status(403).json({ ctoken: true });
 });
+
 export default app;
