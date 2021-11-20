@@ -42,7 +42,10 @@ const authLink = setContext((_, { headers }) => {
 });
 
 const httpLink = createUploadLink({
-  uri: 'http://localhost:3001/graphql',
+  uri:
+    process.env.NODE_ENV === 'production'
+      ? `/graphql`
+      : 'http://localhost:3001/graphql',
   credentials: 'include',
 });
 
