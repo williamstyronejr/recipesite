@@ -1,3 +1,10 @@
+# Upload images
+server/src/public/images/*
+!server/src/public/images/default.jpg
+!server/src/public/images/defaultRecipe.jpg
+!server/src/public/images/site
+!server/src/public/images/site/*
+
 # Logs
 logs
 *.log
