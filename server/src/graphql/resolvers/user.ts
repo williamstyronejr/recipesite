@@ -16,6 +16,10 @@ import logger from '../../services/logger';
 
 const { JWT_SECRET } = process.env;
 const SALT_ROUNDS = 8;
+const COOKIE_OPTION =
+  process.env.NODE_ENV === 'development'
+    ? {}
+    : { httpOnly: true, secure: true };
 
 function generateToken(user: any): string {
   return jwt.sign(
@@ -135,7 +139,7 @@ export default {
         });
         const token = generateToken(user);
 
-        context.res.cookie('token', token, { httpOnly: true });
+        context.res.cookie('token', token, COOKIE_OPTION);
 
         return {
           user: { ...user.toJSON(), token },
@@ -214,7 +218,7 @@ export default {
 
         const token = generateToken(user);
 
-        context.res.cookie('token', token, { httpOnly: true });
+        context.res.cookie('token', token, COOKIE_OPTION);
 
         return {
           user: {
