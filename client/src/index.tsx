@@ -12,23 +12,8 @@ import { onError } from '@apollo/client/link/error';
 import { createUploadLink } from 'apollo-upload-client';
 import './index.css';
 import Root from './Root';
+import { getCookie } from './utils/utils';
 import reportWebVitals from './reportWebVitals';
-
-function getCookie(name: string): string | null {
-  if (!document.cookie) {
-    return null;
-  }
-
-  const xsrfCookies = document.cookie
-    .split(';')
-    .map((c) => c.trim())
-    .filter((c) => c.startsWith(`${name}=`));
-
-  if (xsrfCookies.length === 0) {
-    return null;
-  }
-  return decodeURIComponent(xsrfCookies[0].split('=')[1]);
-}
 
 const authLink = setContext((_, { headers }) => {
   const token = getCookie('csrf-token');

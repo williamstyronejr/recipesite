@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { gql, useQuery } from '@apollo/client';
 import FullScreenLoading from '../components/FullScreenLoading';
+import { getCookie } from '../utils/utils';
 
 interface State {
   id: number | null;
@@ -107,10 +108,19 @@ export function useAuthContext(): {
   }
 
   function signout() {
-    fetch('http://localhost:3001/signout', {
-      method: 'POST',
-      credentials: 'include',
-    })
+    const token = getCookie('csrf-token') || '';
+
+    fetch(
+      '/signout',
+
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'csrf-token': token,
+        },
+      },
+    )
       .then((res) => res.json())
       .then(() => {
         dispatch({
