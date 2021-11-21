@@ -210,9 +210,9 @@ export default {
           recipe: null,
         };
       }
-      const fileName = await uploadImage(mainImage);
 
       try {
+        const fileName = await uploadImage(mainImage);
         const entity = await db.models.Entity.create({});
         const recipe = await db.models.Recipe.create({
           entityId: entity.id,
@@ -229,6 +229,7 @@ export default {
 
         return { recipe, errors: null };
       } catch (err) {
+        logger.error(err);
         return {
           recipe: null,
           errors: [

@@ -3,7 +3,10 @@ import crypto from 'crypto';
 import { createWriteStream } from 'fs';
 import { FileUpload } from 'graphql-upload';
 
-const PATH_TO_IMG = path.join(__dirname, '..', '..', 'public', 'images');
+const PATH_TO_IMG =
+  process.env.NODE_ENV === 'development'
+    ? path.join(__dirname, '..', '..', 'public', 'images')
+    : path.join(__dirname, '..', '..', '..', '..', 'src', 'public', 'images');
 
 /**
  * Generates a pseudo random string using crypto.
