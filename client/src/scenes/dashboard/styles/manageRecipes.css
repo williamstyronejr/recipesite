@@ -76,7 +76,7 @@
 }
 
 .manage__content {
-  flex: 1 0 auto;
+  flex: 1 1 auto;
 }
 
 .manage__empty {
@@ -97,7 +97,7 @@
 }
 
 .manage__info {
-  flex: 1 0 auto;
+  flex: 1 1 auto;
   text-decoration: none;
 }
 
@@ -177,7 +177,7 @@
 @media only screen and (min-width: 600px) {
   .manage {
     display: flex;
-    flex-flow: row wrap;
+    flex-flow: row nowrap;
   }
 
   .manage__aside {
