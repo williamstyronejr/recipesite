@@ -58,9 +58,11 @@ export default {
 
         const recipe = recipeData.toJSON();
 
+        console.log(recipe.user);
         return {
           ...recipe,
           authorName: recipe.user.username,
+          authorImage: recipe.user.profileImage,
           avgRating: ratingData.length ? ratingData[0].avgRating : 0,
           ratingCount: ratingData.length ? ratingData[0].ratingCount : 0,
           userRating: ratingData.length ? ratingData[0].rating : 0,

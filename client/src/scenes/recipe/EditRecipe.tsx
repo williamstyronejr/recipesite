@@ -22,6 +22,7 @@ const QUERY_RECIPE = gql`
       cookTime
       author
       authorName
+      authorImage
       published
     }
   }
@@ -88,6 +89,7 @@ const EditRecipe = () => {
   const [published, setPublished] = React.useState<boolean>(false);
   const [previewImage, setPreviewImage] = React.useState<any>(null);
   const [removeImage, setRemoveImage] = React.useState<boolean>(false);
+  const [authorImage, setAuthorImage] = React.useState<string>('');
   const [errors, setErrors] = React.useState<Record<string, string>>({});
 
   const [deleteRecipe] = useMutation(DELETE_RECIPE, {
@@ -141,6 +143,7 @@ const EditRecipe = () => {
       setCookTime(data.getRecipe.cookTime.toString());
       setPrepTime(data.getRecipe.prepTime.toString());
       setIngredients(data.getRecipe.ingredients);
+      setAuthorImage(data.getRecipe.authorImage);
     },
     variables: {
       recipeId,
@@ -208,6 +211,7 @@ const EditRecipe = () => {
           isPreview
           isOwner
           favorited={false}
+          authorImage={authorImage}
         />
       ) : (
         <form className="form" onSubmit={submitHandler}>

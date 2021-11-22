@@ -83,6 +83,7 @@ export default gql`
     mainImage: String!
     authorName: String!
     author: ID!
+    authorImage: String!
     avgRating: Float
     userRating: Int
     ratingCount: Int

@@ -20,6 +20,7 @@ const QUERY_RECIPE = gql`
       ingredients
       author
       authorName
+      authorImage
       mainImage
       prepTime
       cookTime
@@ -61,6 +62,7 @@ const RecipePage = () => {
     userRating,
     ratingCount,
     favorited,
+    authorImage,
   } = data.getRecipe;
 
   return (
@@ -83,6 +85,7 @@ const RecipePage = () => {
         isOwner={state.id === author}
         isPreview={false}
         favorited={favorited}
+        authorImage={authorImage}
       />
 
       <Comments

@@ -23,6 +23,7 @@ const Recipe = ({
   isPreview = false,
   isOwner = false,
   onPreviewClose = null,
+  authorImage = '',
 }: {
   id: string;
   entityId: string;
@@ -32,6 +33,7 @@ const Recipe = ({
   cookTime: string;
   authorName: string;
   author: number;
+  authorImage: string;
   mainImage: string;
   ingredients: string;
   directions: string;
@@ -318,7 +320,11 @@ const Recipe = ({
         <Link className="recipe__author" to={`/account/profile/${author}`}>
           <img
             className="recipe__author-img"
-            src="https://cdn.dribbble.com/users/2527772/screenshots/11920939/media/24291b3fd033123e1507cbff2080e59e.png"
+            src={
+              authorImage.startsWith('http')
+                ? authorImage
+                : `/img/${authorImage}`
+            }
             alt="User Profile"
           />
           <div className="recipe__author-name">{authorName}</div>
