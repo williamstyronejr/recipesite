@@ -8,7 +8,7 @@
     "dev": "concurrently \"npm run dev --prefix server\" \"npm run start --prefix client\"",
     "bootstrap": "lerna bootstrap",
     "build": "lerna run --concurrency 1 --stream build",
-    "postbuild": "npm run bootstrap && npm run build"
+    "postinstall": "npm run bootstrap"
   },
   "repository": {
     "type": "git",
