@@ -3,14 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "workspaces": [
-    "server",
-    "client"
-  ],
   "scripts": {
     "start": "npm run production --prefix server",
     "dev": "concurrently \"npm run dev --prefix server\" \"npm run start --prefix client\"",
-    "build": "npm run build --workspaces"
+    "bootstrap": "lerna bootstrap",
+    "build": "lerna run --concurrency 1 --stream build",
+    "postbuild": "npm run bootstrap && npm run build"
   },
   "repository": {
     "type": "git",
