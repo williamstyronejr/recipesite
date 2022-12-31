@@ -1,7 +1,7 @@
 import path from 'path';
 import cors from 'cors';
 import express, { Response, Request, NextFunction } from 'express';
-import { graphqlUploadExpress } from 'graphql-upload';
+import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
 import cookieParser from 'cookie-parser';
 import csrf from 'csurf';
 const app = express();

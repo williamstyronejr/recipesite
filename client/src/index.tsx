@@ -1,5 +1,6 @@
 import * as React from 'react';
-import ReactDOM from 'react-dom';
+
+import { createRoot } from 'react-dom/client';
 import {
   ApolloProvider,
   ApolloClient,
@@ -10,10 +11,10 @@ import {
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { createUploadLink } from 'apollo-upload-client';
-import './index.css';
 import Root from './Root';
 import { getCookie } from './utils/utils';
 import reportWebVitals from './reportWebVitals';
+import './index.css';
 
 const authLink = setContext((_, { headers }) => {
   const token = getCookie('csrf-token');
@@ -112,11 +113,12 @@ const client = new ApolloClient({
   }),
 });
 
-ReactDOM.render(
+const container = document.getElementById('root');
+const root = createRoot(container!); // createRoot(container!) if you use TypeScript
+root.render(
   <ApolloProvider client={client}>
     <Root />
   </ApolloProvider>,
-  document.getElementById('root'),
 );
 
 // If you want to start measuring performance in your app, pass a function

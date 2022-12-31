@@ -1,7 +1,7 @@
 import path from 'path';
 import crypto from 'crypto';
 import { createWriteStream } from 'fs';
-import { FileUpload } from 'graphql-upload';
+import { FileUpload } from 'graphql-upload/Upload.js';
 
 const PATH_TO_IMG =
   process.env.NODE_ENV === 'development'

@@ -1,4 +1,14 @@
-import { UserInputError } from 'apollo-server';
+import { ApolloServerErrorCode } from '@apollo/server/errors';
+import { GraphQLError } from 'graphql';
+
+const UserInputError = (msg: string, exts?: Record<string, any>) =>
+  new GraphQLError(msg, {
+    extensions: {
+      code: ApolloServerErrorCode.BAD_USER_INPUT,
+      ...exts,
+    },
+  });
+
 import bcrpty from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import {
@@ -38,7 +48,7 @@ export default {
       try {
         const user = await db.models.User.findByPk(userId);
 
-        if (!user) throw new UserInputError('User does not exist');
+        if (!user) throw UserInputError('User does not exist');
 
         const topRecipes = await db.models.Recipe.findAll({
           where: { author: userId, published: true },
@@ -447,7 +457,7 @@ export default {
       { email }: { email: string },
     ): Promise<boolean> {
       const { errors, valid } = validateEmail(email);
-      if (!valid) throw new UserInputError('Input errors', { errors });
+      if (!valid) throw UserInputError('Input errors', { errors });
 
       // Add user to mail list
 
