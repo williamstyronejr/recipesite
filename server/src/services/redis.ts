@@ -1,7 +1,7 @@
-import redis, { RedisClient } from 'redis';
+import redis, { RedisClientType } from 'redis';
 import logger from './logger';
 
-let redisClient: RedisClient | null;
+let redisClient: RedisClientType | null;
 
 /**
  * Creates a connection to redis server. Will prioritize URL over host and port.
@@ -11,23 +11,21 @@ let redisClient: RedisClient | null;
  * @return {Promise<Object>} Returns a promise to resolve with a redis client
  *  when it's ready.
  */
-export function setUpRedis(
+export async function setUpRedis(
   HOST = 'localhost',
   PORT = 6379,
-  URL: string | null = null,
-): Promise<RedisClient> {
-  redisClient = URL ? redis.createClient(URL) : redis.createClient(PORT, HOST);
+  URL: string | undefined = undefined,
+): Promise<RedisClientType> {
+  redisClient = redis.createClient({ url: URL });
 
-  return new Promise((res, rej) => {
-    redisClient?.on('error', (err) => {
-      rej(err);
-    });
-
-    redisClient?.on('ready', () => {
-      logger.info(`Redis connection made on ${HOST}:${PORT}`);
-      return res(redisClient as RedisClient);
-    });
-  });
+  try {
+    await redisClient.connect();
+    logger.info(`Redis connection made on ${HOST}:${PORT}`);
+    return redisClient;
+  } catch (err) {
+    logger.error('Redis connection error,');
+    throw err;
+  }
 }
 
 /**
@@ -45,28 +43,23 @@ export function closeRedis(): void {
  * @return {Promise<Boolean>} Returns a promise to resolve with a boolean
  *  indicating if cache was set.
  */
-export function cacheSearch(
+export async function cacheSearch(
   key: string,
   value: Record<string, unknown>,
   page: number,
 ): Promise<boolean> {
-  return new Promise((res, rej) => {
-    redisClient?.hset(
-      key,
-      `page-${page}`,
-      JSON.stringify(value),
-      (err, reply) => {
-        if (err) return rej(err);
-        if (reply === 0) return false;
+  if (!redisClient) throw new Error('Redis is not initialized.');
+  `page-${page}`;
+  const reply = await redisClient.hSet(
+    key,
+    `page-${page}`,
+    JSON.stringify(value),
+  );
+  if (reply === 0) return false;
 
-        // If key has no TTL, set one
-        redisClient?.ttl(key, (ttlErr, ttlReply) => {
-          if (ttlReply < 0) redisClient?.expire(key, 60 * 60 * 24);
-          res(true);
-        });
-      },
-    );
-  });
+  const ttl = await redisClient.ttl(key);
+  if (ttl) redisClient.expire(key, 60 * 60 * 24);
+  return true;
 }
 
 /**
@@ -76,17 +69,14 @@ export function cacheSearch(
  * @returns {Promise<Object>} Returns a promise to resolve with json object
  *  of the cached results.
  */
-export function getCacheSearch(
+export async function getCacheSearch(
   key: string,
   page: number,
 ): Promise<Record<string, unknown>> {
-  return new Promise((res, rej) => {
-    redisClient?.hget(key, `page-${page}`, (err, reply) => {
-      if (err) rej(err);
+  if (!redisClient) throw new Error('Redis is not initialized.');
+  const reply = await redisClient.hGet(key, `page-${page}`);
 
-      res(JSON.parse(reply));
-    });
-  });
+  return reply ? JSON.parse(reply) : null;
 }
 
 /**
@@ -95,11 +85,9 @@ export function getCacheSearch(
  * @returns {Promise<Boolean>} Returns a promise to resolve with a boolean
  *  indicating if the cache was deleted.
  */
-export function deleteCacheSearch(key: string): Promise<boolean> {
-  return new Promise((res, rej) => {
-    redisClient?.del(key, (err, reply) => {
-      if (err) return rej(err);
-      res(reply > 0 ? true : false);
-    });
-  });
+export async function deleteCacheSearch(key: string): Promise<boolean> {
+  if (!redisClient) throw new Error('Redis is not initialized.');
+
+  const reply = await redisClient.del(key);
+  return reply > 0;
 }
