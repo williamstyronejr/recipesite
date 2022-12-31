@@ -1,4 +1,5 @@
-import { GraphQLUpload } from 'graphql-upload';
+import GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
+
 import userResolver from './user';
 import recipeResolver from './recipe';
 import commentResolver from './comment';

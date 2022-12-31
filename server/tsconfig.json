@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "commonjs",
+    "module": "CommonJS",
     "declaration": true,
     "sourceMap": true,
     "outDir": "dist",
@@ -10,6 +10,8 @@
     "esModuleInterop": true,
     "types": ["@types/jest", "@types/node"],
     "typeRoots": ["./node-modules/@types/", "./src/@types/"]
+    // "allowJs": true,
+    // "maxNodeModuleJsDepth": 10
   },
   "include": ["src/**/**.ts", "src/**/*.test.ts"],
   "exclude": ["node_modules", "dist/**"]

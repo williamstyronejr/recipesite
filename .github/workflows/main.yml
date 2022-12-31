@@ -4,9 +4,9 @@ name: Deploy
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -15,7 +15,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-  
+
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout repo
@@ -32,18 +32,3 @@ jobs:
           working-directory: |
             server
             client
-      
-      - name: Heroku Deploy
-        #  Only deploy main branch on pushes
-        if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
-        uses: akhileshns/heroku-deploy@v3.12.12
-        env:
-          # "HD_" is removed by akhileshns/heroku-deploy
-          # Skip husky and cypress install on heroku
-          HD_HUSKY_SKIP_INSTALL: "1"
-          HD_CYPRESS_INSTALL_BINARY: 0
-
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "reshipibukku" # Must be unique in Heroku
-          heroku_email: ${{secrets.HEROKU_EMAIL}}

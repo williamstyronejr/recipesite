@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Redirect, useHistory } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useMutation, gql } from '@apollo/client';
 import { useAuthContext } from '../../context/auth';
 import { validateSignup } from '../../utils/validators';
@@ -39,7 +39,7 @@ const REGISTER_USER = gql`
 
 const SignupPage = () => {
   const { state, login } = useAuthContext();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [email, setEmail] = React.useState<string>('');
   const [username, setUsername] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
@@ -58,7 +58,7 @@ const SignupPage = () => {
       }
 
       login(userData.user);
-      history.push('/');
+      navigate('/');
     },
     onError() {
       setError({ general: 'Server error occurred, please try again.' });
@@ -71,7 +71,7 @@ const SignupPage = () => {
     },
   });
 
-  if (state.authenticated) return <Redirect to="/" />;
+  if (state.authenticated) return <Navigate to="/" />;
 
   const submitHandler = (evt: React.SyntheticEvent<HTMLFormElement>) => {
     evt.preventDefault();

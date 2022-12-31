@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMutation, gql } from '@apollo/client';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { validateRecipe } from '../../utils/validators';
 import './styles/create.css';
 
@@ -41,7 +41,7 @@ const CREATE_RECIPE = gql`
 `;
 
 const CreateRecipePage = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const fileRef = React.createRef<HTMLInputElement>();
   const [title, setTitle] = React.useState<string>('');
   const [summary, setSummary] = React.useState<string>('');
@@ -70,7 +70,7 @@ const CreateRecipePage = () => {
           general: 'Server error occurred, please try again.',
         });
 
-      history.push(`/recipe/${res.recipe.id}`);
+      navigate(`/recipe/${res.recipe.id}`);
     },
     onError() {
       setErrors({ general: 'An error occurred, please try again.' });

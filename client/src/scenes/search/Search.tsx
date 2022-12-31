@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link, useLocation, useHistory } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useQuery, gql } from '@apollo/client';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import Loading from '../../components/Loading';
@@ -28,7 +28,7 @@ const QUERY_SEARCH = gql`
 `;
 
 const SearchPage = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const searchParams = new URLSearchParams(useLocation().search);
   const initSearch = searchParams.get('q') || '';
   const [searchError, setSearchError] = React.useState<boolean>(false);
@@ -58,7 +58,7 @@ const SearchPage = () => {
   });
 
   const onNewSearch = () => {
-    history.push(`/search?q=${search}`);
+    navigate(`/search?q=${search}`);
   };
 
   return (

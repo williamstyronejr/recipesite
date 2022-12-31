@@ -4,13 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prepare": "husky install",
     "start": "npm run production --prefix server",
     "dev": "concurrently \"npm run dev --prefix server\" \"npm run start --prefix client\"",
     "bootstrap": "lerna bootstrap",
     "build": "lerna run --concurrency 1 --stream build",
-    "precommit": "lerna run --concurrency 1 --stream precommit --since HEAD --exclude-dependents",
-    "prepush": "lerna run --concurrency 1 --stream prepush --since HEAD --exclude-dependents",
     "heroku-postbuild": "npm run bootstrap && npm run build"
   },
   "repository": {
@@ -24,8 +21,7 @@
   },
   "homepage": "https://github.com/williamstyronejr/recipesite#readme",
   "devDependencies": {
-    "concurrently": "^6.3.0",
-    "husky": "^7.0.4",
-    "lerna": "^4.0.0"
+    "concurrently": "^7.6.0",
+    "lerna": "^6.3.0"
   }
 }

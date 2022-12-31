@@ -7,8 +7,8 @@ module.exports = {
   },
   plugins: [],
   extends: [
-    'react-app',
-    'react-app/jest',
+    // 'react-app',
+    // 'react-app/jest',
     'airbnb',
     'airbnb-typescript',
     'prettier',
@@ -25,6 +25,7 @@ module.exports = {
     'import/prefer-default-export': 0,
     'no-underscore-dangle': 0,
     'default-param-last': 0,
+    '@typescript-eslint/default-param-last': 0,
     'react/function-component-definition': [
       2,
       {

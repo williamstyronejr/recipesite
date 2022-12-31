@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { useAuthContext } from '../../context/auth';
 import Recipe from '../../components/Recipe';
@@ -75,7 +75,7 @@ const UPDATE_RECIPE = gql`
 const EditRecipe = () => {
   const { recipeId } = useParams<{ recipeId: string }>();
   const { state } = useAuthContext();
-  const history = useHistory();
+  const navigate = useNavigate();
   const fileRef = React.createRef<HTMLInputElement>();
   const [previewVisible, setPreviewVisible] = React.useState<boolean>(false);
   const [dialogVisible, setDialogVisible] = React.useState<boolean>();
@@ -94,7 +94,7 @@ const EditRecipe = () => {
 
   const [deleteRecipe] = useMutation(DELETE_RECIPE, {
     update(_, { data: { deleteRecipe: complete } }) {
-      if (complete) history.push(`/account/profile/${state.id}`);
+      if (complete) navigate(`/account/profile/${state.id}`);
     },
     onError() {
       setErrors({ general: 'Recipe could not be deleted, please try again.' });
@@ -114,7 +114,7 @@ const EditRecipe = () => {
 
         return setErrors(errs);
       }
-      history.push(`/recipe/${recipeId}`);
+      navigate(`/recipe/${recipeId}`);
     },
     onError() {
       setErrors({ general: 'Server error occurrer, please try again.' });

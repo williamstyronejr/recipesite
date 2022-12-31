@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './styles/recipesearch.css';
 
 const RecipeSearch = () => {
   const [search, setSearch] = React.useState<string>('');
-  const history = useHistory();
+  const navigate = useNavigate();
 
   return (
     <div className="search">
@@ -18,7 +18,7 @@ const RecipeSearch = () => {
         onChange={(evt) => setSearch(evt.target.value)}
         onKeyDown={(evt) => {
           if (evt.key === 'Enter') {
-            history.push(`/search?q=${search}`);
+            navigate(`/search?q=${search}`);
             setSearch('');
           }
         }}
