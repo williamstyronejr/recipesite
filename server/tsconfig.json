@@ -8,6 +8,7 @@
     "rootDir": "./",
     "strict": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "types": ["@types/jest", "@types/node"],
     "typeRoots": ["./node-modules/@types/", "./src/@types/"]
     // "allowJs": true,

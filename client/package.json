@@ -15,7 +15,6 @@
     "@types/react-dom": "^18.0.10",
     "@types/react-router-dom": "^5.3.3",
     "apollo-upload-client": "^17.0.0",
-    "cypress": "^12.2.0",
     "eslint": "^8.30.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.0.0",
@@ -38,7 +37,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "DISABLE_ESLINT_PLUGIN=true BUILD_PATH='../server/public' react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "precommit": "lint-staged",
@@ -59,6 +58,7 @@
   },
   "devDependencies": {
     "lint-staged": "^13.1.0",
+    "cypress": "^12.2.0",
     "prettier": "^2.8.1"
   },
   "lint-staged": {

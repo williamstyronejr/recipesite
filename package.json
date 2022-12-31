@@ -3,12 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "workspaces": [
+    "server",
+    "client"
+  ],
   "scripts": {
     "start": "npm run production --prefix server",
     "dev": "concurrently \"npm run dev --prefix server\" \"npm run start --prefix client\"",
-    "bootstrap": "lerna bootstrap",
-    "build": "lerna run --concurrency 1 --stream build",
-    "heroku-postbuild": "npm run bootstrap && npm run build"
+    "build": "npm run build --workspaces"
   },
   "repository": {
     "type": "git",
