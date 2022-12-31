@@ -20,16 +20,7 @@ export const setUpRoutes = (app: Application): void => {
       res.cookie('csrf-token', req.csrfToken());
       res.sendFile(
         process.env.NODE_ENV === 'production'
-          ? path.join(
-              __dirname,
-              '..',
-              '..',
-              '..',
-              '..',
-              'client',
-              'build',
-              'index.html',
-            )
+          ? path.join(__dirname, '..', '..', '..', 'public', 'index.html')
           : path.join(
               __dirname,
               '..',

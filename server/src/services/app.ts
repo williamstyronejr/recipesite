@@ -29,16 +29,7 @@ app.use(
   '/static',
   express.static(
     process.env.NODE_ENV === 'production'
-      ? path.join(
-          __dirname,
-          '..',
-          '..',
-          '..',
-          '..',
-          'client',
-          'build',
-          'static',
-        )
+      ? path.join(__dirname, '..', '..', '..', 'public', 'static')
       : path.join(__dirname, '..', '..', '..', 'client', 'build', 'static'),
   ),
 );
