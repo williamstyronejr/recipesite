@@ -1,0 +1,150 @@
+.search {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.search__heading {
+  font-size: 3rem;
+  font-weight: 700;
+  padding: 20px 0;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px 0 rgb(17 22 26 / 16%), 0 4px 8px 0 rgb(17 22 26 / 8%),
+    0 8px 16px 0 rgb(17 22 26 / 4%);
+  border-left: 5px solid var(--color-alt);
+  padding-left: 20px;
+}
+
+.search__filter {
+  padding: 10px;
+  box-shadow: 0 4px 8px 0 rgb(17 22 26 / 16%), 0 4px 8px 0 rgb(17 22 26 / 8%),
+    0 8px 16px 0 rgb(17 22 26 / 4%);
+  background-color: #ffffff;
+}
+
+.search__filter_heading {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 10px 0;
+}
+
+.search__content {
+  padding: 0 10px;
+  min-height: 100vh;
+}
+
+.search__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.search__item {
+  display: flex;
+  flex: row nowrap;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.search__item__empty {
+  font-size: 1.5rem;
+  font-weight: 500;
+  text-align: center;
+  padding: 40px 0 0 0;
+}
+
+.search__preview_wrapper {
+  position: relative;
+  width: 150px;
+  height: 150px;
+}
+
+.search__preview {
+  display: inline-block;
+  width: 150px;
+  height: 150px;
+}
+
+.search__info {
+  padding-left: 10px;
+}
+
+.search__title {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-link);
+  text-decoration: none;
+  margin: 15px 0;
+}
+
+.search__title:hover {
+  color: var(--color-link-active);
+}
+
+.search__summary {
+  font-size: 1.25rem;
+}
+
+.filter__search_bar {
+  padding: 0.6em 10px;
+  width: 100%;
+  border-radius: 3px;
+  margin-right: 10px;
+  border: 1px solid black;
+}
+
+@media only screen and (min-width: 600px) {
+  .search {
+    display: flex;
+    flex-flow: row wrap;
+  }
+
+  .search__header {
+    width: 100%;
+    flex: 1 0 auto;
+  }
+
+  .search__filter {
+    flex: 0 0 auto;
+    width: 200px;
+    height: 200px;
+  }
+
+  .search__content {
+    flex: 1 0 auto;
+    width: 10px;
+  }
+
+  .search__list {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+  }
+
+  .search__item {
+    display: block;
+    width: 280px;
+    margin: 0 10px 20px 10px;
+  }
+
+  .search__item__empty {
+    width: 100%;
+  }
+
+  .search__preview {
+    display: block;
+    width: 100%;
+  }
+
+  .search__info {
+    display: block;
+    width: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    padding: 20px;
+  }
+
+  .search__title {
+    margin: 0 0 10px 0;
+  }
+}

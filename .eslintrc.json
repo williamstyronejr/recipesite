@@ -1,0 +1,23 @@
+{
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2020": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "next",
+    "plugin:cypress/recommended",
+    "prettier"
+  ],
+  "plugins": ["cypress"],
+  "rules": {
+    "import/no-anonymous-default-export": 0,
+    "consistent-return": 0,
+    "prefer-object-spread": 0,
+    "import/prefer-default-export": 0,
+    "no-underscore-dangle": 0,
+    "default-param-last": 0,
+    "@typescript-eslint/default-param-last": 0
+  }
+}

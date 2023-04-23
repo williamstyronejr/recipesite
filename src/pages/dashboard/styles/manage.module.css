@@ -1,0 +1,189 @@
+.manage {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.manage__header {
+  width: 100%;
+}
+
+.manage__aside {
+  padding: 10px 0;
+  margin: 10px;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgb(17 22 26 / 16%), 0 4px 8px 0 rgb(17 22 26 / 8%),
+    0 8px 16px 0 rgb(17 22 26 / 4%);
+}
+
+.manage__button {
+  display: block;
+  width: 60px;
+  height: 60px;
+  position: relative;
+  margin: 0 auto 10px auto;
+}
+
+.manage__button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+}
+
+.manage__back {
+  position: absolute;
+  top: 27px;
+  left: 13px;
+  width: 40px;
+  height: 5px;
+  background-color: var(--color-alt);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.manage__back::after,
+.manage__back::before {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 5px;
+  right: -9px;
+  background-color: var(--color-alt);
+}
+
+.manage__back::after {
+  top: -9px;
+  left: -10px;
+  transform: rotate(-45deg);
+}
+
+.manage__back::before {
+  top: 9px;
+  left: -10px;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+  transform: rotate(45deg);
+}
+
+.manage__button:hover .manage__back::after,
+.manage__button:hover .manage__back::before,
+.manage__button:hover .manage__back {
+  background-color: var(--color-alt-darken);
+}
+
+.manage__label {
+  display: block;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.manage__content {
+  flex: 1 1 auto;
+}
+
+.manage__empty {
+  font-size: 1.5rem;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.manage__recipe {
+  display: flex;
+  flex-flow: row nowrap;
+  background-color: white;
+  align-items: center;
+  padding: 10px 15px;
+  margin: 0 5px 20px 5px;
+  box-shadow: 0 4px 8px 0 rgb(17 22 26 / 16%), 0 4px 8px 0 rgb(17 22 26 / 8%),
+    0 8px 16px 0 rgb(17 22 26 / 4%);
+}
+
+.manage__info {
+  flex: 1 1 auto;
+  text-decoration: none;
+}
+
+.manage__title {
+  font-size: 2rem;
+  margin: 5px 0;
+  color: var(--color-text);
+}
+
+.manage__info:hover .manage__title {
+  color: var(--color-alt);
+  text-decoration: underline;
+}
+
+.manage__status {
+  display: block;
+  width: fit-content;
+  border-radius: 10px;
+  font-size: 1rem;
+  padding: 5px 5px;
+  color: var(--color-text-off);
+  font-weight: 700;
+  margin-right: 10px;
+  background-color: var(--color-subtle);
+  text-decoration: none;
+}
+
+.manage__status__public {
+  background-color: var(--color-alt);
+}
+
+.manage__summary {
+  font-size: 1.5rem;
+  color: var(--color-subtle);
+}
+
+.manage__controls {
+  flex: 0 1 auto;
+}
+
+.manage__edit {
+  display: block;
+  background-color: var(--color-alt);
+  color: var(--color-text-off);
+  text-decoration: none;
+  text-align: center;
+  border-radius: 5px;
+  font-size: 1.5rem;
+  font-weight: 500;
+  padding: 6px 10px;
+  margin: 0 0 8px 0;
+}
+
+.manage__edit:hover {
+  background-color: var(--color-alt-darken);
+}
+
+.manage__delete {
+  display: block;
+  background-color: var(--color-cancel);
+  color: var(--color-text-off);
+  text-decoration: none;
+  text-align: center;
+  border-radius: 5px;
+  font-size: 1.5rem;
+  font-weight: 500;
+  padding: 6px 10px;
+  margin: 0;
+  border: none;
+}
+
+.manage__delete:hover {
+  background-color: var(--color-cancel-darken);
+  cursor: pointer;
+}
+
+@media only screen and (min-width: 600px) {
+  .manage {
+    display: flex;
+    flex-flow: row nowrap;
+  }
+
+  .manage__aside {
+    width: 200px;
+    flex: 0 0 auto;
+    margin: 0 10px 0 0;
+    padding: 5px 10px 0 10px;
+  }
+}

@@ -1,0 +1,132 @@
+.profile {
+  padding-top: 30px;
+  min-height: 100vh;
+  padding-bottom: 30px;
+}
+
+.profile__missing {
+  width: 100%;
+  padding: 15em 0 0 0;
+  text-align: center;
+  height: 100vh;
+}
+
+.profile__404_heading {
+  font-size: 5rem;
+  font-weight: 700;
+  color: var(--color-alt);
+}
+
+.profile__404_msg {
+  font-size: 2rem;
+  margin: 0 0 10px 0;
+}
+
+.profile__404_link {
+  color: var(--color-link);
+  font-size: 1.5rem;
+  text-decoration: none;
+}
+
+.profile__404_link:hover {
+  color: var(--color-link-active);
+}
+
+.profile__header {
+  width: 100%;
+  text-align: center;
+}
+
+.profile__wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.profile__picture_wrapper {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+}
+
+.profile__picture {
+  border-radius: 50%;
+}
+
+.profile__username {
+  font-size: 2rem;
+  font-weight: 500;
+  padding-top: 15px;
+}
+
+.profile__bio {
+  font-size: 1.5rem;
+}
+
+.profile__recipes {
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+  padding-top: 20px;
+}
+
+.profile__empty {
+  width: 100%;
+  padding: 10em 0;
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.profile__title {
+  font-size: 2rem;
+  font-weight: 500;
+  margin: 1em 0;
+}
+
+.profile__recipe {
+  display: block;
+  width: 90%;
+  margin: 0 auto 20px auto;
+  padding: 40px 0;
+  box-shadow: 0 4px 8px 1px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  color: var(--color-text);
+  transition: box-shadow 0.3s ease-out;
+}
+
+.profile__recipe:hover {
+  cursor: pointer;
+  text-decoration: underline;
+  box-shadow: 0 0 8px 0 rgb(17 22 26 / 6%), 0 4px 16px 0 rgb(17 22 26 / 8%),
+    0 8px 12px 0 rgb(17 22 26 / 6%), 0 16px 24px 0 rgb(17 22 26 / 4%);
+}
+
+.profile__recipe_title {
+  font-size: 1.5rem;
+}
+
+.profile__recipe_summary {
+  display: none;
+}
+
+@media only screen and (min-width: 600px) {
+  .profile__username {
+    font-size: 3.5rem;
+  }
+
+  .profile__recipes {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-start;
+  }
+
+  .profile__title {
+    width: 100%;
+  }
+
+  .profile__recipe {
+    width: 290px;
+    margin: 0 15px 0 0;
+  }
+}
