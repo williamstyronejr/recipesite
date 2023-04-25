@@ -10,7 +10,8 @@ const authLink = setContext((_, { headers }) => {
   return {
     headers: {
       ...headers,
-      'csrf-token': token,
+      // 'csrf-token': token,
+      'Apollo-Require-Preflight': 'true',
     },
   };
 });
@@ -18,6 +19,9 @@ const authLink = setContext((_, { headers }) => {
 const httpLink = createUploadLink({
   uri: '/api/graphql',
   credentials: 'include',
+  headers: {
+    'Apollo-Require-Preflight': 'true',
+  },
 });
 
 const errorLink = onError(({ graphQLErrors, operation, forward }) => {
@@ -59,6 +63,7 @@ const errorLink = onError(({ graphQLErrors, operation, forward }) => {
 
 const client = new ApolloClient({
   link: from([errorLink, authLink, httpLink]),
+  ssrMode: typeof window === 'undefined',
   cache: new InMemoryCache({
     typePolicies: {
       Query: {
