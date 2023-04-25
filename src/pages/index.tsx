@@ -41,13 +41,14 @@ const HomePage = () => (
       </header>
 
       <div className={styles.home__aside}>
-        <Image
-          fill={true}
-          className={styles.home__food}
-          alt="Food Plate"
-          src={'/images/plate9.png'}
-        />
-
+        <div className={styles.home__food_wrapper}>
+          <Image
+            fill={true}
+            className={styles.home__food}
+            alt="Food Plate"
+            src={'/images/plate9.png'}
+          />
+        </div>
         <div className={`${styles.home__review} ${styles.home__review__top}`}>
           <h4 className={styles.home__title}>Vegetable Stir Fry</h4>
           <div className={styles.home__rating}>

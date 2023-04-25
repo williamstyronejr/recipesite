@@ -110,6 +110,7 @@
 .popular__image {
   border-radius: 50%;
   width: 100%;
+  object-fit: contain;
 }
 
 .carousels {
@@ -174,9 +175,15 @@
     margin-right: 10px;
   }
 
+  .home__food_wrapper {
+    width: 100%;
+    height: auto;
+  }
+
   .home__food {
     display: block;
     width: 100%;
+    object-fit: contain;
   }
 
   .home__review {
