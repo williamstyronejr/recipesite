@@ -145,7 +145,7 @@ export default {
           email,
           hash,
           bio: '',
-          profileImage: 'default.jpg',
+          profileImage: '/images/default.jpg',
         });
         const token = generateToken(user);
 
@@ -367,7 +367,7 @@ export default {
         };
       }
 
-      if (sessionUser.username === 'guest')
+      if (sessionUser.username === 'guest') {
         return {
           updateErrors: [
             {
@@ -377,9 +377,11 @@ export default {
             },
           ],
         };
+      }
 
       try {
-        const fileName = await uploadImage(profileImage);
+        const url = await uploadImage(profileImage);
+        console.log(url);
 
         const params: {
           username?: string;
@@ -390,8 +392,8 @@ export default {
         if (username) params.username = username;
         if (email) params.email = email;
         if (bio || bio === '') params.bio = bio;
-        if (fileName) params.profileImage = fileName;
-        if (removeProfileImage) params.profileImage = 'default.jpg';
+        if (url) params.profileImage = url;
+        if (removeProfileImage) params.profileImage = '/images/default.jpg';
 
         await db.models.User.update(params, {
           where: {

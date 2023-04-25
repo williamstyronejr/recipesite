@@ -233,7 +233,6 @@ const AccountForm = ({
   initialBio,
   initialImage,
 }: {
-  // unauth: Function;
   signout: Function;
   initialUsername: string;
   initialEmail: string;
@@ -364,7 +363,7 @@ const AccountForm = ({
           <button
             className="form__button form__button--remove"
             type="button"
-            disabled={initialImage === 'default.jpg'}
+            disabled={initialImage === '/images/default.jpg'}
             onClick={() => uploadProfileImage(null, true)}
           >
             Remove Profile Image

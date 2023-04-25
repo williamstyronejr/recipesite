@@ -212,7 +212,8 @@ export default {
       }
 
       try {
-        const fileName = await uploadImage(mainImage);
+        const url = await uploadImage(mainImage);
+        console.log(url);
         const entity = await db.models.Entity.create({});
         const recipe = await db.models.Recipe.create({
           entityId: entity.id,
@@ -224,7 +225,7 @@ export default {
           prepTime,
           published,
           author: user.id,
-          mainImage: fileName ? fileName : 'defaultRecipe.jpg',
+          mainImage: url ? url : 'defaultRecipe.jpg',
         });
 
         return { recipe, errors: null };

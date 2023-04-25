@@ -1,12 +1,7 @@
 import path from 'path';
 import crypto from 'crypto';
-import { createWriteStream } from 'fs';
 import { FileUpload } from 'graphql-upload/Upload.mjs';
-
-const PATH_TO_IMG =
-  process.env.NODE_ENV === 'development'
-    ? path.join(__dirname, '..', '..', 'public', 'images')
-    : path.join(__dirname, '..', '..', '..', '..', 'src', 'public', 'images');
+import { uploadFirebaseFile } from '@/utils/firebase';
 
 /**
  * Generates a pseudo random string using crypto.
@@ -22,6 +17,33 @@ function generateRandomString(append = ''): Promise<string> {
   });
 }
 
+async function streamToBlob(stream: any, mimeType: string) {
+  const buffers = [];
+
+  // node.js readable streams implement the async iterator protocol
+  for await (const data of stream) {
+    buffers.push(data);
+  }
+
+  return Buffer.concat(buffers);
+  // if (mimeType != null && typeof mimeType !== 'string') {
+  //   throw new Error('Invalid mimetype, expected string.');
+  // }
+  // return new Promise((resolve, reject) => {
+  //   const chunks: any = [];
+  //   stream
+  //     .on('data', (chunk: any) => chunks.push(chunk))
+  //     .once('end', () => {
+  //       const blob =
+  //         mimeType != null
+  //           ? new Blob(chunks, { type: mimeType })
+  //           : new Blob(chunks);
+  //       resolve(blob);
+  //     })
+  //     .once('error', reject);
+  // });
+}
+
 /**
  * Saves a file locally to the profile image folder and returns the new name of
  *  the file.
@@ -33,13 +55,18 @@ export async function uploadImage(
   file: FileUpload | null
 ): Promise<string | null> {
   if (!file) return null;
+  try {
+    const { filename, createReadStream, mimetype } = await file;
+    console.log(filename, mimetype);
+    const stream = createReadStream();
+    const blob = await streamToBlob(stream, mimetype);
+    const newFileName = await generateRandomString(path.extname(filename));
+    console.log(blob);
+    const { url } = await uploadFirebaseFile(blob, newFileName, mimetype);
 
-  const { filename, createReadStream } = await file;
-  const stream = createReadStream();
-  const newFileName = await generateRandomString(path.extname(filename));
-  const out = createWriteStream(path.join(PATH_TO_IMG, newFileName));
-  stream.pipe(out);
-  await new Promise((res) => out.on('finish', res));
-
-  return newFileName;
+    return url;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
 }
