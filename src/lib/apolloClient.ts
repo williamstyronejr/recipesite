@@ -2,10 +2,10 @@ import { ApolloClient, InMemoryCache, from } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 import { setContext } from '@apollo/client/link/context';
 import { createUploadLink } from 'apollo-upload-client';
-import { getCookie } from '@/utils/utils';
+// import { getCookie } from '@/utils/utils';
 
 const authLink = setContext((_, { headers }) => {
-  const token = getCookie('csrf-token');
+  // const token = getCookie('csrf-token');
 
   return {
     headers: {

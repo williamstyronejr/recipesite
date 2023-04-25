@@ -17,31 +17,13 @@ function generateRandomString(append = ''): Promise<string> {
   });
 }
 
-async function streamToBlob(stream: any, mimeType: string) {
+async function streamToBlob(stream: any) {
   const buffers = [];
 
-  // node.js readable streams implement the async iterator protocol
   for await (const data of stream) {
     buffers.push(data);
   }
-
   return Buffer.concat(buffers);
-  // if (mimeType != null && typeof mimeType !== 'string') {
-  //   throw new Error('Invalid mimetype, expected string.');
-  // }
-  // return new Promise((resolve, reject) => {
-  //   const chunks: any = [];
-  //   stream
-  //     .on('data', (chunk: any) => chunks.push(chunk))
-  //     .once('end', () => {
-  //       const blob =
-  //         mimeType != null
-  //           ? new Blob(chunks, { type: mimeType })
-  //           : new Blob(chunks);
-  //       resolve(blob);
-  //     })
-  //     .once('error', reject);
-  // });
 }
 
 /**
@@ -55,18 +37,12 @@ export async function uploadImage(
   file: FileUpload | null
 ): Promise<string | null> {
   if (!file) return null;
-  try {
-    const { filename, createReadStream, mimetype } = await file;
-    console.log(filename, mimetype);
-    const stream = createReadStream();
-    const blob = await streamToBlob(stream, mimetype);
-    const newFileName = await generateRandomString(path.extname(filename));
-    console.log(blob);
-    const { url } = await uploadFirebaseFile(blob, newFileName, mimetype);
 
-    return url;
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
+  const { filename, createReadStream, mimetype } = await file;
+  const stream = createReadStream();
+  const blob = await streamToBlob(stream);
+  const newFileName = await generateRandomString(path.extname(filename));
+
+  const { url } = await uploadFirebaseFile(blob, newFileName, mimetype);
+  return url;
 }

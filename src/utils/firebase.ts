@@ -4,7 +4,7 @@ import {
   ref,
   uploadBytes,
   getDownloadURL,
-  deleteObject,
+  // deleteObject,
 } from 'firebase/storage';
 
 const {
