@@ -73,6 +73,9 @@ export default (sequelize: Sequelize, DataTypes: any): any => {
       createdAt: {
         type: DataTypes.DATE,
       },
+      type: {
+        type: DataTypes.STRING,
+      },
     },
     { sequelize, modelName: 'recipe' }
   );
