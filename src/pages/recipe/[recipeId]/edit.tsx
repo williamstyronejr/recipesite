@@ -24,6 +24,7 @@ const QUERY_RECIPE = gql`
       authorName
       authorImage
       published
+      type
     }
   }
 `;
@@ -46,6 +47,7 @@ const UPDATE_RECIPE = gql`
     $published: Boolean!
     $mainImage: Upload
     $removeImage: Boolean
+    $type: String
   ) {
     updateRecipe(
       recipeInput: {
@@ -59,6 +61,7 @@ const UPDATE_RECIPE = gql`
         published: $published
         mainImage: $mainImage
         removeImage: $removeImage
+        type: $type
       }
     ) {
       success
@@ -85,10 +88,12 @@ const EditRecipe = () => {
   const [prepTime, setPrepTime] = React.useState<string>('');
   const [cookTime, setCookTime] = React.useState<string>('');
   const [mainImage, setMainImage] = React.useState<any>(undefined);
+  const [initialImage, setInitialImage] = React.useState<string>('');
   const [published, setPublished] = React.useState<boolean>(false);
   const [previewImage, setPreviewImage] = React.useState<any>(null);
   const [removeImage, setRemoveImage] = React.useState<boolean>(false);
   const [authorImage, setAuthorImage] = React.useState<string>('');
+  const [mealType, setMealType] = React.useState<string | null>(null);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
 
   const [deleteRecipe] = useMutation(DELETE_RECIPE, {
@@ -127,23 +132,29 @@ const EditRecipe = () => {
       prepTime: parseInt(prepTime, 10),
       cookTime: parseInt(cookTime, 10),
       published,
-      mainImage:
-        mainImage === '/image/defaultRecipe.jpg' ? undefined : mainImage,
       removeImage,
+      type: mealType,
+      mainImage:
+        initialImage === mainImage || removeImage === true
+          ? undefined
+          : mainImage,
     },
   });
 
   const { loading, error } = useQuery(QUERY_RECIPE, {
     onCompleted(data) {
+      console.log(data);
       setTitle(data.getRecipe.title);
       setDirections(data.getRecipe.directions);
       setSummary(data.getRecipe.summary);
       setPublished(data.getRecipe.published);
+      setInitialImage(data.getRecipe.mainImage);
       setMainImage(data.getRecipe.mainImage);
       setCookTime(data.getRecipe.cookTime.toString());
       setPrepTime(data.getRecipe.prepTime.toString());
       setIngredients(data.getRecipe.ingredients);
       setAuthorImage(data.getRecipe.authorImage);
+      setMealType(data.getRecipe.type);
     },
     skip: !router.query || !router.query.recipeId,
     variables: {
@@ -284,13 +295,13 @@ const EditRecipe = () => {
               />
             </label>
 
-            {previewImage || mainImage !== 'defaultRecipe.jpg' ? (
+            {previewImage || mainImage !== '/images/defaultRecipe.jpg' ? (
               <button
                 className="form__button form__button--remove"
                 type="button"
                 onClick={() => {
                   setPreviewImage(null);
-                  setMainImage('defaultRecipe.jpg');
+                  setMainImage('/images/defaultRecipe.jpg');
                   setRemoveImage(true);
                 }}
               >
@@ -333,6 +344,47 @@ const EditRecipe = () => {
               />
               <div className="form__custom-radio" />
               <span className="form__labeling">Private</span>
+            </label>
+          </fieldset>
+
+          <fieldset className="form__field">
+            <label className="form__label" htmlFor="type">
+              <span className="form__labeling">Meal Type</span>
+              <select
+                id="type"
+                name="type"
+                className=""
+                value={mealType ? mealType : ''}
+                onChange={(evt) => setMealType(evt.target.value)}
+              >
+                <option disabled value="" className="">
+                  Select Type
+                </option>
+
+                <option value="Snack" className="">
+                  Snack
+                </option>
+
+                <option value="Breakfast" className="">
+                  Breakfast
+                </option>
+
+                <option value="Lunch" className="">
+                  Lunch
+                </option>
+
+                <option value="Dinner" className="">
+                  Dinner
+                </option>
+
+                <option value="Dessert" className="">
+                  Dessert
+                </option>
+
+                <option value="Other" className="">
+                  Other
+                </option>
+              </select>
             </label>
           </fieldset>
 
