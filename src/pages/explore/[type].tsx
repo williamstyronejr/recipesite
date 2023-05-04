@@ -5,8 +5,15 @@ import { gql, useQuery } from '@apollo/client';
 import styles from './styles/index.module.css';
 
 const QUERY_MAIN_RECIPE = gql`
-  query searchRecipes($limit: Int!, $offset: Int!, $author: String!) {
-    searchRecipes(search: { offset: $offset, limit: $limit, author: $author }) {
+  query searchRecipes(
+    $limit: Int!
+    $offset: Int!
+    $author: String!
+    $type: String!
+  ) {
+    searchRecipes(
+      search: { offset: $offset, limit: $limit, author: $author, type: $type }
+    ) {
       recipes {
         id
         title
@@ -48,9 +55,9 @@ const RecipeComponent = ({
   </div>
 );
 
-const Popular = () => {
+const Popular = ({ type }: { type: string }) => {
   const { data } = useQuery(QUERY_MAIN_RECIPE, {
-    variables: { limit: 3, offset: 0, author: 'ReshipiBukku' },
+    variables: { limit: 3, offset: 0, author: 'ReshipiBukku', type },
   });
 
   const recipes = data && data.searchRecipes ? data.searchRecipes.recipes : [];
@@ -84,11 +91,11 @@ const Popular = () => {
 };
 
 const ExplorePage = () => {
-  const router = useRouter();
+  const { query } = useRouter();
 
-  if (!router.query.type) return null;
+  if (!query.type) return null;
 
-  return <Popular />;
+  return <Popular type={query.type} />;
 };
 
 export default ExplorePage;
