@@ -176,8 +176,9 @@
   }
 
   .home__food_wrapper {
+    position: relative;
     width: 100%;
-    height: auto;
+    height: 500px;
   }
 
   .home__food {
