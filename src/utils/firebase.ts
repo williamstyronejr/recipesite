@@ -4,7 +4,7 @@ import {
   ref,
   uploadBytes,
   getDownloadURL,
-  // deleteObject,
+  deleteObject,
 } from 'firebase/storage';
 
 const {
@@ -26,6 +26,14 @@ const firebaseApp = initializeApp({
 });
 
 const storage = getStorage(firebaseApp);
+
+export async function deleteFirebaseFile(url: string) {
+  const split = url.split('.com/o/')[1];
+  const fileName = split.split('?')[0];
+
+  const fileRef = ref(storage, fileName);
+  return deleteObject(fileRef);
+}
 
 export async function uploadFirebaseFile(
   file: any,
