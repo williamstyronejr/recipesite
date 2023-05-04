@@ -255,7 +255,8 @@ export function validateRecipe(
   ingredients: string | undefined,
   cookTime: number | undefined,
   prepTime: number | undefined,
-  published: boolean
+  published: boolean,
+  type: string | undefined
 ): Validator {
   const errors: Error = [];
 
@@ -307,6 +308,15 @@ export function validateRecipe(
         errors.push({
           path: 'ingredients',
           message: 'Ingredients must be provided for a published recipe',
+        });
+      }
+    }
+
+    if (type || type === '') {
+      if (type.trim() === '') {
+        errors.push({
+          path: 'type',
+          message: 'Type is required for a published recipe.',
         });
       }
     }
