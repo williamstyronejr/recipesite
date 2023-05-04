@@ -4,6 +4,7 @@ import checkAuth from '../utils/auth';
 import { validateRecipe } from '../utils/validators';
 import { uploadImage } from './utils';
 import { QueryTypes } from 'sequelize';
+import { deleteFirebaseFile } from '@/utils/firebase';
 
 export default {
   Query: {
@@ -25,7 +26,11 @@ export default {
           ],
         });
 
-        if (!recipeData || !recipeData.published) return null;
+        if (
+          !recipeData ||
+          (!recipeData.published && recipeData.author !== user.id)
+        )
+          return null;
 
         /**
          * Can't get sub querys to work using raw query for now
@@ -124,7 +129,7 @@ export default {
     async searchRecipes(
       _: any,
       {
-        search: { q, order, offset, limit },
+        search: { q, order, offset, limit, type, author },
       }: {
         search: {
           q: string;
@@ -132,15 +137,30 @@ export default {
           order: string;
           offset: number;
           limit: number;
+          type: string;
         };
       }
     ): Promise<any | null> {
       const ordering = order === 'rating' ? [[]] : [['createdAt', 'DESC']];
-      const where: { title?: any } = {};
+      const where: { title?: any; type?: string; author?: any } = {};
+      if (author) {
+        const user = await db.models.User.findOne({
+          where: {
+            username: author,
+          },
+        });
+
+        if (user) {
+          where.author = user.id;
+        }
+      }
+
       if (q)
         where.title = {
           [Op.like]: q,
         };
+      if (type)
+        where.type = `${type.charAt(0).toUpperCase()}${type.substring(1)}`;
 
       try {
         const recipes = await db.models.Recipe.findAll({
@@ -213,7 +233,6 @@ export default {
 
       try {
         const url = await uploadImage(mainImage);
-        console.log(url);
         const entity = await db.models.Entity.create({});
         const recipe = await db.models.Recipe.create({
           entityId: entity.id,
@@ -225,12 +244,12 @@ export default {
           prepTime,
           published,
           author: user.id,
-          mainImage: url ? url : 'defaultRecipe.jpg',
+          mainImage: url ? url : '/image/defaultRecipe.jpg',
         });
 
         return { recipe, errors: null };
       } catch (err) {
-        // logger.error(err);
+        console.log(err);
         return {
           recipe: null,
           errors: [
@@ -256,6 +275,7 @@ export default {
           published,
           mainImage,
           removeImage,
+          type,
         },
       }: {
         recipeInput: {
@@ -269,10 +289,12 @@ export default {
           published: boolean;
           mainImage: any;
           removeImage: boolean;
+          type: string;
         };
       },
       context: any
     ): Promise<Record<string, unknown>> {
+      console.log({ id, type });
       const user = checkAuth(context);
       const { errors, valid } = validateRecipe(
         title,
@@ -281,7 +303,8 @@ export default {
         ingredients,
         cookTime,
         prepTime,
-        published
+        published,
+        type
       );
 
       if (!valid) {
@@ -292,19 +315,25 @@ export default {
       }
 
       try {
-        const fileName = !removeImage
-          ? await uploadImage(mainImage)
-          : 'defaultRecipe.jpg';
-
         const params: Record<string, unknown> = {};
+        const oldRecipe = await db.models.Recipe.findByPk(id);
+
+        if (removeImage) {
+          if (oldRecipe.mainImage !== '/images/defaultRecipe.jpg') {
+            params.mainImage = '/images/defaultRecipe.jpg';
+          }
+        } else if (mainImage) {
+          uploadImage(mainImage);
+        }
+
         if (title) params.title = title;
         if (summary) params.summary = summary;
         if (directions) params.directions = directions;
         if (ingredients) params.ingredients = ingredients;
         if (cookTime) params.cookTime = cookTime;
         if (prepTime) params.prepTime = prepTime;
+        if (type) params.type = type;
         if (typeof published === 'boolean') params.published = published;
-        if (fileName) params.mainImage = fileName;
 
         const results = await db.models.Recipe.update(params, {
           where: {
@@ -313,11 +342,25 @@ export default {
           },
         });
 
+        if (
+          (removeImage &&
+            oldRecipe.mainImage !== '/images/defaultRecipe.jpg') ||
+          (mainImage && mainImage !== oldRecipe.mainImage)
+        ) {
+          try {
+            await deleteFirebaseFile(oldRecipe.mainImage);
+          } catch (err) {
+            // Log error deleting file
+            console.log('Deleting Image');
+          }
+        }
+
         return {
           success: results[0] > 0,
           errors: null,
         };
       } catch (err) {
+        console.log(err);
         return {
           success: false,
         };
