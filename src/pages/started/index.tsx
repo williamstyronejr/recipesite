@@ -13,42 +13,50 @@ const StartedPage = () => {
 
       <div className={styles.started__options}>
         <Link className={styles.started__option} href="/explore/breakfest">
-          <Image
-            fill={true}
-            className={styles.started__image}
-            src="/images/site/breakfest.jpg"
-            alt="Breakfest"
-          />
+          <div className={styles.started__image_wrapper}>
+            <Image
+              fill={true}
+              className={styles.started__image}
+              src="/images/site/breakfest.jpg"
+              alt="Breakfest"
+            />
+          </div>
           Breakfest
         </Link>
 
         <Link className={styles.started__option} href="/explore/lunch">
-          <Image
-            fill={true}
-            className={styles.started__image}
-            src="/images/site/lunch.jpg"
-            alt="Food"
-          />
+          <div className={styles.started__image_wrapper}>
+            <Image
+              fill={true}
+              className={styles.started__image}
+              src="/images/site/lunch.jpg"
+              alt="Food"
+            />
+          </div>
           Lunch
         </Link>
 
         <Link className={styles.started__option} href="/explore/dinner">
-          <Image
-            fill={true}
-            className={styles.started__image}
-            src="/images/site/dinner.jpeg"
-            alt="Food"
-          />
+          <div className={styles.started__image_wrapper}>
+            <Image
+              fill={true}
+              className={styles.started__image}
+              src="/images/site/dinner.jpeg"
+              alt="Food"
+            />
+          </div>
           Dinner
         </Link>
 
         <Link className={styles.started__option} href="/explore/dessert">
-          <Image
-            fill={true}
-            className={styles.started__image}
-            src="/images/site/dessert.jpg"
-            alt="Food"
-          />
+          <div className={styles.started__image_wrapper}>
+            <Image
+              fill={true}
+              className={styles.started__image}
+              src="/images/site/dessert.jpg"
+              alt="Food"
+            />
+          </div>
           Dessert
         </Link>
       </div>
