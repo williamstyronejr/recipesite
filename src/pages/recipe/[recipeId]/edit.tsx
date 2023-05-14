@@ -65,6 +65,21 @@ const UPDATE_RECIPE = gql`
       }
     ) {
       success
+      recipe {
+        id
+        title
+        summary
+        directions
+        ingredients
+        mainImage
+        prepTime
+        cookTime
+        author
+        authorName
+        authorImage
+        published
+        type
+      }
       errors {
         ... on UserInputError {
           path
@@ -87,10 +102,10 @@ const EditRecipe = () => {
   const [ingredients, setIngredients] = React.useState<string>('');
   const [prepTime, setPrepTime] = React.useState<string>('');
   const [cookTime, setCookTime] = React.useState<string>('');
-  const [mainImage, setMainImage] = React.useState<any>(undefined);
+  const [mainImage, setMainImage] = React.useState<any>(null);
+  const [previewImage, setPreviewImage] = React.useState<any>(null);
   const [initialImage, setInitialImage] = React.useState<string>('');
   const [published, setPublished] = React.useState<boolean>(false);
-  const [previewImage, setPreviewImage] = React.useState<any>(null);
   const [removeImage, setRemoveImage] = React.useState<boolean>(false);
   const [authorImage, setAuthorImage] = React.useState<string>('');
   const [mealType, setMealType] = React.useState<string | null>(null);
@@ -109,20 +124,21 @@ const EditRecipe = () => {
   });
 
   const [updateRecipe] = useMutation(UPDATE_RECIPE, {
-    update(_, { data: { updateRecipe: res } }) {
+    update(cache, { data: { updateRecipe: res } }) {
       if (res.errors) {
         const errs: any = {};
         res.errors.forEach((error: any) => {
           errs[error.path] = error.message;
         });
-
         return setErrors(errs);
       }
+
       router.push(`/recipe/${router.query.recipeId}`);
     },
     onError() {
       setErrors({ general: 'Server error occurrer, please try again.' });
     },
+    refetchQueries: [QUERY_RECIPE],
     variables: {
       recipeId: router.query.recipeId,
       title,
@@ -141,9 +157,12 @@ const EditRecipe = () => {
     },
   });
 
-  const { loading, error } = useQuery(QUERY_RECIPE, {
+  const {
+    loading,
+    error,
+    data: recipeData,
+  } = useQuery(QUERY_RECIPE, {
     onCompleted(data) {
-      console.log(data);
       setTitle(data.getRecipe.title);
       setDirections(data.getRecipe.directions);
       setSummary(data.getRecipe.summary);
@@ -277,12 +296,14 @@ const EditRecipe = () => {
                 </div>
 
                 <div className="form__preview-wrapper">
-                  <Image
-                    fill={true}
-                    className="form__preview"
-                    src={previewImage || mainImage}
-                    alt="Recipe example"
-                  />
+                  {previewImage || mainImage ? (
+                    <Image
+                      fill={true}
+                      className="form__preview"
+                      src={previewImage || mainImage}
+                      alt="Recipe example"
+                    />
+                  ) : null}
                 </div>
               </button>
               <input

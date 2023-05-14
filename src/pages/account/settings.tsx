@@ -260,6 +260,7 @@ const AccountForm = ({
 
       setStatus(true);
     },
+    refetchQueries: [QUERY_USER],
     onError() {
       setErrors({ general: 'Server error occurred, please try again.' });
     },
