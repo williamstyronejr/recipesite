@@ -198,6 +198,7 @@ export default {
           prepTime,
           published,
           mainImage,
+          type,
         },
       }: {
         recipeInput: {
@@ -209,6 +210,7 @@ export default {
           prepTime: number;
           published: boolean;
           mainImage: any;
+          type: string;
         };
       },
       context: any
@@ -221,7 +223,8 @@ export default {
         ingredients,
         cookTime,
         prepTime,
-        published
+        published,
+        type
       );
 
       if (!valid) {
@@ -243,13 +246,13 @@ export default {
           cookTime,
           prepTime,
           published,
+          type,
           author: user.id,
-          mainImage: url ? url : '/image/defaultRecipe.jpg',
+          mainImage: url ? url : '/images/defaultRecipe.jpg',
         });
 
         return { recipe, errors: null };
       } catch (err) {
-        console.log(err);
         return {
           recipe: null,
           errors: [
@@ -294,7 +297,6 @@ export default {
       },
       context: any
     ): Promise<Record<string, unknown>> {
-      console.log({ id, type });
       const user = checkAuth(context);
       const { errors, valid } = validateRecipe(
         title,
@@ -323,7 +325,8 @@ export default {
             params.mainImage = '/images/defaultRecipe.jpg';
           }
         } else if (mainImage) {
-          uploadImage(mainImage);
+          const url = await uploadImage(mainImage);
+          params.mainImage = url;
         }
 
         if (title) params.title = title;
@@ -340,27 +343,40 @@ export default {
             id,
             author: user.id,
           },
+          include: [
+            {
+              model: db.models.User,
+              as: 'user',
+              attributes: { exclude: ['hash'] },
+            },
+          ],
+          returning: true,
         });
 
         if (
-          (removeImage &&
-            oldRecipe.mainImage !== '/images/defaultRecipe.jpg') ||
-          (mainImage && mainImage !== oldRecipe.mainImage)
+          oldRecipe.mainImage !== '/images/defaultRecipe.jpg' &&
+          (removeImage ||
+            (params.mainImage && params.mainImage !== oldRecipe.mainImage))
         ) {
           try {
             await deleteFirebaseFile(oldRecipe.mainImage);
           } catch (err) {
             // Log error deleting file
-            console.log('Deleting Image');
           }
         }
 
         return {
           success: results[0] > 0,
+          recipe: results[1].length
+            ? {
+                ...results[1][0],
+                authorName: results[1][0].dataValues.user.username,
+                authorImage: results[1][0].dataValues.user.profileImage,
+              }
+            : null,
           errors: null,
         };
       } catch (err) {
-        console.log(err);
         return {
           success: false,
         };
