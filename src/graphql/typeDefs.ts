@@ -72,18 +72,18 @@ export default gql`
   }
   type Recipe {
     id: ID!
-    entityId: ID!
-    title: String!
-    summary: String!
-    directions: String!
-    ingredients: String!
-    published: Boolean!
-    prepTime: Int!
-    cookTime: Int!
-    mainImage: String!
-    authorName: String!
-    author: ID!
-    authorImage: String!
+    entityId: ID
+    title: String
+    summary: String
+    directions: String
+    ingredients: String
+    published: Boolean
+    prepTime: Int
+    cookTime: Int
+    mainImage: String
+    authorName: String
+    author: ID
+    authorImage: String
     avgRating: Float
     userRating: Int
     ratingCount: Int
@@ -140,6 +140,7 @@ export default gql`
 
   type UpdateRecipePayload {
     success: Boolean
+    recipe: Recipe
     errors: [RecipeError]
   }
 
