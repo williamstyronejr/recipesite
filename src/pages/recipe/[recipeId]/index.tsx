@@ -5,6 +5,7 @@ import Loading from '@/components/ui/Loading';
 import Recipe from '@/components/ui/Recipe';
 import Comments from '@/components/ui/Comments';
 import ErrorPage from '@/components/ui/Error';
+import MissingPage from '@/components/ui/Missing';
 
 const QUERY_RECIPE = gql`
   query ($recipeId: ID!) {
@@ -43,7 +44,7 @@ const RecipePage = () => {
   if (!query || !query.recipeId) return <Loading />;
   if (error) return <ErrorPage />;
   if (loading || error) return <Loading />;
-  if (!data.getRecipe) return null;
+  if (!data.getRecipe) return <MissingPage />;
 
   const {
     id,
