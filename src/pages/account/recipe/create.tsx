@@ -14,6 +14,7 @@ const CREATE_RECIPE = gql`
     $cookTime: Int
     $published: Boolean!
     $mainImage: Upload
+    $type: String
   ) {
     createRecipe(
       recipeInput: {
@@ -25,6 +26,7 @@ const CREATE_RECIPE = gql`
         cookTime: $cookTime
         published: $published
         mainImage: $mainImage
+        type: $type
       }
     ) {
       recipe {
@@ -52,6 +54,7 @@ const CreateRecipePage = () => {
   const [cookTime, setCookTime] = React.useState<string>('');
   const [mainImage, setMainImage] = React.useState<any>(undefined);
   const [previewImage, setPreviewImage] = React.useState<any | null>(null);
+  const [mealType, setMealType] = React.useState<string | null>(null);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
 
   const [createRecipe, { loading }] = useMutation(CREATE_RECIPE, {
@@ -84,6 +87,7 @@ const CreateRecipePage = () => {
       cookTime: Number.parseInt(cookTime, 10),
       prepTime: Number.parseInt(prepTime, 10),
       mainImage,
+      type: mealType,
     },
   });
 
@@ -204,6 +208,47 @@ const CreateRecipePage = () => {
             />
             <div className="form__custom-radio" />
             <span className="form__labeling">Private</span>
+          </label>
+        </fieldset>
+
+        <fieldset className="form__field">
+          <label className="form__label" htmlFor="type">
+            <span className="form__labeling">Meal Type</span>
+            <select
+              id="type"
+              name="type"
+              className=""
+              value={mealType ? mealType : ''}
+              onChange={(evt) => setMealType(evt.target.value)}
+            >
+              <option disabled value="" className="">
+                Select Type
+              </option>
+
+              <option value="Snack" className="">
+                Snack
+              </option>
+
+              <option value="Breakfast" className="">
+                Breakfast
+              </option>
+
+              <option value="Lunch" className="">
+                Lunch
+              </option>
+
+              <option value="Dinner" className="">
+                Dinner
+              </option>
+
+              <option value="Dessert" className="">
+                Dessert
+              </option>
+
+              <option value="Other" className="">
+                Other
+              </option>
+            </select>
           </label>
         </fieldset>
 
