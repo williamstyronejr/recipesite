@@ -24,6 +24,7 @@ export default (sequelize: Sequelize, DataTypes: any): any => {
     prepTime!: number;
     mainImage!: string;
     createdAt!: Date;
+    type!: string;
 
     static associate(models: any) {
       // define association here
