@@ -1,0 +1,49 @@
+.custom {
+  width: 100%;
+}
+
+.custom__wrapper {
+  width: 80%;
+  max-width: 300px;
+  margin: 0 auto;
+}
+.custom__btn {
+  display: flex;
+  background-color: transparent;
+  width: 100%;
+  text-align: left;
+}
+
+.custom__value {
+  flex: 1 0 auto;
+  margin-right: 5px;
+}
+
+.custom__active .custom__arrow {
+  transform: rotateX(180deg);
+}
+
+.options__wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.options {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+}
+
+.custom__active .options {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.option {
+  width: 100%;
+}
+
+.select {
+  display: none;
+}
