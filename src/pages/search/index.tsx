@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -34,8 +34,8 @@ const SearchPage = () => {
   const router = useRouter();
   const searchParams = new URLSearchParams(router.pathname);
   const initSearch = searchParams.get('q') || '';
-  const [searchError, setSearchError] = React.useState<boolean>(false);
-  const [search, setSearch] = React.useState<string>(initSearch);
+  const [searchError, setSearchError] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>(initSearch);
 
   const { loading, data, fetchMore } = useQuery(QUERY_SEARCH, {
     onError() {

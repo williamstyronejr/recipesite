@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, SyntheticEvent } from 'react';
 import { useMutation, gql } from '@apollo/client';
 import Link from 'next/link';
 import Head from 'next/head';
@@ -35,9 +35,9 @@ const LOGIN_USER = gql`
 const SigninPage = () => {
   const { state, login } = useAuthContext();
   const router = useRouter();
-  const [username, setUsername] = React.useState<string>('');
-  const [password, setPassword] = React.useState<string>('');
-  const [errors, setErrors] = React.useState<Record<string, string>>({});
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [loginUser, { loading }] = useMutation(LOGIN_USER, {
     update(_, { data: { login: userData } }) {
@@ -63,7 +63,7 @@ const SigninPage = () => {
 
   if (state.authenticated) router.replace('/');
 
-  const submitHandler = (evt: React.SyntheticEvent<HTMLFormElement>) => {
+  const submitHandler = (evt: SyntheticEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
     const validateErrors: any = {};

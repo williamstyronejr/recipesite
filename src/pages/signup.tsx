@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, SyntheticEvent } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useMutation, gql } from '@apollo/client';
@@ -41,11 +41,11 @@ const REGISTER_USER = gql`
 const SignupPage = () => {
   const { state, login } = useAuthContext();
   const router = useRouter();
-  const [email, setEmail] = React.useState<string>('');
-  const [username, setUsername] = React.useState<string>('');
-  const [password, setPassword] = React.useState<string>('');
-  const [confirm, setConfirm] = React.useState<string>('');
-  const [errors, setError] = React.useState<{ [key: string]: string }>({});
+  const [email, setEmail] = useState<string>('');
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [confirm, setConfirm] = useState<string>('');
+  const [errors, setError] = useState<{ [key: string]: string }>({});
 
   const [createUser, { loading }] = useMutation(REGISTER_USER, {
     update(_, { data: { register: userData } }) {
@@ -74,7 +74,7 @@ const SignupPage = () => {
 
   if (state.authenticated) router.push('/');
 
-  const submitHandler = (evt: React.SyntheticEvent<HTMLFormElement>) => {
+  const submitHandler = (evt: SyntheticEvent<HTMLFormElement>) => {
     evt.preventDefault();
     setError({});
     const validateErrors = validateSignup(username, email, password, confirm);

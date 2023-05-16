@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { gql, useMutation, useQuery } from '@apollo/client';
@@ -64,8 +64,8 @@ const Comments = ({
   userId: number | null;
   source: number;
 }) => {
-  const [content, setContent] = React.useState<string>('');
-  const [errors, setErrors] = React.useState<Record<string, string>>({});
+  const [content, setContent] = useState<string>('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const {
     loading,

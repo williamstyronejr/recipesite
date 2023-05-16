@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { gql, useMutation } from '@apollo/client';
 import styles from './styles/rating.module.css';
 
@@ -34,7 +34,7 @@ const Rating = ({
   totalRatings: number;
   disabled?: boolean;
 }) => {
-  const [rating, setRating] = React.useState<number>(
+  const [rating, setRating] = useState<number>(
     userRating || Math.floor(avgRating)
   );
 

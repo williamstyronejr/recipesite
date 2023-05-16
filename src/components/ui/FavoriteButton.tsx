@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { gql, useMutation } from '@apollo/client';
 import styles from './styles/favorite.module.css';
 
@@ -17,7 +17,7 @@ const FavoriteButton = ({
   initFavorite: boolean;
   disabled: boolean;
 }) => {
-  const [favorited, setFavorited] = React.useState<boolean>(initFavorite);
+  const [favorited, setFavorited] = useState<boolean>(initFavorite);
 
   const [updateFavorite] = useMutation(MUTATION_FAVORITE, {
     update(_: any, { data: { setFavorite: success } }) {

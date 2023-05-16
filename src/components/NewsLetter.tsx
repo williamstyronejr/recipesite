@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { useMutation, gql } from '@apollo/client';
 import styles from './styles/newsletter.module.css';
 
@@ -9,16 +9,16 @@ const MUTATION_NEWSLETTERS = gql`
 `;
 
 const NewsLetter = () => {
-  const [email, setEmail] = React.useState<string>('');
-  const [success, setSuccess] = React.useState<boolean>(false);
-  const [errors, setErrors] = React.useState<{
+  const [email, setEmail] = useState<string>('');
+  const [success, setSuccess] = useState<boolean>(false);
+  const [errors, setErrors] = useState<{
     general?: string;
     email?: string;
   }>({});
 
   let notificationTimeout: number | null = null;
 
-  React.useEffect(
+  useEffect(
     () => () => {
       if (notificationTimeout) window.clearTimeout(notificationTimeout);
     },
