@@ -8,6 +8,7 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import Loading from '@/components/ui/Loading';
 import ErrorPage from '@/components/ui/Error';
 import { validateRecipe } from '@/utils/validators';
+import SelectInput from '@/components/ui/SelectInput';
 
 const QUERY_RECIPE = gql`
   query ($recipeId: ID!) {
@@ -218,6 +219,8 @@ const EditRecipe = () => {
     fileReader.readAsDataURL(evt.currentTarget.files[0]);
   }
 
+  console.log(mealType);
+
   return (
     <section className="form-wrapper form-wrapper--wide">
       {previewVisible ? (
@@ -369,44 +372,19 @@ const EditRecipe = () => {
           </fieldset>
 
           <fieldset className="form__field">
-            <label className="form__label" htmlFor="type">
-              <span className="form__labeling">Meal Type</span>
-              <select
-                id="type"
-                name="type"
-                className=""
-                value={mealType ? mealType : ''}
-                onChange={(evt) => setMealType(evt.target.value)}
-              >
-                <option disabled value="" className="">
-                  Select Type
-                </option>
-
-                <option value="Snack" className="">
-                  Snack
-                </option>
-
-                <option value="Breakfast" className="">
-                  Breakfast
-                </option>
-
-                <option value="Lunch" className="">
-                  Lunch
-                </option>
-
-                <option value="Dinner" className="">
-                  Dinner
-                </option>
-
-                <option value="Dessert" className="">
-                  Dessert
-                </option>
-
-                <option value="Other" className="">
-                  Other
-                </option>
-              </select>
-            </label>
+            <SelectInput
+              name="type"
+              value={mealType}
+              changeValue={(str: string) => setMealType(str)}
+              options={[
+                'Snack',
+                'Breakfast',
+                'Lunch',
+                'Dinner',
+                'Dessert',
+                'Other',
+              ]}
+            />
           </fieldset>
 
           <fieldset className="form__field">

@@ -3,6 +3,7 @@ import { useMutation, gql } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { validateRecipe } from '@/utils/validators';
 import Image from 'next/image';
+import SelectInput from '@/components/ui/SelectInput';
 
 const CREATE_RECIPE = gql`
   mutation createRecipe(
@@ -212,44 +213,19 @@ const CreateRecipePage = () => {
         </fieldset>
 
         <fieldset className="form__field">
-          <label className="form__label" htmlFor="type">
-            <span className="form__labeling">Meal Type</span>
-            <select
-              id="type"
-              name="type"
-              className=""
-              value={mealType ? mealType : ''}
-              onChange={(evt) => setMealType(evt.target.value)}
-            >
-              <option disabled value="" className="">
-                Select Type
-              </option>
-
-              <option value="Snack" className="">
-                Snack
-              </option>
-
-              <option value="Breakfast" className="">
-                Breakfast
-              </option>
-
-              <option value="Lunch" className="">
-                Lunch
-              </option>
-
-              <option value="Dinner" className="">
-                Dinner
-              </option>
-
-              <option value="Dessert" className="">
-                Dessert
-              </option>
-
-              <option value="Other" className="">
-                Other
-              </option>
-            </select>
-          </label>
+          <SelectInput
+            name="type"
+            value={mealType}
+            changeValue={(str: string) => setMealType(str)}
+            options={[
+              'Snack',
+              'Breakfast',
+              'Lunch',
+              'Dinner',
+              'Dessert',
+              'Other',
+            ]}
+          />
         </fieldset>
 
         <fieldset className="form__field">
