@@ -58,7 +58,8 @@ const RecipeComponent = ({
 
 const Popular = ({ type }: { type: string }) => {
   const { data } = useQuery(QUERY_MAIN_RECIPE, {
-    variables: { limit: 3, offset: 0, author: 'ReshipiBukku', type },
+    variables: { limit: 8, offset: 0, author: 'ReshipiBukku', type },
+    fetchPolicy: 'no-cache',
   });
 
   const recipes = data && data.searchRecipes ? data.searchRecipes.recipes : [];
@@ -100,7 +101,7 @@ const ExplorePage = () => {
 
   if (!query.type) return null;
 
-  return <Popular type={query.type} />;
+  return <Popular type={query.type.toString()} />;
 };
 
 export default ExplorePage;
