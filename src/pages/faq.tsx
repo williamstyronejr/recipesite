@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, ReactNode } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import styles from './styles/faq.module.css';
@@ -8,7 +8,7 @@ const QuestionItem = ({
   children,
 }: {
   question: string;
-  children: React.ReactNode | null | undefined;
+  children: ReactNode | null | undefined;
 }) => {
   const [active, setActive] = useState<boolean>(false);
 
