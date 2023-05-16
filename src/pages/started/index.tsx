@@ -17,16 +17,16 @@ const StartedPage = () => {
       </header>
 
       <div className={styles.started__options}>
-        <Link className={styles.started__option} href="/explore/breakfest">
+        <Link className={styles.started__option} href="/explore/breakfast">
           <div className={styles.started__image_wrapper}>
             <Image
               fill={true}
               className={styles.started__image}
               src="/images/site/breakfest.jpg"
-              alt="Breakfest"
+              alt="Breakfast"
             />
           </div>
-          Breakfest
+          Breakfast
         </Link>
 
         <Link className={styles.started__option} href="/explore/lunch">
