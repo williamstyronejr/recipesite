@@ -141,7 +141,7 @@ export default {
         };
       }
     ): Promise<any | null> {
-      const ordering = order === 'rating' ? [[]] : [['createdAt', 'DESC']];
+      let ordering = order === 'rating' ? [[]] : [['createdAt', 'DESC']];
       const where: { title?: any; type?: string; author?: any } = {};
       if (author) {
         const user = await db.models.User.findOne({
@@ -159,8 +159,13 @@ export default {
         where.title = {
           [Op.like]: q,
         };
-      if (type)
-        where.type = `${type.charAt(0).toUpperCase()}${type.substring(1)}`;
+      if (type) {
+        if (type.toLowerCase() === 'popular') {
+          ordering = [['createdAt', 'DESC']];
+        } else {
+          where.type = `${type.charAt(0).toUpperCase()}${type.substring(1)}`;
+        }
+      }
 
       try {
         const recipes = await db.models.Recipe.findAll({
