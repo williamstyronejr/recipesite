@@ -22,14 +22,11 @@ import {
 import db from '../../models/index';
 import checkAuth from '../utils/auth';
 import { uploadImage } from './utils';
-import { setTokenCookie } from '@/apollo/cookies';
+import { removeTokenCookie, setTokenCookie } from '@/apollo/cookies';
+import { deleteFirebaseFile } from '@/utils/firebase';
 
 const { JWT_SECRET } = process.env;
 const SALT_ROUNDS = 8;
-const COOKIE_OPTION =
-  process.env.NODE_ENV === 'development'
-    ? {}
-    : { httpOnly: true, secure: true };
 
 function generateToken(user: any): string {
   return jwt.sign(
@@ -147,9 +144,9 @@ export default {
           bio: '',
           profileImage: '/images/default.jpg',
         });
-        const token = generateToken(user);
 
-        context.res.cookie('token', token, COOKIE_OPTION);
+        const token = generateToken(user);
+        setTokenCookie(context.res, token);
 
         return {
           user: { ...user.toJSON(), token },
@@ -389,17 +386,31 @@ export default {
           bio?: string;
           profileImage?: string;
         } = {};
+        let currentUser;
+
         if (username) params.username = username;
         if (email) params.email = email;
         if (bio || bio === '') params.bio = bio;
         if (url) params.profileImage = url;
-        if (removeProfileImage) params.profileImage = '/images/default.jpg';
+        if (removeProfileImage) {
+          currentUser = await db.models.User.findByPk(sessionUser.id);
+          params.profileImage = '/images/default.jpg';
+        }
 
         await db.models.User.update(params, {
           where: {
             id: sessionUser.id,
           },
         });
+
+        try {
+          if (removeProfileImage) {
+            if (currentUser.profileImage.includes('.com'))
+              await deleteFirebaseFile(currentUser.profileImage);
+          }
+        } catch (err) {
+          // Log firebase deletion error
+        }
 
         return {
           success: true,
@@ -447,7 +458,7 @@ export default {
           where: { id: sessionUser.id },
         });
 
-        context.res.clearCookie('token');
+        removeTokenCookie(context.res);
         return rowsDestroyed > 0;
       } catch (err) {
         return false;
