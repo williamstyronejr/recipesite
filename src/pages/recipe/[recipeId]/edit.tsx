@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { useAuthContext } from '@/hooks/useAuth';
@@ -223,6 +224,9 @@ const EditRecipe = () => {
 
   return (
     <section className="form-wrapper form-wrapper--wide">
+      <Head>
+        <title>Edit Recipe - Reshipi Bukku</title>
+      </Head>
       {previewVisible ? (
         <Recipe
           id=""

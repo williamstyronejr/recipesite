@@ -1,9 +1,12 @@
-import * as React from 'react';
 import Link from 'next/link';
+import Head from 'next/head';
 import styles from './styles/support.module.css';
 
 const SupportPage = () => (
   <section className={styles.support}>
+    <Head>
+      <title>Support - Reshipi Bukku</title>
+    </Head>
     <header className={styles.support__header}>
       <h1 className={styles.support__heading}>
         Support Center

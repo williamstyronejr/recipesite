@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useMutation, gql } from '@apollo/client';
 import Link from 'next/link';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useAuthContext } from '../hooks/useAuth';
 import styles from './styles/auth.module.css';
@@ -83,6 +84,10 @@ const SigninPage = () => {
 
   return (
     <section className={styles.signin}>
+      <Head>
+        <title>Signin - Reshipi Bukku</title>
+      </Head>
+
       <form className="form" onSubmit={submitHandler}>
         <header className="form__header">
           <h3 className="form__heading">Sign in to your account</h3>

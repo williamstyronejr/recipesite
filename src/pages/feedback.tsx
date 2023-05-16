@@ -1,15 +1,20 @@
-import * as React from 'react';
+import Head from 'next/head';
+import { useState, SyntheticEvent } from 'react';
 
 const FeedbackPage = () => {
-  const [type, setType] = React.useState<string>('');
-  const [feedback, setFeedback] = React.useState<string>('');
+  const [type, setType] = useState<string>('');
+  const [feedback, setFeedback] = useState<string>('');
 
-  const submitHandler = (evt: React.SyntheticEvent<HTMLFormElement>) => {
+  const submitHandler = (evt: SyntheticEvent<HTMLFormElement>) => {
     evt.preventDefault();
   };
 
   return (
     <section className="page-form" onSubmit={submitHandler}>
+      <Head>
+        <title>Feedback - Reshipi Bukku</title>
+      </Head>
+
       <form className="form">
         <header className="form__header">
           <h3 className="form__heading">Feedback Form</h3>

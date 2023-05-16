@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Head from 'next/head';
 import { useMutation, gql } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { validateRecipe } from '@/utils/validators';
@@ -127,6 +128,10 @@ const CreateRecipePage = () => {
 
   return (
     <section className="form-wrapper form-wrapper--wide">
+      <Head>
+        <title>Create Recipe - Reshipi Bukku</title>
+      </Head>
+
       <form className="form" onSubmit={submitHandler}>
         <header className="form__header">
           {errors.general ? (

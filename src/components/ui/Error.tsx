@@ -1,7 +1,11 @@
+import Head from 'next/head';
 import Link from 'next/link';
 
 const ErrorPage = () => (
   <section className="missing">
+    <Head>
+      <title>Error - Reshipi Bukku</title>
+    </Head>
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 792 612"

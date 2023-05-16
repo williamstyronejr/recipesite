@@ -1,8 +1,8 @@
-import * as React from 'react';
-import { useQuery, gql } from '@apollo/client';
-import useInfiniteScroll from 'react-infinite-scroll-hook';
 import Link from 'next/link';
+import Head from 'next/head';
 import Image from 'next/image';
+import useInfiniteScroll from 'react-infinite-scroll-hook';
+import { useQuery, gql } from '@apollo/client';
 import Loading from '@/components/ui/Loading';
 import styles from './styles/favorites.module.css';
 
@@ -47,6 +47,10 @@ const FavoritesPage = () => {
 
   return (
     <section className={styles.favorites}>
+      <Head>
+        <title>Favorites - Reshipi Bukku</title>
+      </Head>
+
       <header className={styles.favorites__header}>
         <h3 className={styles.favorites__heading}>Favorites</h3>
       </header>

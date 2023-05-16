@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { gql, useQuery } from '@apollo/client';
 import { useAuthContext } from '@/hooks/useAuth';
@@ -67,6 +68,10 @@ const RecipePage = () => {
 
   return (
     <section className="recipe">
+      <Head>
+        <title>{title} - Reshipi Bukku</title>
+      </Head>
+
       <Recipe
         id={id}
         entityId={entityId}

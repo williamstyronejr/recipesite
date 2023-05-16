@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Head from 'next/head';
 import Image from 'next/image';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { useAuthContext } from '@/hooks/useAuth';
@@ -139,6 +140,9 @@ const PasswordForm = () => {
 
   return (
     <form className="form" onSubmit={handleSubmit}>
+      <Head>
+        <title>Password - Reshipi Bukku</title>
+      </Head>
       <header className="form__header">
         {status ? (
           <div className="form__notification" data-cy="form-notification">
@@ -306,6 +310,9 @@ const AccountForm = ({
 
   return (
     <form className="form" onSubmit={submitHandler}>
+      <Head>
+        <title>Account - Reshipi Bukku</title>
+      </Head>
       <header className="form__header">
         {status ? (
           <div className="form__notification" data-cy="form-notification">
@@ -477,6 +484,9 @@ const SettingsPage = () => {
 
   return (
     <section className={styles.settings}>
+      <Head>
+        <title>Settings - Reshipi Bukku</title>
+      </Head>
       <aside className={styles.settings__aside}>
         <button
           className={`${styles.settings__link} ${

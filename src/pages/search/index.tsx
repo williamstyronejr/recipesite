@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Image from 'next/image';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useQuery, gql } from '@apollo/client';
@@ -65,6 +66,9 @@ const SearchPage = () => {
 
   return (
     <section className={styles.search}>
+      <Head>
+        <title>Search - Reshipi Bukku</title>
+      </Head>
       <header className={styles.search__header}>
         <h1 className={styles.search__heading}>Recipes</h1>
       </header>

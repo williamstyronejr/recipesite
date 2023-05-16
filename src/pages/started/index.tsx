@@ -1,10 +1,15 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import Head from 'next/head';
 import styles from './styles/index.module.css';
 
 const StartedPage = () => {
   return (
     <section className={styles.started}>
+      <Head>
+        <title>Get Started - Reshipi Bukku</title>
+      </Head>
+
       <header className={styles.started__header}>
         <h1 className={styles.started__heading}>
           Let start with the type of meal
@@ -58,6 +63,18 @@ const StartedPage = () => {
             />
           </div>
           Dessert
+        </Link>
+
+        <Link className={styles.started__option} href="/explore/snack">
+          <div className={styles.started__image_wrapper}>
+            <Image
+              fill={true}
+              className={styles.started__image}
+              src="/images/site/dessert.jpg"
+              alt="Food"
+            />
+          </div>
+          Snacks
         </Link>
       </div>
     </section>

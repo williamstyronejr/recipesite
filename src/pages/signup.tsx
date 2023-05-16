@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useMutation, gql } from '@apollo/client';
 import { useAuthContext } from '@/hooks/useAuth';
@@ -84,6 +85,10 @@ const SignupPage = () => {
 
   return (
     <section className={styles.signup}>
+      <Head>
+        <title>Signup - Reshipi Bukku</title>
+      </Head>
+
       <form className="form" onSubmit={submitHandler}>
         <header className="form__header">
           <h3 className="form__heading">Create an account</h3>

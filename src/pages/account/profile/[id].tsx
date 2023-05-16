@@ -1,9 +1,10 @@
 import Link from 'next/link';
+import Head from 'next/head';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { gql, useQuery } from '@apollo/client';
 import Loading from '../../../components/ui/Loading';
 import styles from './styles/profile.module.css';
-import Image from 'next/image';
 
 const QUERY_USER_PROFILE = gql`
   query ($userId: ID!) {
@@ -22,6 +23,9 @@ const QUERY_USER_PROFILE = gql`
 
 const UserNotFound = () => (
   <section className={`${styles.profile} ${styles.profile__missing}`}>
+    <Head>
+      <title>404 - Reshipi Bukku</title>
+    </Head>
     <div className={styles.profile__404_heading}>Bummer.</div>
     <div className={styles.profile__404_msg}>This User does not exist.</div>
 
@@ -49,6 +53,9 @@ const ProfilePage = () => {
 
   return (
     <section className={styles.profile}>
+      <Head>
+        <title>Profile - Reshipi Bukku</title>
+      </Head>
       <header className={styles.profile__header}>
         <div className={styles.profile__wrapper}>
           <div className={styles.profile__picture_wrapper}>
