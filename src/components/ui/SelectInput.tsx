@@ -7,10 +7,12 @@ const SelectInput = ({
   options,
   value,
   changeValue,
+  title = '',
 }: {
   name: string;
   options: string[];
   value: string;
+  title?: string;
   changeValue: Function;
 }) => {
   const [active, setActive] = useState(false);
@@ -37,9 +39,7 @@ const SelectInput = ({
               setActive((old) => !old);
             }}
           >
-            <div className={styles.custom__value}>
-              {value || 'Select Meal Type'}
-            </div>
+            <div className={styles.custom__value}>{value || title}</div>
             <span className={styles.custom__arrow}>
               <i className="fas fa-arrow-up" />
             </span>
@@ -50,7 +50,7 @@ const SelectInput = ({
               {options.map((option) => (
                 <button
                   key={`select-${option}`}
-                  className={styles.option}
+                  className={`transition-colors ${styles.option}`}
                   type="button"
                   onClick={() => {
                     setActive(false);
@@ -66,12 +66,13 @@ const SelectInput = ({
         </div>
       </div>
 
-      <select
+      <input
+        type="text"
         name={name}
         className={styles.select}
         value={value}
         onChange={() => {}}
-      ></select>
+      />
     </>
   );
 };
