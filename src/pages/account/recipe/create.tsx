@@ -218,8 +218,10 @@ const CreateRecipePage = () => {
         </fieldset>
 
         <fieldset className="form__field">
+          <span className="form__labeling">Recipe Type</span>
           <SelectInput
             name="type"
+            title="Select Meal Type"
             value={mealType}
             changeValue={(str: string) => setMealType(str)}
             options={[

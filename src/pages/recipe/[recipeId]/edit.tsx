@@ -216,8 +216,6 @@ const EditRecipe = () => {
     fileReader.readAsDataURL(evt.currentTarget.files[0]);
   }
 
-  console.log(mealType);
-
   return (
     <section className="form-wrapper form-wrapper--wide">
       <Head>
@@ -334,8 +332,9 @@ const EditRecipe = () => {
             ) : null}
           </fieldset>
 
-          <span className="form__labeling">Publish Status</span>
           <fieldset className="form__field form__field--flex">
+            <span className="form__labeling">Publish Status</span>
+
             <label
               htmlFor="published-1"
               className="form__label form__label--inline form__label--radio"
@@ -372,8 +371,11 @@ const EditRecipe = () => {
           </fieldset>
 
           <fieldset className="form__field">
+            <span className="form__labeling">Recipe Type</span>
+
             <SelectInput
               name="type"
+              title="Select Meal Type"
               value={mealType}
               changeValue={(str: string) => setMealType(str)}
               options={[
