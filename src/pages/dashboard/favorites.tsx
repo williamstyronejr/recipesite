@@ -66,11 +66,15 @@ const FavoritesPage = () => {
 
         {items.map((item: any) => (
           <div className={styles.favorites__item} key={item.id}>
-            <Link href={`/recipe/${item.id}`} title={item.title}>
+            <Link
+              className={styles.favorites__preview_wrapper}
+              href={`/recipe/${item.id}`}
+              title={item.title}
+            >
               <Image
                 fill={true}
                 className={styles.favorites__preview}
-                src={`/img/${item.mainImage}`}
+                src={item.mainImage}
                 alt="Recipe Example"
               />
             </Link>
