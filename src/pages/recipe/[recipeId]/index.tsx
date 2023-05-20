@@ -95,8 +95,7 @@ const RecipePage = () => {
 
       <Comments
         entityId={entityId}
-        // userId={state.id || null}
-        userId={null}
+        userId={state.id || null}
         source={entityId}
       />
     </section>
