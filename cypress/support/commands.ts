@@ -29,17 +29,19 @@ declare namespace Cypress {
 }
 
 Cypress.Commands.add('register', (email, username, password) => {
-  cy.visit('/');
-  cy.contains('Signup').click();
+  cy.session(username, () => {
+    cy.visit('/');
+    cy.contains('Signup').click();
 
-  cy.get('input[name="username"]').type(username);
-  cy.get('input[name="email"]').type(email);
-  cy.get('input[name="password"]').type(password);
-  cy.get('input[name="confirm"]').type(password);
+    cy.get('input[name="username"]').type(username);
+    cy.get('input[name="email"]').type(email);
+    cy.get('input[name="password"]').type(password);
+    cy.get('input[name="confirm"]').type(password);
 
-  cy.get('form').submit();
+    cy.get('form').submit();
 
-  cy.location('pathname').should('eq', '/');
+    cy.location('pathname').should('eq', '/');
+  });
 });
 
 Cypress.Commands.add(

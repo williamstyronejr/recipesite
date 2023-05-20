@@ -15,35 +15,25 @@ describe('Managing recipes', () => {
       12,
       true,
       'ingredients',
-      'directions',
+      'directions'
     );
   });
 
   beforeEach(() => {
-    Cypress.Cookies.preserveOnce('token');
-    Cypress.Cookies.preserveOnce('_csrf');
-    Cypress.Cookies.preserveOnce('csrf_token');
-  });
-
-  it('Editting recipe from manage should link to edit page', () => {
+    cy.register(email, username, password);
     cy.visit('/');
     cy.contains('Dashboard').click();
     cy.contains('Manage Recipes').click();
-    cy.get('[data-cy="edit"]').click();
+  });
 
+  it('Editting recipe from manage should link to edit page', () => {
+    cy.get('[data-cy="edit"]').click();
     cy.location('pathname').should('match', /\/edit$/);
   });
 
   it('Deleting a recipe should remove it from the recipes list', () => {
-    cy.visit('/');
-    cy.contains('Dashboard').click();
-    cy.contains('Manage Recipes').click();
-
     cy.contains(recipeTitle);
-
     cy.get('[data-cy="delete"]').click();
-    // cy.get('[data-cy="confirm"]').click();
-
     cy.contains(recipeTitle).should('not.exist');
   });
 });
