@@ -1,7 +1,7 @@
 import '@/styles/globals.css';
 import type { AppProps } from 'next/app';
 import useOutsideClick from '@/hooks/useOutsideClick';
-import { useState, useEffect, FC, ReactNode } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
@@ -75,14 +75,13 @@ const AuthNav = ({
 const Header = () => {
   const { state, signout } = useAuthContext();
   const { pathname } = useRouter();
-  const [navMenu, setNavMenu] = useState(false);
-  const [menuActive, setMenuActive] = useState<Boolean>(false);
+  const [menuActive, setMenuActive] = useState(false);
 
   const ref = useOutsideClick({
     ignoreButton: true,
-    active: navMenu,
+    active: menuActive,
     closeEvent: () => {
-      setNavMenu(false);
+      setMenuActive(false);
     },
   });
 
@@ -91,7 +90,10 @@ const Header = () => {
   }, [pathname]);
 
   return (
-    <header className={styles.header} ref={ref}>
+    <header
+      className={`${styles.header} ${menuActive ? styles.menu__active : ''}`}
+      ref={ref}
+    >
       <button
         type="button"
         className={styles.header__menu}
@@ -148,10 +150,13 @@ const Header = () => {
   );
 };
 
-const Auth: FC<{
+const Auth = ({
+  auth,
+  children,
+}: {
   auth: { admin?: boolean };
   children: ReactNode;
-}> = ({ auth, children }) => {
+}) => {
   const router = useRouter();
   const { state } = useAuthContext();
 
