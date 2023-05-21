@@ -39,7 +39,9 @@ const SelectInput = ({
               setActive((old) => !old);
             }}
           >
-            <div className={styles.custom__value}>{value || title}</div>
+            <div className={styles.custom__value}>
+              {value !== '' ? value : title}
+            </div>
             <span className={styles.custom__arrow}>
               <i className="fas fa-arrow-up" />
             </span>

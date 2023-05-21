@@ -376,7 +376,7 @@ const EditRecipe = () => {
             <SelectInput
               name="type"
               title="Select Meal Type"
-              value={mealType}
+              value={mealType || ''}
               changeValue={(str: string) => setMealType(str)}
               options={[
                 'Snack',
