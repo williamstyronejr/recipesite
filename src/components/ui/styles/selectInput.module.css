@@ -7,6 +7,7 @@
   max-width: 300px;
   margin: 0 auto;
 }
+
 .custom__btn {
   display: flex;
   background-color: transparent;
@@ -40,6 +41,9 @@
   /* box-shadow: 0 0 0 4px black; */
   border: 1px solid rgba(0, 0, 0, 0.4);
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+
+  animation: growDown 300ms ease-in-out forwards;
+  transform-origin: top center;
 }
 
 .custom__active .options {
@@ -67,4 +71,16 @@
 
 .select {
   display: none;
+}
+
+@keyframes growDown {
+  0% {
+    transform: scaleY(0);
+  }
+  80% {
+    transform: scaleY(1.1);
+  }
+  100% {
+    transform: scaleY(1);
+  }
 }
