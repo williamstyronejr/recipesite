@@ -72,22 +72,23 @@ export default gql`
   }
   type Recipe {
     id: ID!
-    entityId: ID!
-    title: String!
-    summary: String!
-    directions: String!
-    ingredients: String!
-    published: Boolean!
-    prepTime: Int!
-    cookTime: Int!
-    mainImage: String!
-    authorName: String!
-    author: ID!
-    authorImage: String!
+    entityId: ID
+    title: String
+    summary: String
+    directions: String
+    ingredients: String
+    published: Boolean
+    prepTime: Int
+    cookTime: Int
+    mainImage: String
+    authorName: String
+    author: ID
+    authorImage: String
     avgRating: Float
     userRating: Int
     ratingCount: Int
     favorited: Boolean
+    type: String
   }
   type Profile {
     username: String!
@@ -139,6 +140,7 @@ export default gql`
 
   type UpdateRecipePayload {
     success: Boolean
+    recipe: Recipe
     errors: [RecipeError]
   }
 
@@ -161,6 +163,7 @@ export default gql`
   }
   input RecipeInput {
     id: ID
+    type: String
     title: String
     summary: String
     directions: String
@@ -175,6 +178,7 @@ export default gql`
     q: String
     order: String
     author: String
+    type: String
     offset: Int!
     limit: Int!
   }

@@ -1,11 +1,14 @@
-import * as React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import Head from 'next/head';
 import NewsLetter from '../components/NewsLetter';
 import styles from './styles/home.module.css';
 
 const HomePage = () => (
   <>
+    <Head>
+      <title>Reshipi Bukku</title>
+    </Head>
     <section className={styles.home}>
       <header className={styles.home__header}>
         <h1 className={styles.home__heading}>

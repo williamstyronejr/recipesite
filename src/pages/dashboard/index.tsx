@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Head from 'next/head';
 import { useAuthContext } from '@/hooks/useAuth';
 import styles from './styles/dashboard.module.css';
 
@@ -7,6 +8,10 @@ const DashboardPage = () => {
 
   return (
     <section className={styles.dashboard}>
+      <Head>
+        <title>Dashboard - Reshipi Bukku</title>
+      </Head>
+
       <header className={styles.dashboard__header}>
         <h1 className={styles.dashboard__heading}>
           Welcome back,

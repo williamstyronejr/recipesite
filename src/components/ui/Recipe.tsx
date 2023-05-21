@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Rating from './Rating';
@@ -46,7 +46,7 @@ const Recipe = ({
   favorited: boolean;
   onPreviewClose?: Function | null;
 }) => {
-  const [userControls, setUserControls] = React.useState<boolean>(false);
+  const [userControls, setUserControls] = useState<boolean>(false);
 
   return (
     <div className={styles.recipe__wrapper}>

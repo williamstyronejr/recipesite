@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 
 const useOutsideClick = ({
   active,
@@ -11,9 +11,9 @@ const useOutsideClick = ({
   ignoreButton?: boolean;
   triggerKeys?: String[];
 }) => {
-  const ref = React.useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
-  const onClickEvent = React.useCallback(
+  const onClickEvent = useCallback(
     (evt: MouseEvent) => {
       if (ref && ref.current) {
         if (!ref.current.contains(evt.target as HTMLElement)) {
@@ -28,7 +28,7 @@ const useOutsideClick = ({
     [closeEvent, ignoreButton]
   );
 
-  const onKeyEvent = React.useCallback(
+  const onKeyEvent = useCallback(
     (evt: KeyboardEvent) => {
       if (triggerKeys.includes(evt.key)) {
         closeEvent();
@@ -37,7 +37,7 @@ const useOutsideClick = ({
     [closeEvent, triggerKeys]
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (active || active === undefined) {
       window.addEventListener('click', onClickEvent);
       window.addEventListener('keyup', onKeyEvent);

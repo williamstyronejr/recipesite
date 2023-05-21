@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { gql, useQuery } from '@apollo/client';
 import { useAuthContext } from '@/hooks/useAuth';
@@ -5,6 +6,7 @@ import Loading from '@/components/ui/Loading';
 import Recipe from '@/components/ui/Recipe';
 import Comments from '@/components/ui/Comments';
 import ErrorPage from '@/components/ui/Error';
+import MissingPage from '@/components/ui/Missing';
 
 const QUERY_RECIPE = gql`
   query ($recipeId: ID!) {
@@ -43,7 +45,7 @@ const RecipePage = () => {
   if (!query || !query.recipeId) return <Loading />;
   if (error) return <ErrorPage />;
   if (loading || error) return <Loading />;
-  if (!data.getRecipe) return null;
+  if (!data.getRecipe) return <MissingPage />;
 
   const {
     id,
@@ -66,6 +68,10 @@ const RecipePage = () => {
 
   return (
     <section className="recipe">
+      <Head>
+        <title>{title} - Reshipi Bukku</title>
+      </Head>
+
       <Recipe
         id={id}
         entityId={entityId}
@@ -89,8 +95,7 @@ const RecipePage = () => {
 
       <Comments
         entityId={entityId}
-        // userId={state.id || null}
-        userId={null}
+        userId={state.id || null}
         source={entityId}
       />
     </section>

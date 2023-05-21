@@ -1,10 +1,10 @@
 import Head from 'next/head';
 import Link from 'next/link';
 
-const ErrorPage = () => (
+const MissingPage = () => (
   <section className="missing">
     <Head>
-      <title>Error - Reshipi Bukku</title>
+      <title>404 - Reshipi Bukku</title>
     </Head>
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -33,10 +33,8 @@ const ErrorPage = () => (
       />
     </svg>
     <h3 className="missing__heading">404</h3>
-
     <p className="missing__text">
-      Sorry, an error occurred on our servers, please try going back to the home
-      page.{' '}
+      This page does not exists.{' '}
       <Link className="missing__link" href="/">
         Click here to go back home.
       </Link>
@@ -44,4 +42,4 @@ const ErrorPage = () => (
   </section>
 );
 
-export default ErrorPage;
+export default MissingPage;

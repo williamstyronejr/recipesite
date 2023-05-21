@@ -1,5 +1,6 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Head from 'next/head';
 import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { gql, useQuery, useMutation } from '@apollo/client';
 import { useAuthContext } from '@/hooks/useAuth';
@@ -33,7 +34,7 @@ const DELETE_RECIPE = gql`
 
 const ManageRecipesPage = () => {
   const { state } = useAuthContext();
-  const [filter, setFilter] = React.useState('all');
+  const [filter, setFilter] = useState('all');
 
   const {
     loading,
@@ -75,12 +76,16 @@ const ManageRecipesPage = () => {
     rootMargin: '0px 0px 200px 0px',
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     refetch({ userId: state.id, publishedType: filter, limit: 10, offset: 0 });
   }, [filter, state.id, refetch]);
 
   return (
     <section className={styles.manage}>
+      <Head>
+        <title>Manage - Reshipi Bukku</title>
+      </Head>
+
       <aside className={styles.manage__aside}>
         <Link className={styles.manage__button} href="/dashboard">
           <div className={styles.manage__back} />

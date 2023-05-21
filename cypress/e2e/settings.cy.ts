@@ -4,18 +4,10 @@ const username = createRandomString(8);
 const email = createRandomString(8, '@email.com');
 const password = 'test';
 
-before(() => {
-  cy.clearCookies();
-  cy.register(email, username, password);
-});
-
 beforeEach(() => {
-  Cypress.Cookies.preserveOnce('token');
-  Cypress.Cookies.preserveOnce('_csrf');
-  Cypress.Cookies.preserveOnce('csrf_token');
+  cy.register(email, username, password);
+  cy.visit('/');
 });
-
-afterEach(() => {});
 
 describe('Account Settings', () => {
   it('Invalid field should display field errors', () => {

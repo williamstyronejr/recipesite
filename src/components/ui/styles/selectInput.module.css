@@ -1,0 +1,70 @@
+.custom {
+  width: 100%;
+}
+
+.custom__wrapper {
+  width: 80%;
+  max-width: 300px;
+  margin: 0 auto;
+}
+.custom__btn {
+  display: flex;
+  background-color: transparent;
+  width: 100%;
+  text-align: left;
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.custom__value {
+  flex: 1 0 auto;
+  margin-right: 5px;
+}
+
+.custom__active .custom__arrow {
+  transform: rotateX(180deg);
+}
+
+.options__wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.options {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  background-color: white;
+  /* box-shadow: 0 0 0 4px black; */
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.custom__active .options {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.option {
+  width: 100%;
+  background-color: white;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 8px 0;
+}
+
+.option:hover {
+  cursor: pointer;
+  background-color: #efefef;
+}
+
+.option:disabled {
+  background-color: #efebeb;
+  cursor: default;
+}
+
+.select {
+  display: none;
+}

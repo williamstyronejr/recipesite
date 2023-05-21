@@ -1,8 +1,10 @@
-import * as React from 'react';
+import { useState, createRef, SyntheticEvent } from 'react';
+import Head from 'next/head';
 import { useMutation, gql } from '@apollo/client';
 import { useRouter } from 'next/router';
 import { validateRecipe } from '@/utils/validators';
 import Image from 'next/image';
+import SelectInput from '@/components/ui/SelectInput';
 
 const CREATE_RECIPE = gql`
   mutation createRecipe(
@@ -14,6 +16,7 @@ const CREATE_RECIPE = gql`
     $cookTime: Int
     $published: Boolean!
     $mainImage: Upload
+    $type: String
   ) {
     createRecipe(
       recipeInput: {
@@ -25,6 +28,7 @@ const CREATE_RECIPE = gql`
         cookTime: $cookTime
         published: $published
         mainImage: $mainImage
+        type: $type
       }
     ) {
       recipe {
@@ -42,17 +46,18 @@ const CREATE_RECIPE = gql`
 
 const CreateRecipePage = () => {
   const router = useRouter();
-  const fileRef = React.createRef<HTMLInputElement>();
-  const [title, setTitle] = React.useState<string>('');
-  const [summary, setSummary] = React.useState<string>('');
-  const [directions, setDirections] = React.useState('');
-  const [ingredients, setIngredients] = React.useState<string>('');
-  const [published, setPublished] = React.useState<boolean>(true);
-  const [prepTime, setPrepTime] = React.useState<string>('');
-  const [cookTime, setCookTime] = React.useState<string>('');
-  const [mainImage, setMainImage] = React.useState<any>(undefined);
-  const [previewImage, setPreviewImage] = React.useState<any | null>(null);
-  const [errors, setErrors] = React.useState<Record<string, string>>({});
+  const fileRef = createRef<HTMLInputElement>();
+  const [title, setTitle] = useState<string>('');
+  const [summary, setSummary] = useState<string>('');
+  const [directions, setDirections] = useState('');
+  const [ingredients, setIngredients] = useState<string>('');
+  const [published, setPublished] = useState<boolean>(true);
+  const [prepTime, setPrepTime] = useState<string>('');
+  const [cookTime, setCookTime] = useState<string>('');
+  const [mainImage, setMainImage] = useState<any>(undefined);
+  const [previewImage, setPreviewImage] = useState<any | null>(null);
+  const [mealType, setMealType] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [createRecipe, { loading }] = useMutation(CREATE_RECIPE, {
     update(_, { data: { createRecipe: res } }) {
@@ -84,10 +89,11 @@ const CreateRecipePage = () => {
       cookTime: Number.parseInt(cookTime, 10),
       prepTime: Number.parseInt(prepTime, 10),
       mainImage,
+      type: mealType,
     },
   });
 
-  const submitHandler = (evt: React.SyntheticEvent<HTMLFormElement>) => {
+  const submitHandler = (evt: SyntheticEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
     const validateErr = validateRecipe(
@@ -105,7 +111,7 @@ const CreateRecipePage = () => {
     createRecipe();
   };
 
-  function onFileChange(evt: React.SyntheticEvent<HTMLInputElement>): void {
+  function onFileChange(evt: SyntheticEvent<HTMLInputElement>): void {
     if (!evt.currentTarget.files || evt.currentTarget.files?.length === 0) {
       return;
     }
@@ -122,6 +128,10 @@ const CreateRecipePage = () => {
 
   return (
     <section className="form-wrapper form-wrapper--wide">
+      <Head>
+        <title>Create Recipe - Reshipi Bukku</title>
+      </Head>
+
       <form className="form" onSubmit={submitHandler}>
         <header className="form__header">
           {errors.general ? (
@@ -205,6 +215,24 @@ const CreateRecipePage = () => {
             <div className="form__custom-radio" />
             <span className="form__labeling">Private</span>
           </label>
+        </fieldset>
+
+        <fieldset className="form__field">
+          <span className="form__labeling">Recipe Type</span>
+          <SelectInput
+            name="type"
+            title="Select Meal Type"
+            value={mealType || ''}
+            changeValue={(str: string) => setMealType(str)}
+            options={[
+              'Snack',
+              'Breakfast',
+              'Lunch',
+              'Dinner',
+              'Dessert',
+              'Other',
+            ]}
+          />
         </fieldset>
 
         <fieldset className="form__field">

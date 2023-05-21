@@ -26,7 +26,10 @@ describe('Signing in', () => {
     const username = createRandomString(8);
     const email = createRandomString(8, '@email.com');
     const password = 'test';
+
     cy.register(email, username, password);
+    cy.visit('/');
+
     cy.contains('Signout').click();
     cy.contains('Signin').click();
 

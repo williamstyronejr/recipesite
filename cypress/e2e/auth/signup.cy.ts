@@ -25,6 +25,7 @@ describe('Creating a new account through local signup', () => {
     const username = createRandomString(8);
     const email = createRandomString(8, '@email.com');
     const password = 'test';
+
     cy.get('input[name="username"]').type(username);
     cy.get('input[name="email"]').type(email);
     cy.get('input[name="password"]').type(password);

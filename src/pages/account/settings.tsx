@@ -1,4 +1,5 @@
-import * as React from 'react';
+import { createRef, SyntheticEvent, FormEvent, useState } from 'react';
+import Head from 'next/head';
 import Image from 'next/image';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { useAuthContext } from '@/hooks/useAuth';
@@ -92,11 +93,11 @@ const QUERY_USER = gql`
 `;
 
 const PasswordForm = () => {
-  const [oldPassword, setOldPassword] = React.useState<string>('');
-  const [newPassword, setNewPassword] = React.useState<string>('');
-  const [confirmPassword, setConfirmPassword] = React.useState<string>('');
-  const [status, setStatus] = React.useState<boolean>(false);
-  const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
+  const [oldPassword, setOldPassword] = useState<string>('');
+  const [newPassword, setNewPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [status, setStatus] = useState<boolean>(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [updatePassword, { loading }] = useMutation(MUTATION_PASSWORD, {
     update(_, { data: { updatePassword: res } }) {
@@ -121,7 +122,7 @@ const PasswordForm = () => {
     },
   });
 
-  function handleSubmit(evt: React.SyntheticEvent<HTMLFormElement>) {
+  function handleSubmit(evt: SyntheticEvent<HTMLFormElement>) {
     evt.preventDefault();
     setStatus(false);
 
@@ -139,6 +140,9 @@ const PasswordForm = () => {
 
   return (
     <form className="form" onSubmit={handleSubmit}>
+      <Head>
+        <title>Password - Reshipi Bukku</title>
+      </Head>
       <header className="form__header">
         {status ? (
           <div className="form__notification" data-cy="form-notification">
@@ -239,13 +243,13 @@ const AccountForm = ({
   initialBio: string;
   initialImage: string;
 }) => {
-  const [username, setUsername] = React.useState<string>(initialUsername);
-  const [email, setEmail] = React.useState<string>(initialEmail);
-  const [bio, setBio] = React.useState<string>(initialBio);
-  const [status, setStatus] = React.useState<boolean>(false);
-  const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
-  const [confirmVisible, setConfirmVisible] = React.useState(false);
-  const fileRef = React.createRef<HTMLInputElement>();
+  const [username, setUsername] = useState<string>(initialUsername);
+  const [email, setEmail] = useState<string>(initialEmail);
+  const [bio, setBio] = useState<string>(initialBio);
+  const [status, setStatus] = useState<boolean>(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const fileRef = createRef<HTMLInputElement>();
 
   const [updateAccount, { loading }] = useMutation(MUTATION_ACCOUNT, {
     update(_: any, { data: { updateAccount: res } }) {
@@ -260,6 +264,7 @@ const AccountForm = ({
 
       setStatus(true);
     },
+    refetchQueries: [QUERY_USER],
     onError() {
       setErrors({ general: 'Server error occurred, please try again.' });
     },
@@ -274,7 +279,7 @@ const AccountForm = ({
     },
   });
 
-  function submitHandler(evt: React.FormEvent<HTMLFormElement>) {
+  function submitHandler(evt: FormEvent<HTMLFormElement>) {
     evt.preventDefault();
     setStatus(false);
 
@@ -305,6 +310,9 @@ const AccountForm = ({
 
   return (
     <form className="form" onSubmit={submitHandler}>
+      <Head>
+        <title>Account - Reshipi Bukku</title>
+      </Head>
       <header className="form__header">
         {status ? (
           <div className="form__notification" data-cy="form-notification">
@@ -452,7 +460,7 @@ const AccountForm = ({
 
 const SettingsPage = () => {
   const { signout } = useAuthContext();
-  const [selected, setSelected] = React.useState('account');
+  const [selected, setSelected] = useState('account');
   const { error, loading, data } = useQuery(QUERY_USER, {
     fetchPolicy: 'no-cache',
   });
@@ -476,6 +484,9 @@ const SettingsPage = () => {
 
   return (
     <section className={styles.settings}>
+      <Head>
+        <title>Settings - Reshipi Bukku</title>
+      </Head>
       <aside className={styles.settings__aside}>
         <button
           className={`${styles.settings__link} ${

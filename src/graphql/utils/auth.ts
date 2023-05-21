@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { GraphQLError } from 'graphql';
+import { removeTokenCookie } from '@/apollo/cookies';
 
 const AuthenticationError = (msg: string) =>
   new GraphQLError(msg, {
@@ -18,7 +19,7 @@ export default function checkAuth(context: any, required = true): any {
       const user = jwt.verify(token, JWT_SECRET as string);
       return user;
     } catch (err) {
-      context.res.clearCookie('token');
+      removeTokenCookie(context.res);
       if (required) throw AuthenticationError('Invalid/Expired token');
     }
   }

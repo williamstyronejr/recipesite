@@ -1,5 +1,6 @@
 import { useState, SyntheticEvent } from 'react';
 import { gql, useMutation } from '@apollo/client';
+import Head from 'next/head';
 
 const MUTATION_RECOVERY = gql`
   mutation recovery($email: String!) {
@@ -54,6 +55,10 @@ const RecoveryPage = () => {
 
   return (
     <section className="recovery">
+      <Head>
+        <title>Recovery - Reshipi Bukku</title>
+      </Head>
+
       <form className="form" onSubmit={submitHandler}>
         <header className="form__header">
           <h1 className="form__heading">Reset Your Password</h1>

@@ -4,15 +4,8 @@ const username = createRandomString(8);
 const email = createRandomString(8, '@email.com');
 const password = 'test';
 
-before(() => {
-  cy.clearCookies();
-  cy.register(email, username, password);
-});
-
 beforeEach(() => {
-  Cypress.Cookies.preserveOnce('token');
-  Cypress.Cookies.preserveOnce('_csrf');
-  Cypress.Cookies.preserveOnce('csrf_token');
+  cy.register(email, username, password);
 });
 
 describe('Creating a new recipe', () => {
@@ -54,6 +47,8 @@ describe('Recipe page', () => {
   const commentText1 = 'This comment should not be the one delete';
 
   before(() => {
+    // Repeated from Root-Level due this being called before the Root-Level one
+    cy.register(email, username, password);
     cy.createRecipe(
       title,
       summary,
@@ -61,8 +56,13 @@ describe('Recipe page', () => {
       cookTime,
       published,
       ingredients,
-      directions,
+      directions
     );
+  });
+
+  beforeEach(() => {
+    cy.visit('/dashboard/manage');
+    cy.contains(title).click();
   });
 
   it('Empty input for comment should display a error message', () => {

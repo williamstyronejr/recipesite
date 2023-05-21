@@ -1,5 +1,6 @@
-import * as React from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useQuery, gql } from '@apollo/client';
@@ -33,8 +34,8 @@ const SearchPage = () => {
   const router = useRouter();
   const searchParams = new URLSearchParams(router.pathname);
   const initSearch = searchParams.get('q') || '';
-  const [searchError, setSearchError] = React.useState<boolean>(false);
-  const [search, setSearch] = React.useState<string>(initSearch);
+  const [searchError, setSearchError] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>(initSearch);
 
   const { loading, data, fetchMore } = useQuery(QUERY_SEARCH, {
     onError() {
@@ -65,6 +66,9 @@ const SearchPage = () => {
 
   return (
     <section className={styles.search}>
+      <Head>
+        <title>Search - Reshipi Bukku</title>
+      </Head>
       <header className={styles.search__header}>
         <h1 className={styles.search__heading}>Recipes</h1>
       </header>

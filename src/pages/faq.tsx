@@ -1,4 +1,5 @@
-import * as React from 'react';
+import { useState, ReactNode } from 'react';
+import Head from 'next/head';
 import Link from 'next/link';
 import styles from './styles/faq.module.css';
 
@@ -7,9 +8,9 @@ const QuestionItem = ({
   children,
 }: {
   question: string;
-  children: React.ReactNode | null | undefined;
+  children: ReactNode | null | undefined;
 }) => {
-  const [active, setActive] = React.useState<boolean>(false);
+  const [active, setActive] = useState<boolean>(false);
 
   return (
     <li
@@ -36,6 +37,9 @@ const QuestionItem = ({
 
 const FaqPage = () => (
   <section className={styles.faq}>
+    <Head>
+      <title>FAQ - Reshipi Bukku</title>
+    </Head>
     <header className={styles.faq__header}>
       <h1 className={styles.faq__heading}>Frequently Asked Questions (FAQ)</h1>
     </header>

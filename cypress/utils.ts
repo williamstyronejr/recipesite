@@ -9,7 +9,7 @@ export function createRandomString(length: number, append = ''): string {
   do {
     s += Math.random().toString(36).substr(2);
   } while (s.length < length);
-  s = s.substr(0, length);
+  s = s.substring(0, length);
 
   return s.concat(append);
 }

@@ -1,8 +1,12 @@
+import Head from 'next/head';
 import styles from './styles/about.module.css';
 
 const AboutPage = () => (
   <>
     <section className={styles.about}>
+      <Head>
+        <title>About - Reshipi Bukku</title>
+      </Head>
       <header className={styles.about__header}>
         <h1 className={styles.about__heading}>
           Empowering home chiefs around the world to explore and learn

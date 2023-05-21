@@ -1,4 +1,5 @@
-import * as React from 'react';
+import { useState, createRef, SyntheticEvent } from 'react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import { useAuthContext } from '@/hooks/useAuth';
@@ -8,6 +9,7 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import Loading from '@/components/ui/Loading';
 import ErrorPage from '@/components/ui/Error';
 import { validateRecipe } from '@/utils/validators';
+import SelectInput from '@/components/ui/SelectInput';
 
 const QUERY_RECIPE = gql`
   query ($recipeId: ID!) {
@@ -24,6 +26,7 @@ const QUERY_RECIPE = gql`
       authorName
       authorImage
       published
+      type
     }
   }
 `;
@@ -46,6 +49,7 @@ const UPDATE_RECIPE = gql`
     $published: Boolean!
     $mainImage: Upload
     $removeImage: Boolean
+    $type: String
   ) {
     updateRecipe(
       recipeInput: {
@@ -59,9 +63,25 @@ const UPDATE_RECIPE = gql`
         published: $published
         mainImage: $mainImage
         removeImage: $removeImage
+        type: $type
       }
     ) {
       success
+      recipe {
+        id
+        title
+        summary
+        directions
+        ingredients
+        mainImage
+        prepTime
+        cookTime
+        author
+        authorName
+        authorImage
+        published
+        type
+      }
       errors {
         ... on UserInputError {
           path
@@ -75,21 +95,23 @@ const UPDATE_RECIPE = gql`
 const EditRecipe = () => {
   const router = useRouter();
   const { state } = useAuthContext();
-  const fileRef = React.createRef<HTMLInputElement>();
-  const [previewVisible, setPreviewVisible] = React.useState<boolean>(false);
-  const [dialogVisible, setDialogVisible] = React.useState<boolean>();
-  const [title, setTitle] = React.useState<string>('');
-  const [directions, setDirections] = React.useState<string>('');
-  const [summary, setSummary] = React.useState<string>('');
-  const [ingredients, setIngredients] = React.useState<string>('');
-  const [prepTime, setPrepTime] = React.useState<string>('');
-  const [cookTime, setCookTime] = React.useState<string>('');
-  const [mainImage, setMainImage] = React.useState<any>(undefined);
-  const [published, setPublished] = React.useState<boolean>(false);
-  const [previewImage, setPreviewImage] = React.useState<any>(null);
-  const [removeImage, setRemoveImage] = React.useState<boolean>(false);
-  const [authorImage, setAuthorImage] = React.useState<string>('');
-  const [errors, setErrors] = React.useState<Record<string, string>>({});
+  const fileRef = createRef<HTMLInputElement>();
+  const [previewVisible, setPreviewVisible] = useState<boolean>(false);
+  const [dialogVisible, setDialogVisible] = useState<boolean>();
+  const [title, setTitle] = useState<string>('');
+  const [directions, setDirections] = useState<string>('');
+  const [summary, setSummary] = useState<string>('');
+  const [ingredients, setIngredients] = useState<string>('');
+  const [prepTime, setPrepTime] = useState<string>('');
+  const [cookTime, setCookTime] = useState<string>('');
+  const [mainImage, setMainImage] = useState<any>(null);
+  const [previewImage, setPreviewImage] = useState<any>(null);
+  const [initialImage, setInitialImage] = useState<string>('');
+  const [published, setPublished] = useState<boolean>(false);
+  const [removeImage, setRemoveImage] = useState<boolean>(false);
+  const [authorImage, setAuthorImage] = useState<string>('');
+  const [mealType, setMealType] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [deleteRecipe] = useMutation(DELETE_RECIPE, {
     update(_, { data: { deleteRecipe: complete } }) {
@@ -104,20 +126,21 @@ const EditRecipe = () => {
   });
 
   const [updateRecipe] = useMutation(UPDATE_RECIPE, {
-    update(_, { data: { updateRecipe: res } }) {
+    update(cache, { data: { updateRecipe: res } }) {
       if (res.errors) {
         const errs: any = {};
         res.errors.forEach((error: any) => {
           errs[error.path] = error.message;
         });
-
         return setErrors(errs);
       }
+
       router.push(`/recipe/${router.query.recipeId}`);
     },
     onError() {
       setErrors({ general: 'Server error occurrer, please try again.' });
     },
+    refetchQueries: [QUERY_RECIPE],
     variables: {
       recipeId: router.query.recipeId,
       title,
@@ -127,9 +150,12 @@ const EditRecipe = () => {
       prepTime: parseInt(prepTime, 10),
       cookTime: parseInt(cookTime, 10),
       published,
-      mainImage:
-        mainImage === '/image/defaultRecipe.jpg' ? undefined : mainImage,
       removeImage,
+      type: mealType,
+      mainImage:
+        initialImage === mainImage || removeImage === true
+          ? undefined
+          : mainImage,
     },
   });
 
@@ -139,11 +165,13 @@ const EditRecipe = () => {
       setDirections(data.getRecipe.directions);
       setSummary(data.getRecipe.summary);
       setPublished(data.getRecipe.published);
+      setInitialImage(data.getRecipe.mainImage);
       setMainImage(data.getRecipe.mainImage);
       setCookTime(data.getRecipe.cookTime.toString());
       setPrepTime(data.getRecipe.prepTime.toString());
       setIngredients(data.getRecipe.ingredients);
       setAuthorImage(data.getRecipe.authorImage);
+      setMealType(data.getRecipe.type);
     },
     skip: !router.query || !router.query.recipeId,
     variables: {
@@ -154,7 +182,7 @@ const EditRecipe = () => {
   if (error) return <ErrorPage />;
   if (loading) return <Loading />;
 
-  function submitHandler(evt: React.SyntheticEvent<HTMLFormElement>) {
+  function submitHandler(evt: SyntheticEvent<HTMLFormElement>) {
     evt.preventDefault();
 
     const validateErr = validateRecipe(
@@ -172,7 +200,7 @@ const EditRecipe = () => {
     updateRecipe();
   }
 
-  function onFileChange(evt: React.SyntheticEvent<HTMLInputElement>): void {
+  function onFileChange(evt: SyntheticEvent<HTMLInputElement>): void {
     if (!evt.currentTarget.files || evt.currentTarget.files?.length === 0) {
       return;
     }
@@ -190,6 +218,9 @@ const EditRecipe = () => {
 
   return (
     <section className="form-wrapper form-wrapper--wide">
+      <Head>
+        <title>Edit Recipe - Reshipi Bukku</title>
+      </Head>
       {previewVisible ? (
         <Recipe
           id=""
@@ -266,12 +297,14 @@ const EditRecipe = () => {
                 </div>
 
                 <div className="form__preview-wrapper">
-                  <Image
-                    fill={true}
-                    className="form__preview"
-                    src={previewImage || mainImage}
-                    alt="Recipe example"
-                  />
+                  {previewImage || mainImage ? (
+                    <Image
+                      fill={true}
+                      className="form__preview"
+                      src={previewImage || mainImage}
+                      alt="Recipe example"
+                    />
+                  ) : null}
                 </div>
               </button>
               <input
@@ -284,13 +317,13 @@ const EditRecipe = () => {
               />
             </label>
 
-            {previewImage || mainImage !== 'defaultRecipe.jpg' ? (
+            {previewImage || mainImage !== '/images/defaultRecipe.jpg' ? (
               <button
                 className="form__button form__button--remove"
                 type="button"
                 onClick={() => {
                   setPreviewImage(null);
-                  setMainImage('defaultRecipe.jpg');
+                  setMainImage('/images/defaultRecipe.jpg');
                   setRemoveImage(true);
                 }}
               >
@@ -299,8 +332,9 @@ const EditRecipe = () => {
             ) : null}
           </fieldset>
 
-          <span className="form__labeling">Publish Status</span>
           <fieldset className="form__field form__field--flex">
+            <span className="form__labeling">Publish Status</span>
+
             <label
               htmlFor="published-1"
               className="form__label form__label--inline form__label--radio"
@@ -334,6 +368,25 @@ const EditRecipe = () => {
               <div className="form__custom-radio" />
               <span className="form__labeling">Private</span>
             </label>
+          </fieldset>
+
+          <fieldset className="form__field">
+            <span className="form__labeling">Recipe Type</span>
+
+            <SelectInput
+              name="type"
+              title="Select Meal Type"
+              value={mealType || ''}
+              changeValue={(str: string) => setMealType(str)}
+              options={[
+                'Snack',
+                'Breakfast',
+                'Lunch',
+                'Dinner',
+                'Dessert',
+                'Other',
+              ]}
+            />
           </fieldset>
 
           <fieldset className="form__field">
