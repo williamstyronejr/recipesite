@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 const TOKEN_NAME = 'token';
 
-const MAX_AGE = 60 * 60 * 8; // 8 Hours
+const MAX_AGE = 60 * 60 * 24 * 31; // 1 Month
 
 export function setTokenCookie(res: NextApiResponse, token: string) {
   const cookie = serialize(TOKEN_NAME, token, {
