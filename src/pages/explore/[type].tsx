@@ -4,6 +4,8 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { gql, useQuery } from '@apollo/client';
 import styles from './styles/index.module.css';
+import Loading from '@/components/ui/Loading';
+import ErrorPage from '@/components/ui/Error';
 
 const QUERY_MAIN_RECIPE = gql`
   query searchRecipes(
@@ -57,12 +59,12 @@ const RecipeComponent = ({
 );
 
 const Popular = ({ type }: { type: string }) => {
-  const { data } = useQuery(QUERY_MAIN_RECIPE, {
+  const { data, loading, error } = useQuery(QUERY_MAIN_RECIPE, {
     variables: { limit: 8, offset: 0, author: 'ReshipiBukku', type },
     fetchPolicy: 'no-cache',
   });
 
-  const recipes = data && data.searchRecipes ? data.searchRecipes.recipes : [];
+  if (error) return <ErrorPage />;
 
   return (
     <section className={styles.explore}>
@@ -82,15 +84,19 @@ const Popular = ({ type }: { type: string }) => {
       </header>
 
       <div className={styles.explore__content}>
-        {recipes.map((recipe: any) => (
-          <RecipeComponent
-            key={recipe.id}
-            id={recipe.id}
-            title={recipe.title}
-            summary={recipe.summary}
-            mainImage={recipe.mainImage}
-          />
-        ))}
+        {data && data.searchRecipes
+          ? data.searchRecipes.recipes.map((recipe: any) => (
+              <RecipeComponent
+                key={recipe.id}
+                id={recipe.id}
+                title={recipe.title}
+                summary={recipe.summary}
+                mainImage={recipe.mainImage}
+              />
+            ))
+          : null}
+
+        {loading ? <Loading /> : null}
       </div>
     </section>
   );
