@@ -305,7 +305,7 @@ button {
 }
 
 .form__preview {
-  border-radius: 50%;
+  border-radius: 20px;
   z-index: -1;
 }
 

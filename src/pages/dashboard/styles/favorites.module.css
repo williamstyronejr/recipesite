@@ -19,7 +19,7 @@
   display: flex;
   flex-flow: column nowrap;
   width: 100%;
-  margin-top: 10px;
+  margin-top: 50px;
 }
 
 .favorites__item__missing {
@@ -41,6 +41,7 @@
   display: inline-block;
   width: 150px;
   height: 150px;
+  object-fit: contain;
 }
 
 .favorites__info {
@@ -84,6 +85,7 @@
   .favorites__preview {
     display: block;
     width: 100%;
+    object-fit: cover;
   }
 
   .favorites__info {

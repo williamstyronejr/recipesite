@@ -29,13 +29,14 @@
 
 .recipe__img_wrapper {
   position: relative;
-  width: 300px;
+  width: auto;
   height: 300px;
   margin: 0 auto;
 }
 
 .recipe__img {
   width: 100%;
+  object-fit: contain;
 }
 
 .recipe__tools {
