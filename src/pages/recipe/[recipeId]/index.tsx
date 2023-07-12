@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { gql, useQuery } from '@apollo/client';
 import { useAuthContext } from '@/hooks/useAuth';
-import Loading from '@/components/ui/Loading';
+import LoadingScreen from '@/components/ui/LoadingScreen';
 import Recipe from '@/components/ui/Recipe';
 import Comments from '@/components/ui/Comments';
 import ErrorPage from '@/components/ui/Error';
@@ -42,9 +42,9 @@ const RecipePage = () => {
     skip: !query || !query.recipeId,
   });
 
-  if (!query || !query.recipeId) return <Loading />;
+  if (!query || !query.recipeId) return <LoadingScreen />;
   if (error) return <ErrorPage />;
-  if (loading || error) return <Loading />;
+  if (loading || error) return <LoadingScreen />;
   if (!data.getRecipe) return <MissingPage />;
 
   const {

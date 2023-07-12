@@ -3,7 +3,7 @@
   color: #efefef;
 }
 
-.loading--full {
+.loading__full {
   display: flex;
   flex-flow: column wrap;
   justify-content: center;
@@ -21,17 +21,13 @@
   margin: 20px auto;
 }
 
-.loading__full .loading__dots {
-  margin-left: 10px;
-}
-
 .loading__dots div {
   position: absolute;
   top: 10px;
   width: 13px;
   height: 13px;
   border-radius: 50%;
-  background: rgb(244, 244, 244);
+  background: rgb(192, 192, 192);
   animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 .loading__dots div:nth-child(1) {
